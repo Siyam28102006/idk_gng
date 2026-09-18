@@ -4,10 +4,12 @@ active_epic_id: e03
 active_story_id: e03s01
 vcs:
   kind: git
-  branch: main
+  branch: feat/e03s01-guardrails
+  worktree: /home/thespd/Work/e03s01-guardrails
 handoff:
-  next_skill: kickoff-branch
-  note: "e03s01 planned (5 tasks, P0, failing); next: branch feat/e03s01-guardrails."
+  next_skill: develop-tdd
+  note: "e03s01 kicked off on feat/e03s01-guardrails (5 tasks, P0, failing); preflight green (lint/build/22 tests); next: TDD the guardrails module."
 metrics:
   story_start: "2026-09-18T16:42:30Z"
   plan_complete: "2026-09-18T22:50:00Z"
+  kickoff_complete: "2026-09-18T22:55:00Z"
