@@ -1,11 +1,10 @@
 session: "gridwise-bootstrap"
 active_flow: "build_epic"
 active_epic_id: e02
-active_story_id: e02s01
+active_story_id: e02s02
 vcs:
   kind: git
-  branch: feat/e02s01-llm-path
-  worktree: /home/thespd/Work/e02s01-llm-path
+  branch: main
 handoff:
-  next_skill: release-branch
-  note: "e02s01 done: 20 tests green, live e2e proven, dual-blind review PASS (10/10 both, round 2/5). Ready to merge."
+  next_skill: survey-context
+  note: "e02s01 LLM path released to main; e02s02 normalization next."
