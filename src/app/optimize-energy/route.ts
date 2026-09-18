@@ -1,4 +1,5 @@
 import { optimizeRequestSchema, type OptimizeRequest } from "@/lib/schemas";
+import { interpretNotes, LlmError } from "@/lib/llm/interpret";
 
 interface HourlyEntry {
   hour: number;
@@ -7,17 +8,6 @@ interface HourlyEntry {
   battery_action: "charge" | "discharge" | "idle";
   battery_kwh: number;
   battery_energy_after_kwh: number;
-}
-
-// Tracer stub: one no_op per note. Epic e02 replaces this with the real LLM call.
-function stubInterpretation(notes: string[]) {
-  return notes.map((_, note_index) => ({
-    note_index,
-    applies: false,
-    directive_type: "no_op",
-    structured_adjustment: null,
-    explanation: "Tracer stub: no_op pending real LLM interpretation (e02).",
-  }));
 }
 
 // Trivially feasible plan: solar first, grid for the remainder, battery idle.
@@ -76,18 +66,28 @@ export async function POST(request: Request) {
   }
 
   try {
+    const candidates = await interpretNotes(input.operator_notes, input.battery);
     const { hourly_plan, total_grid_kwh, total_cost_bdt, peak_grid_kwh } =
       trivialPlan(input);
     return Response.json({
       scenario_id: input.scenario_id,
-      directive_interpretation: stubInterpretation(input.operator_notes),
+      directive_interpretation: candidates.map((c, note_index) => ({
+        note_index,
+        applies: c.directive_type !== "no_op",
+        directive_type: c.directive_type,
+        structured_adjustment: c.structured_adjustment,
+        explanation: `LLM interpretation: ${c.directive_type}`,
+      })),
       hourly_plan,
       total_grid_kwh,
       total_cost_bdt,
       peak_grid_kwh,
       plan_summary: "Tracer stub: solar-first dispatch, battery idle.",
     });
-  } catch {
+  } catch (e) {
+    if (e instanceof LlmError) {
+      return Response.json({ error: "interpretation failed" }, { status: 500 });
+    }
     return Response.json({ error: "internal error" }, { status: 500 });
   }
 }
