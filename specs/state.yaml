@@ -1,11 +1,10 @@
 session: "gridwise-bootstrap"
 active_flow: "build_epic"
-active_epic_id: e02
-active_story_id: e02s02
+active_epic_id: e03
+active_story_id: e03s01
 vcs:
   kind: git
-  branch: feat/e02s02-normalization
-  worktree: /home/thespd/Work/e02s02-normalization
+  branch: main
 handoff:
-  next_skill: release-branch
-  note: "e02s02 done: 26/26 pack keyed green, dual-blind review PASS (round 2/5). Ready to merge."
+  next_skill: survey-context
+  note: "e02 released and archived; e03 guardrails next."
