@@ -73,3 +73,53 @@ Findings (inline review + dual-blind review rounds 1-2):
 HIGH findings with confidence >= 8: none.
 EXCEPTIONS.md: not required (no unresolved HIGH).
 Fresh as of: 2026-09-18, branch feat/e02s02-normalization.
+
+---
+
+# Security review — e03s01 guardrail validator (branch feat/e03s01-guardrails)
+
+Scope: new pure module `src/lib/guardrails/` (types.ts, validate.ts), route
+wire-up in `src/app/optimize-energy/route.ts`, table-driven tests
+`tests/guardrails.test.ts`, and a small loosening of `src/lib/llm/directive.ts`
+(`factor.min/max`, `minimum_energy_kwh.nonnegative`, `max_grid_kwh.nonnegative`
+relaxed to `.finite()` — per-type bounds now owned by the guardrail, the single
+source of truth). No new dependencies, no network surface, no LLM call site
+changes.
+
+Findings (inline review + grep-based purity invariant + diff inspection):
+- Secrets: branch diff grepped for `sk-`, `ghp_`, `AKIA` — clean. No env
+  reads introduced.
+- Purity invariant re-verified: `grep -rn "from \"ai\|from \"@ai-sdk"
+  src/lib/guardrails/` returns 0 matches. Validator is a pure function over
+  its three arguments; no fetch, no fs, no globals, no Date.now.
+- Prompt injection: unchanged from e02s02 — the guardrail is downstream of
+  the LLM output and tightens, never loosens, what the route accepts.
+- Information disclosure on fallback: `fallback_reasons` entries log only
+  `{note_index, reason}` enum (server-side `console.warn`). Note text, LLM
+  internals, and per-request payloads stay out of logs and never appear in
+  the response.
+- Type-level bounds removed from the LLM schema (`factor` no longer `.max(1)`,
+  `reserve` no longer `.nonnegative()`, `cap` no longer `.nonnegative()`).
+  Per-type bounds are now in the guardrail. Out-of-range values still cannot
+  reach the optimizer: the guardrail's `fallback_reasons` catches them and
+  reduces the entry to `no_op`. Defense-in-depth contract is preserved by
+  the LLM schema still enforcing structural shape (integer hours in 0..23,
+  finite numbers) and by a test that pins hours-range as
+  `shape_invalid` (LLM-schema-owned).
+- DoS / availability: per-request work is O(n) over the candidate list
+  (≤24 entries). No new loops, no allocations on hot paths beyond the
+  documented `Set` for uniqueness.
+- 0 `any` introduced; 0 `@ts-ignore`; 0 `eslint-disable`. The single `as T`
+  cast is bounded by the helper's generic constraint
+  `<T extends { hours: readonly number[] }>` and cannot widen beyond the
+  input's shape.
+
+HIGH findings with confidence >= 8: 0
+MEDIUM: 0
+LOW: 1
+LOW detail: `directiveSchema` no longer enforces per-type bounds at the type
+  level — the guardrail does. Out-of-range values still cannot reach the
+  optimizer; `fallback_reasons` logs the typed reason (not the value). No
+  client-facing leak. Documented in AUDIT-e03s01.md §Types and Safety.
+EXCEPTIONS.md: not required (no unresolved HIGH).
+Fresh as of: 2026-09-18, branch feat/e03s01-guardrails (HEAD 476339d).
