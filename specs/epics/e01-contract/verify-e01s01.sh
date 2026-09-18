@@ -60,6 +60,14 @@ print("optimize happy path: OK")
 
 status, body = post(b"{not json")
 assert status == 400 and "error" in body, (status, body)
+status, body = post('"just a string"')
+assert status == 400 and "error" in body, (status, body)
+bad = dict(payload); bad["scenario_id"] = ""
+status, _ = post(bad)
+assert status == 400, status
+bad = dict(payload); bad["battery"] = dict(payload["battery"], capacity_kwh=0)
+status, _ = post(bad)
+assert status == 400, status
 bad = dict(payload); bad["hours"] = bad["hours"][:23]
 status, _ = post(bad)
 assert status == 400, status
