@@ -6,7 +6,7 @@ epics:
     slug: e01-contract
     title: "API contract and pipeline skeleton"
     wsjf: 10
-    status: pending
+    status: done
   - id: e02
     slug: e02-llm
     title: "LLM note-to-directive interpretation path"

@@ -6,5 +6,5 @@ vcs:
   kind: git
   branch: main
 handoff:
-  next_skill: survey-context
-  note: "e01 released and archived; e02 LLM path next, blocked on provider decision and sample cases."
+  next_skill: kickoff-branch
+  note: "e02s01 LLM path planned (AI SDK v7, Groq primary, Gemini fallback); consistency script still absent."

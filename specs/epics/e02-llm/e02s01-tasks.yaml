@@ -1,13 +1,39 @@
 story_id: e02s01
 title: "Real per-note LLM call producing the six-type structured directive"
-status: pending
+status: failing
 bcps: 8
+risk: P0
 tasks:
   - id: e02s01t01
-    description: "Add src/lib/llm client with one structured-output call per note, concise prompt covering all six directive types, and env-driven model id"
-    verify: "bun run build"
-    status: pending
+    description: "Add directive zod schema plus pure prompt builder with unit tests; install pinned ai SDK and provider adapters"
+    verify: "bun test tests/llm.test.ts"
+    risk: P0
+    security: low
+    status: failing
+    allure:
+      severity: critical
+      categories:
+        - "LLM Interpretation"
+        - "unit"
   - id: e02s01t02
-    description: "Parse per-note JSON strictly (no phrase-match sole path, no invented params) and hand untrusted output to guardrails only"
-    verify: "bun run lint"
-    status: pending
+    description: "Add interpretNotes client with fallback, timeout, typed errors; wire route; route tests via SDK mock"
+    verify: "bun run build"
+    risk: P0
+    security: medium
+    status: failing
+    allure:
+      severity: critical
+      categories:
+        - "LLM Interpretation"
+        - "integration"
+  - id: e02s01t03
+    description: "Add .env.example names plus key-gated live e2e section; full gates green with no key material"
+    verify: "bash specs/e2e/verify-contract.sh"
+    risk: P1
+    security: medium
+    status: failing
+    allure:
+      severity: high
+      categories:
+        - "LLM Interpretation"
+        - "integration"
