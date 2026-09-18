@@ -4,7 +4,8 @@ active_epic_id: e01
 active_story_id: e01s02
 vcs:
   kind: git
-  branch: main
+  branch: feat/e01s02-validation
+  worktree: /home/thespd/Work/e01s02-validation
 handoff:
-  next_skill: kickoff-branch
-  note: "e01s02 validation pins planned; consistency script still absent — proceed to branch then TDD."
+  next_skill: release-branch
+  note: "e01s02 done: 12 tests green, dual-blind review PASS (A 98, B 10/10, round 2/5). Ready to merge."

@@ -1,6 +1,6 @@
 story_id: e01s02
 title: "Request validation and controlled error codes"
-status: failing
+status: passing
 bcps: 3
 risk: P1
 tasks:
@@ -9,7 +9,7 @@ tasks:
     verify: "bun test tests/optimize-energy.test.ts"
     risk: P1
     security: low
-    status: failing
+    status: passing
     allure:
       severity: high
       categories:
@@ -20,7 +20,7 @@ tasks:
     verify: "bash specs/epics/e01-contract/verify-e01s01.sh"
     risk: P1
     security: low
-    status: failing
+    status: passing
     allure:
       severity: high
       categories:
