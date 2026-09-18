@@ -6,5 +6,5 @@ vcs:
   kind: git
   branch: main
 handoff:
-  next_skill: survey-context
-  note: "e02s01 LLM path released to main; e02s02 normalization next."
+  next_skill: kickoff-branch
+  note: "e02s02 paraphrase pack planned; consistency script still absent."

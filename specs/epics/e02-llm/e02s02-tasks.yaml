@@ -1,13 +1,28 @@
 story_id: e02s02
 title: "Normalization and paraphrase plus distractor robustness"
-status: pending
+status: failing
 bcps: 5
+risk: P0
 tasks:
   - id: e02s02t01
-    description: "Normalize percent-of-capacity to absolute kWh, reduction-vs-remains factor, 12h clock to end-exclusive 24h hours"
-    verify: "bun run build"
-    status: pending
+    description: "Author paraphrase pack plus key-gated semantic runner; record baseline pass rate"
+    verify: "bash specs/e2e/run-paraphrases.sh"
+    risk: P0
+    security: low
+    status: failing
+    allure:
+      severity: critical
+      categories:
+        - "LLM Interpretation"
+        - "paraphrase"
   - id: e02s02t02
-    description: "Classify irrelevant and energy-adjacent chatter as no_op; verify with 3-plus paraphrases per type"
-    verify: "bun run lint"
-    status: pending
+    description: "Tune prompt to 100 percent pack pass with full gates green"
+    verify: "bash specs/e2e/run-paraphrases.sh && bun test"
+    risk: P0
+    security: low
+    status: failing
+    allure:
+      severity: critical
+      categories:
+        - "LLM Interpretation"
+        - "paraphrase"
