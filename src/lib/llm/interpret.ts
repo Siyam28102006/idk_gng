@@ -22,24 +22,18 @@ const CALL_TIMEOUT_MS = 10_000;
 
 class AiLlmClient implements LlmClient {
   async generate(prompt: string, signal: AbortSignal): Promise<unknown> {
+    const run = (model: Parameters<typeof generateText>[0]["model"]) => () =>
+      generateText({ model, output: Output.object({ schema: directiveSchema }), prompt, abortSignal: signal }).then(
+        (r) => r.output,
+      );
     const attempts: Array<() => Promise<unknown>> = [];
     if (process.env.LLM_API_KEY) {
       const groq = createGroq({ apiKey: process.env.LLM_API_KEY });
-      const model = groq(process.env.LLM_MODEL ?? "llama-3.3-70b-versatile");
-      attempts.push(() =>
-        generateText({ model, output: Output.object({ schema: directiveSchema }), prompt, abortSignal: signal }).then(
-          (r) => r.output,
-        ),
-      );
+      attempts.push(run(groq(process.env.LLM_MODEL ?? "llama-3.3-70b-versatile")));
     }
     if (process.env.LLM_FALLBACK_API_KEY) {
       const google = createGoogle({ apiKey: process.env.LLM_FALLBACK_API_KEY });
-      const model = google(process.env.LLM_FALLBACK_MODEL ?? "gemini-3.5-flash-lite");
-      attempts.push(() =>
-        generateText({ model, output: Output.object({ schema: directiveSchema }), prompt, abortSignal: signal }).then(
-          (r) => r.output,
-        ),
-      );
+      attempts.push(run(google(process.env.LLM_FALLBACK_MODEL ?? "gemini-3.5-flash-lite")));
     }
     let lastError: unknown = new Error("no LLM provider configured");
     for (const attempt of attempts) {
@@ -53,7 +47,7 @@ class AiLlmClient implements LlmClient {
   }
 }
 
-// Deterministic double used ONLY when no LLM_API_KEY is configured
+// Deterministic double used ONLY when no LLM keys are configured
 // (local tests). The deployed service always sets keys, so judging traffic
 // always takes the real LLM path above.
 class StubLlmClient implements LlmClient {
