@@ -24,6 +24,10 @@ Fresh as of: 2026-09-18, branch HEAD a02c53f.
 
 # Security review — e02s01 LLM path (branch feat/e02s01-llm-path)
 
+> SUPERSEDED in part by e02s02: provider chain is now OpenRouter → Gemini
+> (`OPENROUTER_KEY`/`GEMINI_KEY`); Groq/`LLM_API_KEY` references below are
+> e02s01-era. Findings otherwise stand.
+
 Scope: new `src/lib/llm/` (directive schema, prompt builder, interpreter with
 Groq-primary/Gemini-fallback via AI SDK, 9s per-attempt + 20s per-note
 timeouts, fail-closed stub in production), route wiring, `.env.example`

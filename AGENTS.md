@@ -179,14 +179,15 @@ no_discharge-rose `#F43F5E`, max_grid-cyan `#06B6D4`, no_op-slate. Fonts:
 
 | Var (`.env.local`, gitignored) | Purpose | Source |
 |---|---|---|
-| `LLM_API_KEY` (exact name TBD with provider) | operator-note interpretation; team owns quota/rate limits for the full judging window | provider dashboard |
-| `LLM_MODEL` | exact model identifier; must also be documented in README (separately graded) | provider / local model id |
+| `OPENROUTER_KEY` / `OPENROUTER_MODEL` (default `nex-agi/nex-n2.5-pro:free`) | operator-note interpretation, primary; team owns quota/rate limits for the full judging window | OpenRouter dashboard |
+| `GEMINI_KEY` / `GEMINI_MODEL` (default `gemini-3.5-flash-lite`) | interpretation fallback when OpenRouter fails; same quota ownership | Google AI Studio |
 | `NEXT_PUBLIC_INSFORGE_URL` / `NEXT_PUBLIC_INSFORGE_ANON_KEY` | local harness persistence ONLY — never on the scored request path | `oss_host` in `.insforge/project.json` / `npx @insforge/cli secrets get ANON_KEY` |
 
 - `.env.example` lists NAMES only. Docker receives secrets via `docker run -e VAR=…`, never baked into the image.
-- LLM provider is still an OPEN DECISION (PRD §8.1): needs structured-output mode
-  (function calling / JSON mode), concise prompts (latency budget), and an outage plan
-  (backup provider or local model — judges will not repair a broken dependency).
+- LLM provider DECIDED (was PRD §8.1 open): OpenRouter primary + Gemini
+  fallback via Vercel AI SDK structured output; strict json_schema verified
+  live on the default model. Model ids must also be documented in README
+  (separately graded).
 - The scored `/optimize-energy` path must not call InsForge at request time — every
   extra hop costs p95 and adds a scored failure mode. InsForge is for the local
   dev harness (sample runs, result logging) if used at all.

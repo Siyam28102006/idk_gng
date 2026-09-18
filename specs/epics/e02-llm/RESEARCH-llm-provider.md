@@ -1,5 +1,9 @@
 # Research — LLM provider for e02 (2026-09-18, live sources)
 
+> SUPERSEDED in part by e02s02: the chain is now OpenRouter (`OPENROUTER_KEY`)
+> → Gemini (`GEMINI_KEY`); Groq references below are e02s01-era. SDK,
+> quota-math, and fallback reasoning still hold.
+
 Task: choose the model/API behind the per-note note→directive call.
 Constraints from PRD §8.1 + AGENTS.md: real LLM on the path (disqualifying if
 absent), structured-output mode, concise prompts (30s timeout, p95 ≤ 5s),

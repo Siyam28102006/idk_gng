@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { directiveSchema } from "../src/lib/llm/directive";
 import { buildPrompt } from "../src/lib/llm/prompt";
-import { interpretNotes, AiLlmClient, LlmError, configuredProviders } from "../src/lib/llm/interpret";
+import { interpretNotes, AiLlmClient, LlmError, configuredProviders, hasLlmKeys } from "../src/lib/llm/interpret";
 
 const battery = {
   capacity_kwh: 200,
@@ -42,10 +42,14 @@ describe("configuredProviders", () => {
   test("orders openrouter before google", () => {
     expect(configuredProviders({})).toEqual([]);
     expect(configuredProviders({ GEMINI_KEY: "x" })).toEqual(["google"]);
+    expect(configuredProviders({ OPENROUTER_KEY: "x" })).toEqual(["openrouter"]);
     expect(configuredProviders({ OPENROUTER_KEY: "x", GEMINI_KEY: "y" })).toEqual([
       "openrouter",
       "google",
     ]);
+    expect(hasLlmKeys({})).toBe(false);
+    expect(hasLlmKeys({ OPENROUTER_KEY: "x" })).toBe(true);
+    expect(hasLlmKeys({ LLM_API_KEY: "x", LLM_FALLBACK_API_KEY: "y" })).toBe(true);
   });
 });
 
@@ -84,7 +88,7 @@ describe("interpretNotes", () => {
     await expect(interpretNotes(["x"], battery, hanging, { noteMs: 50 })).rejects.toMatchObject({ kind: "timeout" });
   });
   test("fails closed in production with no keys, stubs outside it", async () => {
-    const names = ["OPENROUTER_KEY", "GEMINI_KEY"];
+    const names = ["OPENROUTER_KEY", "OPENROUTER_MODEL", "GEMINI_KEY", "GEMINI_MODEL", "LLM_API_KEY", "LLM_MODEL", "LLM_FALLBACK_API_KEY", "LLM_FALLBACK_MODEL"];
     const saved: Record<string, string | undefined> = {};
     const savedEnv = process.env.NODE_ENV;
     try {
@@ -110,15 +114,15 @@ describe("AiLlmClient fallback", () => {
   test("tries runners in order and throws the last error", async () => {
     const seen: string[] = [];
     const failThenSucceed = new AiLlmClient([
-      { name: "primary", run: async () => { seen.push("primary"); throw new Error("down"); } },
-      { name: "fallback", run: async () => { seen.push("fallback"); return candidate; } },
+      { name: "openrouter", run: async () => { seen.push("openrouter"); throw new Error("down"); } },
+      { name: "google", run: async () => { seen.push("google"); return candidate; } },
     ]);
     const out = await interpretNotes(["x"], battery, failThenSucceed);
-    expect(seen).toEqual(["primary", "fallback"]);
+    expect(seen).toEqual(["openrouter", "google"]);
     expect(out[0].directive_type).toBe("no_op");
     const bothFail = new AiLlmClient([
-      { name: "primary", run: async () => { throw new Error("down1"); } },
-      { name: "fallback", run: async () => { throw new Error("down2"); } },
+      { name: "openrouter", run: async () => { throw new Error("down1"); } },
+      { name: "google", run: async () => { throw new Error("down2"); } },
     ]);
     await expect(interpretNotes(["x"], battery, bothFail)).rejects.toBeInstanceOf(LlmError);
   });

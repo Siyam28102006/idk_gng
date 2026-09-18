@@ -25,10 +25,20 @@ export const NOTE_TIMEOUT_MS = 20_000;
 
 export type ProviderName = "openrouter" | "google";
 
+// Canonical names are OPENROUTER_*/GEMINI_*; LLM_API_KEY / LLM_MODEL /
+// LLM_FALLBACK_API_KEY / LLM_FALLBACK_MODEL are accepted as legacy aliases
+// so older .env.local files keep working.
+function pick(env: Record<string, string | undefined>, ...names: string[]): string | undefined {
+  for (const name of names) {
+    if (env[name]) return env[name];
+  }
+  return undefined;
+}
+
 export function configuredProviders(env: Record<string, string | undefined> = process.env): ProviderName[] {
   const names: ProviderName[] = [];
-  if (env.OPENROUTER_KEY) names.push("openrouter");
-  if (env.GEMINI_KEY) names.push("google");
+  if (pick(env, "OPENROUTER_KEY", "LLM_API_KEY")) names.push("openrouter");
+  if (pick(env, "GEMINI_KEY", "LLM_FALLBACK_API_KEY")) names.push("google");
   return names;
 }
 
@@ -42,28 +52,33 @@ export interface AttemptRunner {
 export class AiLlmClient implements LlmClient {
   constructor(private runners?: AttemptRunner[]) {}
 
-  private buildRunners(): AttemptRunner[] {
+  private buildRunners(env: Record<string, string | undefined> = process.env): AttemptRunner[] {
     if (this.runners) return this.runners;
     const run = (model: Parameters<typeof generateText>[0]["model"]) => (prompt: string, signal: AbortSignal) =>
       generateText({ model, output: Output.object({ schema: directiveSchema }), prompt, abortSignal: signal }).then(
         (r) => r.output,
       );
-    const list: AttemptRunner[] = [];
-    if (process.env.OPENROUTER_KEY) {
-      const openrouter = createOpenAICompatible({
-        name: "openrouter",
-        apiKey: process.env.OPENROUTER_KEY,
-        baseURL: "https://openrouter.ai/api/v1",
-      });
-      const modelId = process.env.OPENROUTER_MODEL ?? DEFAULT_OPENROUTER_MODEL;
-      list.push({ name: "openrouter", run: run(openrouter(modelId)) });
-    }
-    if (process.env.GEMINI_KEY) {
-      const google = createGoogle({ apiKey: process.env.GEMINI_KEY as string });
-      const modelId = process.env.GEMINI_MODEL ?? DEFAULT_GOOGLE_MODEL;
-      list.push({ name: "google", run: run(google(modelId)) });
-    }
-    return list;
+    // Order defined once by configuredProviders; each name builds its runner.
+    return configuredProviders(env).flatMap((name): AttemptRunner[] => {
+      if (name === "openrouter" && pick(env, "OPENROUTER_KEY", "LLM_API_KEY")) {
+        const openrouter = createOpenAICompatible({
+          name: "openrouter",
+          apiKey: pick(env, "OPENROUTER_KEY", "LLM_API_KEY") as string,
+          baseURL: "https://openrouter.ai/api/v1",
+          // Verified live against nex-agi/nex-n2.5-pro:free: strict json_schema
+          // accepted, so the schema is enforced server-side, not just client-side.
+          supportsStructuredOutputs: true,
+        });
+        const modelId = pick(env, "OPENROUTER_MODEL", "LLM_MODEL") ?? DEFAULT_OPENROUTER_MODEL;
+        return [{ name, run: run(openrouter(modelId)) }];
+      }
+      if (name === "google" && pick(env, "GEMINI_KEY", "LLM_FALLBACK_API_KEY")) {
+        const google = createGoogle({ apiKey: pick(env, "GEMINI_KEY", "LLM_FALLBACK_API_KEY") as string });
+        const modelId = pick(env, "GEMINI_MODEL", "LLM_FALLBACK_MODEL") ?? DEFAULT_GOOGLE_MODEL;
+        return [{ name, run: run(google(modelId)) }];
+      }
+      return [];
+    });
   }
 
   async generate(prompt: string): Promise<unknown> {
