@@ -1,4 +1,4 @@
-import { optimizeRequestSchema } from "@/lib/schemas";
+import { optimizeRequestSchema, type OptimizeRequest } from "@/lib/schemas";
 
 interface HourlyEntry {
   hour: number;
@@ -21,21 +21,34 @@ function stubInterpretation(notes: string[]) {
 }
 
 // Trivially feasible plan: solar first, grid for the remainder, battery idle.
-function trivialPlan(req: {
-  hours: { hour: number; demand_kwh: number; solar_kwh: number }[];
-  battery: { initial_energy_kwh: number };
-}): HourlyEntry[] {
-  return req.hours.map((h) => {
+// Single pass over ascending hours so plan order and tariff attribution share
+// one ordering — no positional join between arrays.
+function trivialPlan(req: OptimizeRequest): {
+  hourly_plan: HourlyEntry[];
+  total_grid_kwh: number;
+  total_cost_bdt: number;
+  peak_grid_kwh: number;
+} {
+  const hourly_plan: HourlyEntry[] = [];
+  let total_grid_kwh = 0;
+  let total_cost_bdt = 0;
+  let peak_grid_kwh = 0;
+  for (const h of [...req.hours].sort((a, b) => a.hour - b.hour)) {
     const solar_used_kwh = Math.min(h.demand_kwh, h.solar_kwh);
-    return {
+    const grid_kwh = h.demand_kwh - solar_used_kwh;
+    hourly_plan.push({
       hour: h.hour,
-      grid_kwh: h.demand_kwh - solar_used_kwh,
+      grid_kwh,
       solar_used_kwh,
       battery_action: "idle",
       battery_kwh: 0,
       battery_energy_after_kwh: req.battery.initial_energy_kwh,
-    };
-  });
+    });
+    total_grid_kwh += grid_kwh;
+    total_cost_bdt += grid_kwh * h.tariff_bdt_per_kwh;
+    peak_grid_kwh = Math.max(peak_grid_kwh, grid_kwh);
+  }
+  return { hourly_plan, total_grid_kwh, total_cost_bdt, peak_grid_kwh };
 }
 
 export async function POST(request: Request) {
@@ -52,6 +65,9 @@ export async function POST(request: Request) {
   }
   const input = parsed.data;
 
+  if (input.battery.minimum_energy_kwh > input.battery.capacity_kwh) {
+    return Response.json({ error: "minimum above capacity" }, { status: 422 });
+  }
   if (
     input.battery.initial_energy_kwh < input.battery.minimum_energy_kwh ||
     input.battery.initial_energy_kwh > input.battery.capacity_kwh
@@ -60,19 +76,15 @@ export async function POST(request: Request) {
   }
 
   try {
-    const hourly_plan = trivialPlan(input);
-    const total_grid_kwh = hourly_plan.reduce((s, h) => s + h.grid_kwh, 0);
-    const total_cost_bdt = hourly_plan.reduce(
-      (s, h, i) => s + h.grid_kwh * input.hours[i].tariff_bdt_per_kwh,
-      0,
-    );
+    const { hourly_plan, total_grid_kwh, total_cost_bdt, peak_grid_kwh } =
+      trivialPlan(input);
     return Response.json({
       scenario_id: input.scenario_id,
       directive_interpretation: stubInterpretation(input.operator_notes),
       hourly_plan,
       total_grid_kwh,
       total_cost_bdt,
-      peak_grid_kwh: Math.max(...hourly_plan.map((h) => h.grid_kwh)),
+      peak_grid_kwh,
       plan_summary: "Tracer stub: solar-first dispatch, battery idle.",
     });
   } catch {

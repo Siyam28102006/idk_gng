@@ -22,12 +22,8 @@ export const optimizeRequestSchema = z
     hours: z.array(hourSchema).length(24),
     battery: batterySchema,
   })
-  .refine(
-    (req) => {
-      const hs = req.hours.map((h) => h.hour);
-      return new Set(hs).size === 24 && hs.every((h, i) => h === i);
-    },
-    { message: "hours must cover 0-23 exactly once" },
-  );
+  .refine((req) => new Set(req.hours.map((h) => h.hour)).size === 24, {
+    message: "hours must cover 0-23 exactly once, in any order",
+  });
 
 export type OptimizeRequest = z.infer<typeof optimizeRequestSchema>;
