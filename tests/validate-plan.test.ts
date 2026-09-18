@@ -38,47 +38,25 @@ function emptyEntry(h: number): HourlyEntry {
   };
 }
 
-function balanced24(demand = 50, solar = 0, initial = 100, chargeCap = 100, dischargeCap = 100): {
+function balanced24(demand = 50, solar = 0, initial = 100): {
   hours: { hour: number; demand_kwh: number; solar_kwh: number; tariff_bdt_per_kwh: number }[];
   output: OptimizeOutput;
 } {
-  // Build a feasible, neutral plan: charge/discharge only via battery,
-  // grid covers residual. Then recompute totals via recomputeTotals-style
-  // math below so the validatePlan() check agrees.
-  const hours = demandOnlyHours().map((h) => ({ ...h, demand_kwh: demand }));
+  // Build a feasible, neutral plan where every hour is fully satisfied by
+  // solar + grid, the battery never moves, and the totals are exactly
+  // recomputable from the plan. This isolates the validator's contract
+  // checks from the optimizer's math.
+  const hours = demandOnlyHours().map((h) => ({ ...h, demand_kwh: demand, solar_kwh: solar }));
   const hourly_plan: HourlyEntry[] = [];
   for (let h = 0; h < 24; h++) {
-    let soc = h === 0 ? initial : hourly_plan[h - 1]!.battery_energy_after_kwh;
-    // Simple feasibility: every hour ends at initial via tiny round-trips.
-    // We just need totals to recompute correctly for the validator.
-    const entry: HourlyEntry = {
+    hourly_plan.push({
       hour: h,
       grid_kwh: Math.max(0, demand - solar),
       solar_used_kwh: Math.min(solar, demand),
       battery_action: "idle",
       battery_kwh: 0,
       battery_energy_after_kwh: initial,
-    };
-    // Charge at h=0 from initial to push to capacity, discharge at h=23 to
-    // return to initial. Use the charge/discharge caps.
-    if (h === 0) {
-      const charge = Math.min(chargeCap, 200 - soc);
-      entry.battery_action = "charge";
-      entry.battery_kwh = charge;
-      entry.grid_kwh = Math.max(0, demand - solar) + charge;
-      soc += charge;
-      entry.battery_energy_after_kwh = soc;
-    } else if (h === 23) {
-      const discharge = Math.min(dischargeCap, soc - initial);
-      entry.battery_action = "discharge";
-      entry.battery_kwh = discharge;
-      entry.grid_kwh = Math.max(0, demand - solar + discharge);
-      soc -= discharge;
-      entry.battery_energy_after_kwh = soc;
-    } else {
-      entry.battery_energy_after_kwh = soc;
-    }
-    hourly_plan.push(entry);
+    });
   }
   // Compute totals from the plan.
   let total_grid = 0;
@@ -191,6 +169,10 @@ describe("validatePlan — physics (PRD §5.5 #2 balance)", () => {
   test("physics holds within 0.01 → ok", () => {
     const { hours, output } = balanced24();
     output.hourly_plan[5]!.grid_kwh += 0.005;
+    // Update totals consistently so totals_mismatch doesn't fire.
+    output.total_grid_kwh = round(output.total_grid_kwh + 0.005);
+    output.total_cost_bdt = round(output.total_cost_bdt + 0.005 * hours[5]!.tariff_bdt_per_kwh);
+    output.peak_grid_kwh = Math.max(output.peak_grid_kwh, output.hourly_plan[5]!.grid_kwh);
     const result = validatePlan({ hours, battery: battery(), directives: [], output });
     expect(result.ok).toBe(true);
   });
@@ -209,8 +191,14 @@ describe("validatePlan — battery_kwh = 0 when action = idle (PRD §5.7)", () =
 
   test("charge + battery_kwh == charge magnitude → ok", () => {
     const { hours, output } = balanced24();
-    // h=0 is already "charge" with battery_kwh = charge amount.
-    expect(output.hourly_plan[0]!.battery_action).toBe("charge");
+    // Force a charge at h=5 with consistent balance.
+    output.hourly_plan[5]!.battery_action = "charge";
+    output.hourly_plan[5]!.battery_kwh = 10;
+    output.hourly_plan[5]!.grid_kwh = output.hourly_plan[5]!.grid_kwh + 10;
+    // Adjust totals by +10 grid, +50 cost, and bump peak since 60 > 50.
+    output.total_grid_kwh = round(output.total_grid_kwh + 10);
+    output.total_cost_bdt = round(output.total_cost_bdt + 10 * 5);
+    output.peak_grid_kwh = Math.max(output.peak_grid_kwh, output.hourly_plan[5]!.grid_kwh);
     const result = validatePlan({ hours, battery: battery(), directives: [], output });
     expect(result.ok).toBe(true);
   });
@@ -248,18 +236,24 @@ describe("validatePlan — directive replay", () => {
 
   test("minimum_battery_reserve violated (soc < floor at active hour) → reject", () => {
     const { hours, output } = balanced24();
-    // All hours sit at soc=100; reserve floor=150 → all violate.
+    // All hours sit at soc=initial=100. Reserve floor=150 → all violate.
     const directives = [vd("minimum_battery_reserve", { hours: [5], minimum_energy_kwh: 150 })];
-    const result = validatePlan({ hours, battery: battery(), directives, output });
+    const result = validatePlan({ hours, battery: battery({ initial_energy_kwh: 100 }), directives, output });
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.violations.some((v) => v.code === "directive_violation")).toBe(true);
   });
 
   test("no_charge_window violated (charge > 0 at active hour) → reject", () => {
+    // Force a charge at h=5 to make the test independent of any other
+    // battery activity in balanced24.
     const { hours, output } = balanced24();
-    // h=0 has battery_action=charge. Add no_charge_window at h=0.
-    const directives = [vd("no_charge_window", { hours: [0] })];
+    output.hourly_plan[5]!.battery_action = "charge";
+    output.hourly_plan[5]!.battery_kwh = 10;
+    // Now balance requires grid + solar + discharge - charge = demand.
+    // grid -= 10 to keep balance.
+    output.hourly_plan[5]!.grid_kwh = Math.max(0, output.hourly_plan[5]!.grid_kwh - 10);
+    const directives = [vd("no_charge_window", { hours: [5] })];
     const result = validatePlan({ hours, battery: battery(), directives, output });
     expect(result.ok).toBe(false);
     if (result.ok) return;
@@ -268,8 +262,11 @@ describe("validatePlan — directive replay", () => {
 
   test("no_discharge_window violated (discharge > 0 at active hour) → reject", () => {
     const { hours, output } = balanced24();
-    // h=23 has battery_action=discharge. Add no_discharge_window at h=23.
-    const directives = [vd("no_discharge_window", { hours: [23] })];
+    output.hourly_plan[5]!.battery_action = "discharge";
+    output.hourly_plan[5]!.battery_kwh = 10;
+    // Balance: grid + solar + discharge - charge = demand, so grid += 10.
+    output.hourly_plan[5]!.grid_kwh = output.hourly_plan[5]!.grid_kwh + 10;
+    const directives = [vd("no_discharge_window", { hours: [5] })];
     const result = validatePlan({ hours, battery: battery(), directives, output });
     expect(result.ok).toBe(false);
     if (result.ok) return;
@@ -292,6 +289,12 @@ describe("validatePlan — directive replay", () => {
     const { hours, output } = balanced24();
     hours[5]!.solar_kwh = 10;
     output.hourly_plan[5]!.solar_used_kwh = 2.4;
+    // Restore balance: g + s + d - c = demand → 50 + 2.4 - 2.4 = 50. Wait,
+    // the existing grid was already 50 and solar_used was 0; with new solar=2.4
+    // we need grid=50-2.4=47.6 to keep balance.
+    output.hourly_plan[5]!.grid_kwh = 50 - 2.4;
+    output.total_grid_kwh = round(output.total_grid_kwh - 2.4);
+    output.total_cost_bdt = round(output.total_cost_bdt - 2.4 * hours[5]!.tariff_bdt_per_kwh);
     const directives = [vd("solar_reduction", { hours: [5], factor: 0.25 })]; // effective = 2.5
     const result = validatePlan({ hours, battery: battery(), directives, output });
     expect(result.ok).toBe(true);
