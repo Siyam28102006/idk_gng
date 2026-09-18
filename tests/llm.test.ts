@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { directiveSchema } from "../src/lib/llm/directive";
 import { buildPrompt } from "../src/lib/llm/prompt";
-import { interpretNotes, LlmError } from "../src/lib/llm/interpret";
+import { interpretNotes, AiLlmClient, LlmError } from "../src/lib/llm/interpret";
 
 const battery = {
   capacity_kwh: 200,
@@ -40,19 +40,21 @@ describe("directiveSchema", () => {
 
 describe("interpretNotes", () => {
   test("preserves note order across parallel calls", async () => {
+    const byNote = (prompt: string) => {
+      if (prompt.includes("first note")) return { directive_type: "solar_reduction", structured_adjustment: { hours: [5], factor: 0.5 } };
+      if (prompt.includes("second note")) return { directive_type: "no_charge_window", structured_adjustment: { hours: [2] } };
+      return { directive_type: "no_op", structured_adjustment: null };
+    };
     const client = {
       generate: async (prompt: string) => {
         const delay = prompt.includes("first note") ? 30 : 0;
         await new Promise((r) => setTimeout(r, delay));
-        return { directive_type: "no_op", structured_adjustment: null };
+        return byNote(prompt);
       },
     };
     const out = await interpretNotes(["first note", "second note", "third note"], battery, client);
-    expect(out).toHaveLength(3);
-    for (const c of out) {
-      expect(c.directive_type).toBe("no_op");
-      expect(c.structured_adjustment).toBeNull();
-    }
+    expect(out.map((c) => c.directive_type)).toEqual(["solar_reduction", "no_charge_window", "no_op"]);
+    expect(out[0].structured_adjustment).toEqual({ hours: [5], factor: 0.5 });
   });
   test("maps invalid candidates and client failures to LlmError", async () => {
     const badClient = { generate: async () => ({ directive_type: "shift_demand" }) };
@@ -61,6 +63,48 @@ describe("interpretNotes", () => {
       generate: async () => { throw new Error("provider down"); },
     };
     await expect(interpretNotes(["x"], battery, failingClient)).rejects.toBeInstanceOf(LlmError);
+  });
+  test("labels aborts as timeout and bounds hanging clients", async () => {
+    const aborting = {
+      generate: async () => { throw new DOMException("aborted", "AbortError"); },
+    };
+    await expect(interpretNotes(["x"], battery, aborting)).rejects.toMatchObject({ kind: "timeout" });
+    const hanging = { generate: () => new Promise(() => {}) };
+    await expect(interpretNotes(["x"], battery, hanging, { noteMs: 50 })).rejects.toMatchObject({ kind: "timeout" });
+  });
+  test("fails closed in production with no keys, stubs outside it", async () => {
+    const savedKey = process.env.LLM_API_KEY;
+    const savedFallback = process.env.LLM_FALLBACK_API_KEY;
+    const savedEnv = process.env.NODE_ENV;
+    try {
+      delete process.env.LLM_API_KEY;
+      delete process.env.LLM_FALLBACK_API_KEY;
+      process.env.NODE_ENV = "production";
+      await expect(interpretNotes(["x"], battery)).rejects.toBeInstanceOf(LlmError);
+    } finally {
+      if (savedKey !== undefined) process.env.LLM_API_KEY = savedKey;
+      if (savedFallback !== undefined) process.env.LLM_FALLBACK_API_KEY = savedFallback;
+      process.env.NODE_ENV = savedEnv;
+    }
+  });
+});
+
+describe("AiLlmClient fallback", () => {
+  const candidate = { directive_type: "no_op", structured_adjustment: null };
+  test("tries runners in order and throws the last error", async () => {
+    const seen: string[] = [];
+    const failThenSucceed = new AiLlmClient([
+      { name: "primary", run: async () => { seen.push("primary"); throw new Error("down"); } },
+      { name: "fallback", run: async () => { seen.push("fallback"); return candidate; } },
+    ]);
+    const out = await interpretNotes(["x"], battery, failThenSucceed);
+    expect(seen).toEqual(["primary", "fallback"]);
+    expect(out[0].directive_type).toBe("no_op");
+    const bothFail = new AiLlmClient([
+      { name: "primary", run: async () => { throw new Error("down1"); } },
+      { name: "fallback", run: async () => { throw new Error("down2"); } },
+    ]);
+    await expect(interpretNotes(["x"], battery, bothFail)).rejects.toBeInstanceOf(LlmError);
   });
 });
 
@@ -72,5 +116,6 @@ describe("buildPrompt", () => {
     }
     expect(prompt).toContain("200");
     expect(prompt).toContain("Panel washing 1-3 PM.");
+    expect(prompt).toContain("untrusted");
   });
 });
