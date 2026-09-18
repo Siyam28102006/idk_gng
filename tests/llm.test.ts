@@ -111,6 +111,16 @@ describe("interpretNotes", () => {
 
 describe("AiLlmClient fallback", () => {
   const candidate = { directive_type: "no_op", structured_adjustment: null };
+  test("builds env runners and surfaces provider failure", async () => {
+    const saved = { ...process.env };
+    try {
+      process.env.OPENROUTER_KEY = "dummy";
+      process.env.GEMINI_KEY = "dummy";
+      await expect(new AiLlmClient().generate("x")).rejects.toThrow();
+    } finally {
+      process.env = saved;
+    }
+  });
   test("tries runners in order and throws the last error", async () => {
     const seen: string[] = [];
     const failThenSucceed = new AiLlmClient([
