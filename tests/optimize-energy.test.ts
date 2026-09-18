@@ -32,6 +32,26 @@ function post(body: unknown) {
   });
 }
 
+describe("POST /optimize-energy validation", () => {
+  test("rejects semantically invalid battery with 422 and no internals", async () => {
+    const input = {
+      ...sampleRequest(),
+      battery: {
+        capacity_kwh: 200,
+        initial_energy_kwh: 100,
+        minimum_energy_kwh: 250,
+        max_charge_kwh_per_hour: 50,
+        max_discharge_kwh_per_hour: 50,
+      },
+    };
+    const res = await POST(post(input));
+    expect(res.status).toBe(422);
+    const body = await res.json();
+    expect(typeof body.error).toBe("string");
+    expect(JSON.stringify(body)).not.toMatch(/stack|at .*\(.*\)/);
+  });
+});
+
 describe("POST /optimize-energy happy path", () => {
   test("returns schema-valid plan with echo, ordering, and recomputable totals", async () => {
     const input = sampleRequest();
