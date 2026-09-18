@@ -1,10 +1,11 @@
 session: "gridwise-bootstrap"
-active_flow: "plan"
+active_flow: "build_epic"
 active_epic_id: e01
 active_story_id: e01s01
 vcs:
   kind: git
-  branch: main
+  branch: feat/e01s01-tracer
+  worktree: /home/thespd/Work/e01s01-tracer
 handoff:
-  next_skill: kickoff-branch
-  note: "e01s01 tracer planned; consistency script absent (no scripts/ yet) — proceed to branch then TDD."
+  next_skill: release-branch
+  note: "e01s01 tracer done: TDD green, dual-blind review PASS (A 100, B 100, round 3/5). Ready to merge or continue e01s02."
