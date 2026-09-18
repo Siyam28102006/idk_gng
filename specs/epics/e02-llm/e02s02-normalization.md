@@ -58,7 +58,7 @@ calls per full pack run.
 ## Verification Script (Step-by-Step)
 
 1. Ensure keys exported (or `.env.local` sourced).
-2. `bash specs/e2e/run-paraphrases.sh` → expect 100% PASS, exit 0 (~24 LLM calls).
+2. `bash specs/e2e/run-paraphrases.sh` → expect 100% PASS, exit 0 (~26 LLM calls).
 3. `bun test` → 20+ pass; `bun run lint` + `bun run build` clean.
 4. `bash specs/e2e/verify-contract.sh` → `ALL-CHECKS-PASS`.
 5. Observation: no pack note copies public/hidden wording; failures (if any)
@@ -70,7 +70,7 @@ calls per full pack run.
   semantics, not guardrail verdicts).
 - New directive types or params (exactly six, fixed).
 - Optimizer behavior under the interpreted directives (e04).
-- Quota monitoring/automation (e05); keep pack runs deliberate (~24 calls each).
+- Quota monitoring/automation (e05); keep pack runs deliberate (~26 calls each).
 
 ## Risks
 
@@ -78,7 +78,7 @@ calls per full pack run.
   type (different clocks, percent styles, distractor topics) and keeping the
   prompt rule-based rather than example-matched.
 - Quota burn from tuning loops → mitigated: batch prompt edits between runs,
-  ~24 calls/run against 1000+ RPD budgets; record pass rate per run.
+  ~26 calls/run against 1000+ RPD budgets; record pass rate per run.
 - Small-model normalization ceiling (Flash-Lite/Groq free models) → detect
   early: baseline run in step 1 shows per-rule gaps; persistent failures after
   tuning become a model-upgrade decision, not more prompt text.

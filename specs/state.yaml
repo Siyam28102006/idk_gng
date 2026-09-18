@@ -4,7 +4,8 @@ active_epic_id: e02
 active_story_id: e02s02
 vcs:
   kind: git
-  branch: main
+  branch: feat/e02s02-normalization
+  worktree: /home/thespd/Work/e02s02-normalization
 handoff:
-  next_skill: kickoff-branch
-  note: "e02s02 paraphrase pack planned; consistency script still absent."
+  next_skill: release-branch
+  note: "e02s02 done: 26/26 pack keyed green, dual-blind review PASS (round 2/5). Ready to merge."

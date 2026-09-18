@@ -60,10 +60,11 @@ export class AiLlmClient implements LlmClient {
       );
     // Order defined once by configuredProviders; each name builds its runner.
     return configuredProviders(env).flatMap((name): AttemptRunner[] => {
-      if (name === "openrouter" && pick(env, "OPENROUTER_KEY", "LLM_API_KEY")) {
+      const openrouterKey = pick(env, "OPENROUTER_KEY", "LLM_API_KEY");
+      if (name === "openrouter" && openrouterKey) {
         const openrouter = createOpenAICompatible({
           name: "openrouter",
-          apiKey: pick(env, "OPENROUTER_KEY", "LLM_API_KEY") as string,
+          apiKey: openrouterKey,
           baseURL: "https://openrouter.ai/api/v1",
           // Verified live against nex-agi/nex-n2.5-pro:free: strict json_schema
           // accepted, so the schema is enforced server-side, not just client-side.
@@ -72,8 +73,9 @@ export class AiLlmClient implements LlmClient {
         const modelId = pick(env, "OPENROUTER_MODEL", "LLM_MODEL") ?? DEFAULT_OPENROUTER_MODEL;
         return [{ name, run: run(openrouter(modelId)) }];
       }
-      if (name === "google" && pick(env, "GEMINI_KEY", "LLM_FALLBACK_API_KEY")) {
-        const google = createGoogle({ apiKey: pick(env, "GEMINI_KEY", "LLM_FALLBACK_API_KEY") as string });
+      const geminiKey = pick(env, "GEMINI_KEY", "LLM_FALLBACK_API_KEY");
+      if (name === "google" && geminiKey) {
+        const google = createGoogle({ apiKey: geminiKey });
         const modelId = pick(env, "GEMINI_MODEL", "LLM_FALLBACK_MODEL") ?? DEFAULT_GOOGLE_MODEL;
         return [{ name, run: run(google(modelId)) }];
       }
