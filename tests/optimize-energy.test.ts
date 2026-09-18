@@ -33,6 +33,11 @@ function post(body: unknown) {
 }
 
 describe("POST /optimize-energy validation", () => {
+  test("rejects empty and non-string scenario_id with 400", async () => {
+    const base = sampleRequest();
+    expect((await POST(post({ ...base, scenario_id: "" }))).status).toBe(400);
+    expect((await POST(post({ ...base, scenario_id: 42 }))).status).toBe(400);
+  });
   test("accepts unsorted hours and returns ascending plan with correct totals", async () => {
     const base = sampleRequest();
     const input = {
