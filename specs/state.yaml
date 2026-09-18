@@ -1,13 +1,13 @@
 session: "gridwise-bootstrap"
 active_flow: "build_epic"
-active_epic_id: e03
-active_story_id: e03s02
+active_epic_id: e06
+active_story_id: e06s01
 vcs:
   kind: git
   branch: main
 handoff:
   next_skill: kickoff-branch
-  note: "e03s01 released to main (dcae5da feat(guardrails): pure validator with flagged no_op fallback); worktree pruned; feat/e03s01-guardrails branch kept locally pending user delete-permission; e03 NOT done (e03s02 pending); next: kickoff-branch for e03s02 (final hour-by-hour replay validator)."
+  note: "e03/e04/e05 merged to main as 63c3874 (squash of feat/e03-e04-e05-optimizer); 107/107 tests GREEN, lint clean, typecheck clean; 10 SAMPLE cases replay through pipeline. API is green; e06s01 (README, Docker, deployment, video) is now the gate."
 metrics:
   story_start: "2026-09-18T16:42:30Z"
   plan_complete: "2026-09-18T22:50:00Z"
@@ -17,3 +17,6 @@ metrics:
   audit_complete: "2026-09-18T23:35:00Z"
   commit_message_drafted: "2026-09-18T23:42:00Z"
   release_complete: "2026-09-18T23:55:00Z"
+release:
+  main_sha: "63c3874"
+  branch_kept_locally: "feat/e03-e04-e05-optimizer"

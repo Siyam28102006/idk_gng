@@ -1,12 +1,12 @@
-active_epic: e03-guardrails
+active_epic: e06-delivery
 stories:
   e01s01: done
   e01s02: done
   e02s01: done
   e02s02: done
   e03s01: done
-  e03s02: pending
-  e04s01: pending
-  e04s02: pending
-  e05s01: pending
+  e03s02: done
+  e04s01: done
+  e04s02: done
+  e05s01: done
   e06s01: deferred-until-api-green
