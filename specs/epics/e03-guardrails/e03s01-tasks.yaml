@@ -1,13 +1,62 @@
 story_id: e03s01
 title: "Pure guardrail validator with safe fallback"
-status: pending
+status: failing
 bcps: 5
+risk: P0
 tasks:
   - id: e03s01t01
-    description: "Add pure src/lib/guardrails validator (enum, note mapping 1:1, hours unique ascending 0-23, factor range, reserve and cap bounds, applies semantics, no invention)"
+    description: "Add src/lib/guardrails/types.ts with ValidatedDirective, GuardrailResult discriminated union, and FallbackReason string-enum type (no runtime code beyond type-only exports)"
     verify: "bun run build"
-    status: pending
+    risk: P0
+    security: low
+    status: failing
+    allure:
+      severity: critical
+      categories:
+        - "Guardrails"
+        - "unit"
   - id: e03s01t02
-    description: "Define controlled fallback for malformed output (corrective retry or flagged no_op) that never crashes or emits unvalidated directives"
+    description: "Add src/lib/guardrails/validate.ts implementing the pure validateGuardrails(candidates, notes, battery) function that enforces all seven guardrail rules, replaces malformed entries with flagged no_op, accumulates fallback_reasons, and never throws"
+    verify: "bun test tests/guardrails.test.ts"
+    risk: P0
+    security: low
+    status: failing
+    allure:
+      severity: critical
+      categories:
+        - "Guardrails"
+        - "unit"
+  - id: e03s01t03
+    description: "Add tests/guardrails.test.ts with table-driven unit cases per rule (six-type happy path, factor bounds, hours unique/ascending/0-23, reserve bounds, cap bounds, note mapping, fallback path) plus one integration test proving the route happy path is preserved"
+    verify: "bun test"
+    risk: P0
+    security: low
+    status: failing
+    allure:
+      severity: critical
+      categories:
+        - "Guardrails"
+        - "unit"
+        - "integration"
+  - id: e03s01t04
+    description: "Wire src/app/optimize-energy/route.ts to call validateGuardrails after interpretNotes and build directive_interpretation from validated.directives (applies and structured_adjustment sourced from the validator); log fallback_reasons server-side as generic strings, no note text or LLM internals; preserve the 200/400/422/500 mapping and the existing external schema"
+    verify: "bun test tests/optimize-energy.test.ts"
+    risk: P0
+    security: low
+    status: failing
+    allure:
+      severity: critical
+      categories:
+        - "Guardrails"
+        - "integration"
+  - id: e03s01t05
+    description: "Run bun run lint and confirm src/lib/guardrails/ imports nothing from ai, @ai-sdk/google, or @ai-sdk/openai-compatible (purity invariant holds for e04 optimizer)"
     verify: "bun run lint"
-    status: pending
+    risk: P0
+    security: low
+    status: failing
+    allure:
+      severity: critical
+      categories:
+        - "Guardrails"
+        - "Security Review"
