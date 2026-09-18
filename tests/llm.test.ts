@@ -84,7 +84,8 @@ describe("interpretNotes", () => {
     } finally {
       if (savedKey !== undefined) process.env.LLM_API_KEY = savedKey;
       if (savedFallback !== undefined) process.env.LLM_FALLBACK_API_KEY = savedFallback;
-      process.env.NODE_ENV = savedEnv;
+      if (savedEnv === undefined) delete process.env.NODE_ENV;
+      else process.env.NODE_ENV = savedEnv;
     }
   });
 });
