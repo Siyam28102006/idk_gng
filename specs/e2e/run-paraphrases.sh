@@ -5,7 +5,7 @@ set -euo pipefail
 PORT="${PORT:-3000}"
 BASE="http://localhost:${PORT}"
 
-if [ -z "${LLM_API_KEY:-}" ] && [ -z "${LLM_FALLBACK_API_KEY:-}" ]; then
+if [ -z "${OPENROUTER_KEY:-}" ] && [ -z "${LLM_API_KEY:-}" ] && [ -z "${GEMINI_KEY:-}" ] && [ -z "${LLM_FALLBACK_API_KEY:-}" ]; then
   echo "paraphrase pack: SKIPPED (no LLM keys set)"
   exit 0
 fi
