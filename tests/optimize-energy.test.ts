@@ -35,23 +35,35 @@ function post(body: unknown) {
 describe("POST /optimize-energy validation", () => {
   test("rejects empty and non-string scenario_id with 400", async () => {
     const base = sampleRequest();
-    expect((await POST(post({ ...base, scenario_id: "" }))).status).toBe(400);
-    expect((await POST(post({ ...base, scenario_id: 42 }))).status).toBe(400);
+    for (const scenario_id of ["", 42]) {
+      const res = await POST(post({ ...base, scenario_id }));
+      expect(res.status).toBe(400);
+      expect(typeof (await res.json()).error).toBe("string");
+    }
   });
   test("rejects battery shape violations with 400", async () => {
     const base = sampleRequest();
     const negative = { ...base.battery, max_charge_kwh_per_hour: -5 };
-    expect((await POST(post({ ...base, battery: negative }))).status).toBe(400);
     const zeroCap = { ...base.battery, capacity_kwh: 0 };
-    expect((await POST(post({ ...base, battery: zeroCap }))).status).toBe(400);
-    const { minimum_energy_kwh: _drop, ...missingField } = base.battery;
-    expect((await POST(post({ ...base, battery: missingField }))).status).toBe(400);
+    const missingField = {
+      capacity_kwh: 200,
+      initial_energy_kwh: 100,
+      max_charge_kwh_per_hour: 50,
+      max_discharge_kwh_per_hour: 50,
+    };
+    for (const battery of [negative, zeroCap, missingField]) {
+      const res = await POST(post({ ...base, battery }));
+      expect(res.status).toBe(400);
+      expect(typeof (await res.json()).error).toBe("string");
+    }
   });
-  test("rejects non-object JSON bodies with 400", async () => {
+  test("rejects non-object JSON bodies with 400 and no internals", async () => {
     for (const body of ['"just a string"', "[1,2,3]", "null", "42"]) {
       const res = await POST(post(body));
       expect(res.status).toBe(400);
-      expect(typeof (await res.json()).error).toBe("string");
+      const resBody = await res.json();
+      expect(typeof resBody.error).toBe("string");
+      expect(JSON.stringify(resBody)).not.toMatch(/stack|at .*\(.*\)/);
     }
   });
   test("accepts unsorted hours and returns ascending plan with correct totals", async () => {
