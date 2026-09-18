@@ -1,6 +1,6 @@
 story_id: e02s01
 title: "Real per-note LLM call producing the six-type structured directive"
-status: failing
+status: passing
 bcps: 8
 risk: P0
 tasks:
@@ -9,18 +9,18 @@ tasks:
     verify: "bun test tests/llm.test.ts"
     risk: P0
     security: low
-    status: failing
+    status: passing
     allure:
       severity: critical
       categories:
         - "LLM Interpretation"
         - "unit"
   - id: e02s01t02
-    description: "Add interpretNotes client with fallback, timeout, typed errors; wire route; route tests via SDK mock"
+    description: "Add interpretNotes client with fallback, timeout, typed errors; wire route; route tests via injected fake client"
     verify: "bun run build"
     risk: P0
     security: medium
-    status: failing
+    status: passing
     allure:
       severity: critical
       categories:
@@ -31,7 +31,7 @@ tasks:
     verify: "bash specs/e2e/verify-contract.sh"
     risk: P1
     security: medium
-    status: failing
+    status: passing
     allure:
       severity: high
       categories:
