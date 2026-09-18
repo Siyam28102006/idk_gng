@@ -1,0 +1,267 @@
+{
+ "cases": [
+  {
+   "expected": {
+    "directive_type": "solar_reduction",
+    "factor": 0.2,
+    "hours": [
+     11,
+     12
+    ]
+   },
+   "id": "solar-01",
+   "note": "Rooftop panels will yield just a fifth of usual output from 11 AM to 1 PM."
+  },
+  {
+   "expected": {
+    "directive_type": "solar_reduction",
+    "factor": 0.25,
+    "hours": [
+     16,
+     17
+    ]
+   },
+   "id": "solar-02",
+   "note": "Expect solar generation to fall 75% during the 4 to 6 PM cleaning shift."
+  },
+  {
+   "expected": {
+    "directive_type": "solar_reduction",
+    "factor": 0.5,
+    "hours": [
+     9,
+     10
+    ]
+   },
+   "id": "solar-03",
+   "note": "Inverters derated to half capacity between 9 and 11 in the morning."
+  },
+  {
+   "expected": {
+    "directive_type": "solar_reduction",
+    "factor": 0.3,
+    "hours": [
+     14,
+     15
+    ]
+   },
+   "id": "solar-04",
+   "note": "Dust haze will cut sunlight to 30% between 2 PM and 4 PM."
+  },
+  {
+   "expected": {
+    "directive_type": "minimum_battery_reserve",
+    "hours": [
+     18,
+     19,
+     20
+    ],
+    "minimum_energy_kwh": 120
+   },
+   "id": "reserve-01",
+   "note": "Keep the battery above 120 kWh from 6 PM to 9 PM for the evening peak."
+  },
+  {
+   "expected": {
+    "directive_type": "minimum_battery_reserve",
+    "hours": [
+     19,
+     20
+    ],
+    "minimum_energy_kwh": 100
+   },
+   "id": "reserve-02",
+   "note": "Hold at least half the storage in reserve during hours 19 to 21."
+  },
+  {
+   "expected": {
+    "directive_type": "minimum_battery_reserve",
+    "hours": [
+     0,
+     1,
+     2,
+     3,
+     4
+    ],
+    "minimum_energy_kwh": 60
+   },
+   "id": "reserve-03",
+   "note": "Maintain a 60 kWh floor overnight from midnight to 5 AM."
+  },
+  {
+   "expected": {
+    "directive_type": "minimum_battery_reserve",
+    "hours": [
+     22,
+     23
+    ],
+    "minimum_energy_kwh": 50
+   },
+   "id": "reserve-04",
+   "note": "Reserve a quarter of capacity between 10 PM and midnight."
+  },
+  {
+   "expected": {
+    "directive_type": "no_charge_window",
+    "hours": [
+     2,
+     3,
+     4
+    ]
+   },
+   "id": "nocharge-01",
+   "note": "Charger maintenance means no charging from 2 AM to 5 AM."
+  },
+  {
+   "expected": {
+    "directive_type": "no_charge_window",
+    "hours": [
+     13,
+     14
+    ]
+   },
+   "id": "nocharge-02",
+   "note": "Don't top up the battery between 1 PM and 3 PM."
+  },
+  {
+   "expected": {
+    "directive_type": "no_charge_window",
+    "hours": [
+     9,
+     10
+    ]
+   },
+   "id": "nocharge-03",
+   "note": "Charging is forbidden during the morning inspection, 9 to 11."
+  },
+  {
+   "expected": {
+    "directive_type": "no_discharge_window",
+    "hours": [
+     18,
+     19
+    ]
+   },
+   "id": "nodischarge-01",
+   "note": "Preserve stored energy: block discharging 6 PM to 8 PM."
+  },
+  {
+   "expected": {
+    "directive_type": "no_discharge_window",
+    "hours": [
+     22,
+     23
+    ]
+   },
+   "id": "nodischarge-02",
+   "note": "No battery drawdown allowed from 10 PM to midnight."
+  },
+  {
+   "expected": {
+    "directive_type": "no_discharge_window",
+    "hours": [
+     17,
+     18
+    ]
+   },
+   "id": "nodischarge-03",
+   "note": "The evening ceremony needs full reserves, so hold discharge 5 to 7 PM."
+  },
+  {
+   "expected": {
+    "directive_type": "max_grid_window",
+    "hours": [
+     18,
+     19,
+     20
+    ],
+    "max_grid_kwh": 150
+   },
+   "id": "maxgrid-01",
+   "note": "Feeder limit: grid draw must stay under 150 kWh from 6 PM to 9 PM."
+  },
+  {
+   "expected": {
+    "directive_type": "max_grid_window",
+    "hours": [
+     12,
+     13
+    ],
+    "max_grid_kwh": 200
+   },
+   "id": "maxgrid-02",
+   "note": "Cap campus import at 200 kWh between noon and 2 PM."
+  },
+  {
+   "expected": {
+    "directive_type": "max_grid_window",
+    "hours": [
+     7,
+     8
+    ],
+    "max_grid_kwh": 100
+   },
+   "id": "maxgrid-03",
+   "note": "Grid operator requests max 100 kWh draw during 7 to 9 in the morning."
+  },
+  {
+   "expected": {
+    "directive_type": "no_op"
+   },
+   "id": "distract-01",
+   "note": "The cafeteria menu changes tomorrow."
+  },
+  {
+   "expected": {
+    "directive_type": "no_op"
+   },
+   "id": "distract-02",
+   "note": "Reminder: the faculty meeting moved to Thursday noon."
+  },
+  {
+   "expected": {
+    "directive_type": "no_op"
+   },
+   "id": "distract-03",
+   "note": "Campus lights will be decorated for the fest."
+  },
+  {
+   "expected": {
+    "directive_type": "no_op"
+   },
+   "id": "distract-04",
+   "note": "The new solar-powered bench was installed near the library."
+  },
+  {
+   "expected": {
+    "directive_type": "no_op"
+   },
+   "id": "distract-05",
+   "note": "Electricity bill payments are due at the accounts office Friday."
+  },
+  {
+   "expected": {
+    "directive_type": "no_op"
+   },
+   "id": "distract-06",
+   "note": "Congratulations to the cricket team on yesterday's win."
+  },
+  {
+   "expected": {
+    "directive_type": "no_op"
+   },
+   "id": "distract-07",
+   "note": "The battery backup in the server room was serviced this morning."
+  }
+ ],
+ "defaults": {
+  "battery": {
+   "capacity_kwh": 200,
+   "initial_energy_kwh": 100,
+   "max_charge_kwh_per_hour": 50,
+   "max_discharge_kwh_per_hour": 50,
+   "minimum_energy_kwh": 20
+  }
+ },
+ "version": "v1"
+}
