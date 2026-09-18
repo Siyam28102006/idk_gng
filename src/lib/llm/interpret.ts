@@ -34,7 +34,7 @@ class AiLlmClient implements LlmClient {
     }
     if (process.env.LLM_FALLBACK_API_KEY) {
       const google = createGoogle({ apiKey: process.env.LLM_FALLBACK_API_KEY });
-      const model = google(process.env.LLM_FALLBACK_MODEL ?? "gemini-2.5-flash-lite");
+      const model = google(process.env.LLM_FALLBACK_MODEL ?? "gemini-3.5-flash-lite");
       attempts.push(() =>
         generateText({ model, output: Output.object({ schema: directiveSchema }), prompt, abortSignal: signal }).then(
           (r) => r.output,
@@ -63,8 +63,8 @@ class StubLlmClient implements LlmClient {
 }
 
 export function defaultClient(): LlmClient {
-  if (!process.env.LLM_API_KEY) {
-    console.warn("LLM_API_KEY unset: using deterministic test double (no_op per note).");
+  if (!process.env.LLM_API_KEY && !process.env.LLM_FALLBACK_API_KEY) {
+    console.warn("No LLM keys set: using deterministic test double (no_op per note).");
     return new StubLlmClient();
   }
   return new AiLlmClient();
