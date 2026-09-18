@@ -174,3 +174,91 @@ no_discharge-rose `#F43F5E`, max_grid-cyan `#06B6D4`, no_op-slate. Fonts:
 - Never break the request/response schema, ordering, or `scenario_id` echo.
 - Never commit secrets, `.env` values, `*.zip`, or `GridWise_PRD*.md` (gitignored — local only).
 - Never dismiss a reproducible build/lint/test failure as pre-existing.
+
+## Env Setup (names only — values never committed)
+
+| Var (`.env.local`, gitignored) | Purpose | Source |
+|---|---|---|
+| `LLM_API_KEY` (exact name TBD with provider) | operator-note interpretation; team owns quota/rate limits for the full judging window | provider dashboard |
+| `LLM_MODEL` | exact model identifier; must also be documented in README (separately graded) | provider / local model id |
+| `NEXT_PUBLIC_INSFORGE_URL` / `NEXT_PUBLIC_INSFORGE_ANON_KEY` | local harness persistence ONLY — never on the scored request path | `oss_host` in `.insforge/project.json` / `npx @insforge/cli secrets get ANON_KEY` |
+
+- `.env.example` lists NAMES only. Docker receives secrets via `docker run -e VAR=…`, never baked into the image.
+- LLM provider is still an OPEN DECISION (PRD §8.1): needs structured-output mode
+  (function calling / JSON mode), concise prompts (latency budget), and an outage plan
+  (backup provider or local model — judges will not repair a broken dependency).
+- The scored `/optimize-energy` path must not call InsForge at request time — every
+  extra hop costs p95 and adds a scored failure mode. InsForge is for the local
+  dev harness (sample runs, result logging) if used at all.
+
+## Deployment + Docker
+
+- One public service exposing BOTH endpoints, no auth/VPN, stable for the entire
+  evaluation window. `/health` → 200 `{"status":"ok"}` within 60s of cold start.
+- `Dockerfile`: bun-based, `bun run start`, `EXPOSE` the documented port, listen on
+  `0.0.0.0`, zero secrets inside. Push `registry/name:<immutable-tag>` (digest ideal,
+  never `latest`); verify from a clean machine with cold `docker pull` + the exact
+  documented `docker run` command, then `curl /health`.
+- Internal timeouts on LLM + solver so `/optimize-energy` always answers <30s —
+  controlled fallback/500, never a hang (a timeout is an automatic failure).
+
+## Testing Workflow (public pack: `BUP_CSE_FEST_2026_Preli_Public_Sample_Cases.json`)
+
+Pack shape: `{_meta, cases[10]}`, each `{id, label, input, expected_output, rationale}`.
+Per case: POST `input` → compare `directive_interpretation` semantics (free text need
+not match) → replay `hourly_plan` against the TRUE directives + physics → recompute
+totals within 0.01 → check neutrality → record wall time (<30s, target p95 ≤5s).
+
+| Case | Notes → expected semantics |
+|---|---|
+| SAMPLE-01 solar + distractor | `solar_reduction` [12,13] factor 0.25 · `no_op` |
+| SAMPLE-02 charge maintenance | `no_charge_window` [2,3,4] |
+| SAMPLE-03 % reserve | `minimum_battery_reserve` [18,19,20] 100 kWh (= 50% of 200 capacity) |
+| SAMPLE-04 discharge protection | `no_discharge_window` [18,19] |
+| SAMPLE-05 feeder cap | `max_grid_window` [18,19,20] ≤ 155 kWh |
+| SAMPLE-06 multi + distractor | solar [10,11] factor 0.5 · `no_charge` [14,15] · `no_op` |
+| SAMPLE-07 reserve + cap (stacked) | reserve [18,19,20,21] 90 kWh · max_grid [19,20] ≤ 180 |
+| SAMPLE-08 charge/discharge outages | `no_charge` [11,12] · `no_discharge` [17,18] |
+| SAMPLE-09 reduction wording | solar [11,12,13] factor 0.2 (80% reduction → 0.2 REMAINS) |
+| SAMPLE-10 evening multi (stacked) | reserve [18,19,20,21] 80 kWh · max_grid [19,20,21] ≤ 190 · `no_op` |
+
+- Beyond the pack: ≥3 self-authored paraphrases per directive type, energy-adjacent
+  distractors, malformed bodies (expect 400), garbage-LLM output (guardrail safe-fail,
+  no crash), provider-outage drill (controlled failure <30s), rapid-fire repeats (no 5xx).
+- NEVER assert byte-equality with reference schedules — equivalent-optimal is valid.
+  Never import pack IDs, wording, or values into product code (rule-violation risk).
+
+## Submission Checklist (each box protects scored points)
+
+- [ ] Live endpoint reachable externally, both routes, no auth — Deployment
+- [ ] Docker image pinned tag/digest, cold-pull + `/health` rehearsed — Deployment
+- [ ] README passes clean-machine rehearsal: setup, env NAMES, model id + LLM role,
+  guardrails, solver, run command, `/health` + `/optimize-energy` curls, one sample
+  test, deps, limitations — Documentation (10 pts)
+- [ ] All 10 pack cases + paraphrase/distractor/outage/load drills green — 25+25+10 pts
+- [ ] Repo private during event → public right after deadline; history contains no
+  secrets, `*.zip`, or PRD files
+- [ ] 3-minute video uploaded/linked (tie-break only) — record LAST, after API is green
+
+<!-- INSFORGE:START -->
+## InsForge backend
+
+This project uses [InsForge](https://insforge.dev): an all-in-one, open-source Postgres-based backend (BaaS) that gives this app a database, authentication, file storage, edge functions, realtime, an AI model gateway, and payments through one platform.
+
+- **Project:** **IDK_GnG** (API base `https://jvdy4y9s.us-east.insforge.app`)
+- **Skills:** these InsForge skills are installed for supported coding agents. Reach for them before implementing any InsForge feature instead of guessing the API:
+  - `insforge`: app code with the `@insforge/sdk` client (database CRUD, auth, storage, edge functions, realtime, AI, email, and Stripe payments).
+  - `insforge-cli`: backend and infrastructure via the `insforge` CLI (projects, SQL, migrations, RLS policies, storage buckets, functions, secrets, payment setup, schedules, deploys).
+  - `insforge-debug`: diagnosing failures (SDK/HTTP errors, RLS denials, auth and OAuth issues) and running security or performance audits.
+  - `insforge-integrations`: wiring external auth providers (Clerk, Auth0, WorkOS, Better Auth, etc.) for JWT-based RLS, or the OKX x402 payment facilitator.
+  - `find-skills`: discovering additional skills on demand.
+- **Credentials:** app code reads keys from `.env.local`; the CLI reads `.insforge/project.json`. Never hardcode or commit keys.
+- **MCP server:** configured in `opencode.json` (local-only, gitignored — holds the backend API key). Restart the agent to load the `insforge` MCP tools (`fetch-docs`, `fetch-sdk-docs`, `download-template`, `run-raw-sql`, `get-backend-metadata`, …). Before writing any InsForge integration code, call `fetch-docs` (`"instructions"` first, then the feature doc) — never guess the SDK API.
+- **Note:** this repo uses Tailwind CSS v4 (per scaffold). Ignore any generic guidance suggesting v3.4.
+
+Key patterns:
+
+- Database inserts take an array: `insert([{ ... }])`.
+- Reference users with `auth.users(id)`; use `auth.uid()` in RLS policies.
+- For storage uploads, persist both the returned `url` and `key`.
+<!-- INSFORGE:END -->

@@ -72,3 +72,19 @@ next-env.d.ts
 *.rar
 *.7z
 GridWise_PRD*.md
+
+# InsForge & AI agent skills
+.insforge
+opencode.json
+.agent
+.agents
+.augment
+.claude
+.cline
+.github/copilot*
+.kilocode
+.qoder
+.qwen
+.roo
+.trae
+.windsurf
