@@ -6,5 +6,7 @@ vcs:
   kind: git
   branch: main
 handoff:
-  next_skill: survey-context
+  next_skill: plan-work
   note: "e02 released and archived; e03 guardrails next."
+metrics:
+  story_start: "2026-09-18T16:42:30Z"

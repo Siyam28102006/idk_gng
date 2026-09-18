@@ -72,6 +72,9 @@ next-env.d.ts
 *.rar
 *.7z
 GridWise_PRD*.md
+BUP_CSE_FEST_2026_Preliminary_Problem_Statement*.md
+BUP_CSE_FEST_2026_Participant_Guide*.md
+BUP_CSE_FEST_2026_Preli_Public_Sample_Cases.json
 
 # InsForge & AI agent skills
 .insforge

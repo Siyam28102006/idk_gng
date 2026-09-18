@@ -11,7 +11,7 @@ epics:
     slug: e02-llm
     title: "LLM note-to-directive interpretation path"
     wsjf: 9
-    status: pending
+    status: done
   - id: e03
     slug: e03-guardrails
     title: "Deterministic guardrails and final validation"
