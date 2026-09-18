@@ -1,6 +1,6 @@
 story_id: e01s01
 title: "Tracer: health plus optimize skeleton with schema-valid feasible plan"
-status: failing
+status: passing
 bcps: 5
 risk: P0
 tasks:
@@ -8,7 +8,7 @@ tasks:
     description: "Install zod, add src/lib/schemas.ts, add GET /health route"
     verify: "bun run lint"
     risk: P1
-    status: failing
+    status: passing
     allure:
       severity: high
       categories:
@@ -18,7 +18,7 @@ tasks:
     description: "Add POST /optimize-energy route with stub no_op interpretation, trivial feasible plan, recomputed totals, controlled errors"
     verify: "bun run build"
     risk: P0
-    status: failing
+    status: passing
     allure:
       severity: critical
       categories:
@@ -28,7 +28,7 @@ tasks:
     description: "Write and run specs/epics/e01-contract/verify-e01s01.sh end-to-end curl asserts"
     verify: "bash specs/epics/e01-contract/verify-e01s01.sh"
     risk: P0
-    status: failing
+    status: passing
     allure:
       severity: critical
       categories:
