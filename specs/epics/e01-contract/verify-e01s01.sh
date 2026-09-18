@@ -31,7 +31,7 @@ payload = {"scenario_id": "tracer-01",
                        "minimum_energy_kwh": 20, "max_charge_kwh_per_hour": 50,
                        "max_discharge_kwh_per_hour": 50}}
 
-def post(data, raw=False):
+def post(data):
     req = urllib.request.Request(base + "/optimize-energy", method="POST",
                                  headers={"Content-Type": "application/json"},
                                  data=data if isinstance(data, bytes) else json.dumps(data).encode())
@@ -58,7 +58,7 @@ assert abs(body["peak_grid_kwh"] - max(grids)) <= 0.01
 assert abs(body["hourly_plan"][23]["battery_energy_after_kwh"] - 100) <= 0.01
 print("optimize happy path: OK")
 
-status, body = post(b"{not json", raw=True)
+status, body = post(b"{not json")
 assert status == 400 and "error" in body, (status, body)
 bad = dict(payload); bad["hours"] = bad["hours"][:23]
 status, _ = post(bad)

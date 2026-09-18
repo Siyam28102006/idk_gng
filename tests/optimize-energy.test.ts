@@ -54,6 +54,25 @@ describe("POST /optimize-energy validation", () => {
     );
     expect(Math.abs(body.total_cost_bdt - cost)).toBeLessThanOrEqual(0.01);
   });
+  test("rejects initial energy outside bounds with 422", async () => {
+    const base = sampleRequest();
+    const low = await POST(
+      post({ ...base, battery: { ...base.battery, initial_energy_kwh: 10 } }),
+    );
+    expect(low.status).toBe(422);
+    const high = await POST(
+      post({ ...base, battery: { ...base.battery, initial_energy_kwh: 210 } }),
+    );
+    expect(high.status).toBe(422);
+    expect(typeof (await high.json()).error).toBe("string");
+  });
+  test("rejects note counts outside 1-3 with 400", async () => {
+    const base = sampleRequest();
+    expect((await POST(post({ ...base, operator_notes: [] }))).status).toBe(400);
+    expect(
+      (await POST(post({ ...base, operator_notes: ["a", "b", "c", "d"] }))).status,
+    ).toBe(400);
+  });
   test("rejects malformed, short, and duplicate hours with 400", async () => {
     const malformed = await POST(post("{not json"));
     expect(malformed.status).toBe(400);
