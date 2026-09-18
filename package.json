@@ -11,6 +11,7 @@
   "dependencies": {
     "@ai-sdk/google": "^4.0.75",
     "@ai-sdk/groq": "^4.0.45",
+    "@ai-sdk/openai-compatible": "^3.0.52",
     "ai": "^7.0.106",
     "next": "16.3.5",
     "react": "19.2.8",

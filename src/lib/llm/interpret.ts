@@ -1,6 +1,7 @@
 import { generateText, Output } from "ai";
 import { createGoogle } from "@ai-sdk/google";
 import { createGroq } from "@ai-sdk/groq";
+import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { directiveSchema, type BatteryContext, type DirectiveCandidate } from "./directive";
 import { buildPrompt } from "./prompt";
 
@@ -18,10 +19,21 @@ export interface LlmClient {
   generate(prompt: string): Promise<unknown>;
 }
 
-export const DEFAULT_PRIMARY_MODEL = "llama-3.3-70b-versatile";
-export const DEFAULT_FALLBACK_MODEL = "gemini-3.5-flash-lite";
+export const DEFAULT_OPENROUTER_MODEL = "nex-agi/nex-n2.5-pro:free";
+export const DEFAULT_GROQ_MODEL = "llama-3.3-70b-versatile";
+export const DEFAULT_GOOGLE_MODEL = "gemini-3.5-flash-lite";
 export const ATTEMPT_TIMEOUT_MS = 9_000;
 export const NOTE_TIMEOUT_MS = 20_000;
+
+export type ProviderName = "openrouter" | "groq" | "google";
+
+export function configuredProviders(env: Record<string, string | undefined> = process.env): ProviderName[] {
+  const names: ProviderName[] = [];
+  if (env.OPENROUTER_KEY) names.push("openrouter");
+  if (env.LLM_API_KEY) names.push("groq");
+  if (env.GEMINI_KEY ?? env.LLM_FALLBACK_API_KEY) names.push("google");
+  return names;
+}
 
 export interface AttemptRunner {
   name: string;
@@ -40,13 +52,25 @@ export class AiLlmClient implements LlmClient {
         (r) => r.output,
       );
     const list: AttemptRunner[] = [];
+    if (process.env.OPENROUTER_KEY) {
+      const openrouter = createOpenAICompatible({
+        name: "openrouter",
+        apiKey: process.env.OPENROUTER_KEY,
+        baseURL: "https://openrouter.ai/api/v1",
+      });
+      const modelId =
+        process.env.OPENROUTER_MODEL ?? process.env.LLM_MODEL ?? DEFAULT_OPENROUTER_MODEL;
+      list.push({ name: "openrouter", run: run(openrouter(modelId)) });
+    }
     if (process.env.LLM_API_KEY) {
       const groq = createGroq({ apiKey: process.env.LLM_API_KEY });
-      list.push({ name: "primary", run: run(groq(process.env.LLM_MODEL ?? DEFAULT_PRIMARY_MODEL)) });
+      list.push({ name: "groq", run: run(groq(process.env.GROQ_MODEL ?? DEFAULT_GROQ_MODEL)) });
     }
-    if (process.env.LLM_FALLBACK_API_KEY) {
-      const google = createGoogle({ apiKey: process.env.LLM_FALLBACK_API_KEY });
-      list.push({ name: "fallback", run: run(google(process.env.LLM_FALLBACK_MODEL ?? DEFAULT_FALLBACK_MODEL)) });
+    if (process.env.GEMINI_KEY ?? process.env.LLM_FALLBACK_API_KEY) {
+      const google = createGoogle({ apiKey: (process.env.GEMINI_KEY ?? process.env.LLM_FALLBACK_API_KEY) as string });
+      const modelId =
+        process.env.GEMINI_MODEL ?? process.env.LLM_FALLBACK_MODEL ?? DEFAULT_GOOGLE_MODEL;
+      list.push({ name: "google", run: run(google(modelId)) });
     }
     return list;
   }
@@ -79,8 +103,12 @@ class StubLlmClient implements LlmClient {
   }
 }
 
+export function hasLlmKeys(env: Record<string, string | undefined> = process.env): boolean {
+  return configuredProviders(env).length > 0;
+}
+
 export function defaultClient(): LlmClient {
-  if (!process.env.LLM_API_KEY && !process.env.LLM_FALLBACK_API_KEY) {
+  if (!hasLlmKeys()) {
     if (process.env.NODE_ENV === "production") {
       console.error("No LLM keys set in production: failing closed.");
       return new StubLlmClient(true);

@@ -87,17 +87,21 @@ describe("interpretNotes", () => {
     await expect(interpretNotes(["x"], battery, hanging, { noteMs: 50 })).rejects.toMatchObject({ kind: "timeout" });
   });
   test("fails closed in production with no keys, stubs outside it", async () => {
-    const savedKey = process.env.LLM_API_KEY;
-    const savedFallback = process.env.LLM_FALLBACK_API_KEY;
+    const names = ["OPENROUTER_KEY", "LLM_API_KEY", "GEMINI_KEY", "LLM_FALLBACK_API_KEY"];
+    const saved: Record<string, string | undefined> = {};
     const savedEnv = process.env.NODE_ENV;
     try {
-      delete process.env.LLM_API_KEY;
-      delete process.env.LLM_FALLBACK_API_KEY;
+      for (const name of names) {
+        saved[name] = process.env[name];
+        delete process.env[name];
+      }
       process.env.NODE_ENV = "production";
       await expect(interpretNotes(["x"], battery)).rejects.toBeInstanceOf(LlmError);
     } finally {
-      if (savedKey !== undefined) process.env.LLM_API_KEY = savedKey;
-      if (savedFallback !== undefined) process.env.LLM_FALLBACK_API_KEY = savedFallback;
+      for (const name of names) {
+        if (saved[name] === undefined) delete process.env[name];
+        else process.env[name] = saved[name];
+      }
       if (savedEnv === undefined) delete process.env.NODE_ENV;
       else process.env.NODE_ENV = savedEnv;
     }
