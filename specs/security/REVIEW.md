@@ -123,3 +123,31 @@ LOW detail: `directiveSchema` no longer enforces per-type bounds at the type
   client-facing leak. Documented in AUDIT-e03s01.md §Types and Safety.
 EXCEPTIONS.md: not required (no unresolved HIGH).
 Fresh as of: 2026-09-18, branch feat/e03s01-guardrails (HEAD 476339d).
+
+---
+
+# Security review — e06s01 (branch feat/e06-delivery, HEAD 9a3bfdd)
+
+Scope: README rewrite, Dockerfile + .dockerignore, delivery-contract
+tests, local UI harness (10 React components), pure helpers.
+
+Findings (inline review, no `security-review` skill available):
+
+- No secrets in README (delivery-contract test 2 enforces no secret
+  values); only documented model ids.
+- .env.example has NAMES only (delivery-contract test 3 enforces).
+- Dockerfile: pinned base `oven/bun:1.4.2` (not `:latest`); no ENV
+  lines carrying secrets; USER bun (non-root); CMD ["bun","run","start"];
+  EXPOSE 3000; secrets passed at `docker run -e` per AGENTS.md.
+- .dockerignore blocks .git, .env*, .insforge, PRD/sample .json, *.zip.
+- Harness client components render JSON via `<pre>` (React-escaped, no
+  innerHTML). Operator notes are rendered only via `<input>` /
+  `<textarea value>` (auto-escaped). No `<form action>` injection.
+- No new I/O surface; the existing /optimize-energy route contract is
+  unchanged (covered by e03–e05 reviews).
+- The harness posts to `/optimize-energy` (relative URL); the server
+  enforces schema validation (400 on malformed/empty hours) and
+  battery-bounds (422 on min > capacity) before any LLM call.
+
+HIGH findings with confidence >= 8: none.
+EXCEPTIONS.md: not required.
