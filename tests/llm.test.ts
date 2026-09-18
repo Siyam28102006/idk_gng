@@ -39,14 +39,11 @@ describe("directiveSchema", () => {
 });
 
 describe("configuredProviders", () => {
-  test("orders openrouter, groq, google with legacy fallbacks", () => {
+  test("orders openrouter before google", () => {
     expect(configuredProviders({})).toEqual([]);
     expect(configuredProviders({ GEMINI_KEY: "x" })).toEqual(["google"]);
-    expect(configuredProviders({ LLM_FALLBACK_API_KEY: "x" })).toEqual(["google"]);
-    expect(configuredProviders({ LLM_API_KEY: "x", GEMINI_KEY: "y" })).toEqual(["groq", "google"]);
-    expect(configuredProviders({ OPENROUTER_KEY: "x", LLM_API_KEY: "y", GEMINI_KEY: "z" })).toEqual([
+    expect(configuredProviders({ OPENROUTER_KEY: "x", GEMINI_KEY: "y" })).toEqual([
       "openrouter",
-      "groq",
       "google",
     ]);
   });
@@ -87,7 +84,7 @@ describe("interpretNotes", () => {
     await expect(interpretNotes(["x"], battery, hanging, { noteMs: 50 })).rejects.toMatchObject({ kind: "timeout" });
   });
   test("fails closed in production with no keys, stubs outside it", async () => {
-    const names = ["OPENROUTER_KEY", "LLM_API_KEY", "GEMINI_KEY", "LLM_FALLBACK_API_KEY"];
+    const names = ["OPENROUTER_KEY", "GEMINI_KEY"];
     const saved: Record<string, string | undefined> = {};
     const savedEnv = process.env.NODE_ENV;
     try {

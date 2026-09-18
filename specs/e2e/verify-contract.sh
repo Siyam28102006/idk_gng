@@ -84,7 +84,7 @@ assert [h["hour"] for h in body["hourly_plan"]] == list(range(24))
 print("unsorted hours: OK")
 
 import os
-if os.environ.get("OPENROUTER_KEY") or os.environ.get("LLM_API_KEY") or os.environ.get("GEMINI_KEY") or os.environ.get("LLM_FALLBACK_API_KEY"):
+if os.environ.get("OPENROUTER_KEY") or os.environ.get("GEMINI_KEY"):
     live = dict(payload, scenario_id="live-llm-01",
                 operator_notes=["Solar panels produce only 20 percent from 1 PM to 3 PM."])
     status, body = post(live)
