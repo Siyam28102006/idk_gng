@@ -6,8 +6,8 @@ vcs:
   kind: git
   branch: main
 handoff:
-  next_skill: kickoff-branch
-  note: "e03/e04/e05 merged to main as 63c3874 (squash of feat/e03-e04-e05-optimizer); 107/107 tests GREEN, lint clean, typecheck clean; 10 SAMPLE cases replay through pipeline. API is green; e06s01 (README, Docker, deployment, video) is now the gate."
+  next_skill: develop-tdd
+  note: "e06s01 kicked off on branch feat/e06-delivery (worktree /home/thespd/Work/feat-e06-delivery). Preflight green: 107/107 tests, lint clean, build clean. Baseline fix: bun install restored missing highs dep on main. Next: develop-tdd."
 metrics:
   story_start: "2026-09-18T16:42:30Z"
   plan_complete: "2026-09-18T22:50:00Z"
