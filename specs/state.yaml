@@ -6,8 +6,8 @@ vcs:
   kind: git
   branch: main
 handoff:
-  next_skill: develop-tdd
-  note: "e06s01 kicked off on branch feat/e06-delivery (worktree /home/thespd/Work/feat-e06-delivery). Preflight green: 107/107 tests, lint clean, build clean. Baseline fix: bun install restored missing highs dep on main. Next: develop-tdd."
+  next_skill: verify-work
+  note: "e06s01t01 code deliverables done on feat/e06-delivery (README + Dockerfile + .dockerignore, 112/112 tests GREEN, lint clean, build clean). External actions remain for the user: (a) build + push Docker image to a public registry, (b) deploy one public service, (c) record 3-min tie-break video. Next: verify-work UAT."
 metrics:
   story_start: "2026-09-18T16:42:30Z"
   plan_complete: "2026-09-18T22:50:00Z"
