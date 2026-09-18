@@ -1,10 +1,10 @@
 session: "gridwise-bootstrap"
-active_flow: "plan"
+active_flow: "build_epic"
 active_epic_id: e01
-active_story_id: e01s01
+active_story_id: e01s02
 vcs:
   kind: git
   branch: main
 handoff:
-  next_skill: kickoff-branch
-  note: "e01s01 tracer planned; consistency script absent (no scripts/ yet) — proceed to branch then TDD."
+  next_skill: survey-context
+  note: "e01s01 tracer released to main; e01s02 error-code coverage is next."
