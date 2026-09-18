@@ -51,3 +51,25 @@ Findings (inline review + dual-blind review rounds 1-2):
 HIGH findings with confidence >= 8: none.
 EXCEPTIONS.md: not required (no unresolved HIGH).
 Fresh as of: 2026-09-18, branch feat/e02s01-llm-path.
+
+---
+
+# Security review — e02s02 chain + pack (branch feat/e02s02-normalization)
+
+Delta since e02s01: OpenRouter+Gemin chain (`OPENROUTER_KEY`/`GEMINI_KEY`
++ legacy `LLM_*` aliases), strict json_schema via `supportsStructuredOutputs`
+(live-verified), 26-case paraphrase pack + runner, AGENTS.md env table synced.
+`@ai-sdk/groq` removed; `@ai-sdk/openai-compatible` added ([OK]).
+
+Findings (inline review + dual-blind review rounds 1-2):
+- Secrets: names-only `.env.example`; both `.env.local` copies gitignored;
+  committed tree grepped for key patterns — clean. A pasted-keys-in-`.env`
+  working-tree incident was caught pre-commit; history verified clean.
+- Injection: hostile-instruction pack notes (distract-08/09) return `no_op`
+  live; untrusted-data instruction + delimiters in prompt; schema + e03
+  guardrails (pending) as backstops.
+- Availability: timeouts unchanged; pack runs are deliberate (~26 calls).
+
+HIGH findings with confidence >= 8: none.
+EXCEPTIONS.md: not required (no unresolved HIGH).
+Fresh as of: 2026-09-18, branch feat/e02s02-normalization.
