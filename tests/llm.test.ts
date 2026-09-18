@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { directiveSchema } from "../src/lib/llm/directive";
 import { buildPrompt } from "../src/lib/llm/prompt";
+import { interpretNotes, LlmError } from "../src/lib/llm/interpret";
 
 const battery = {
   capacity_kwh: 200,
@@ -34,6 +35,32 @@ describe("directiveSchema", () => {
     expect(
       directiveSchema.safeParse({ directive_type: "no_op", structured_adjustment: { hours: [1] } }).success,
     ).toBe(false);
+  });
+});
+
+describe("interpretNotes", () => {
+  test("preserves note order across parallel calls", async () => {
+    const client = {
+      generate: async (prompt: string) => {
+        const delay = prompt.includes("first note") ? 30 : 0;
+        await new Promise((r) => setTimeout(r, delay));
+        return { directive_type: "no_op", structured_adjustment: null };
+      },
+    };
+    const out = await interpretNotes(["first note", "second note", "third note"], battery, client);
+    expect(out).toHaveLength(3);
+    for (const c of out) {
+      expect(c.directive_type).toBe("no_op");
+      expect(c.structured_adjustment).toBeNull();
+    }
+  });
+  test("maps invalid candidates and client failures to LlmError", async () => {
+    const badClient = { generate: async () => ({ directive_type: "shift_demand" }) };
+    await expect(interpretNotes(["x"], battery, badClient)).rejects.toBeInstanceOf(LlmError);
+    const failingClient = {
+      generate: async () => { throw new Error("provider down"); },
+    };
+    await expect(interpretNotes(["x"], battery, failingClient)).rejects.toBeInstanceOf(LlmError);
   });
 });
 
