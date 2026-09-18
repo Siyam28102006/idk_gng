@@ -6,5 +6,5 @@ vcs:
   kind: git
   branch: main
 handoff:
-  next_skill: survey-context
-  note: "e01s01 tracer released to main; e01s02 error-code coverage is next."
+  next_skill: kickoff-branch
+  note: "e01s02 validation pins planned; consistency script still absent — proceed to branch then TDD."

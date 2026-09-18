@@ -1,13 +1,28 @@
 story_id: e01s02
 title: "Request validation and controlled error codes"
-status: pending
+status: failing
 bcps: 3
+risk: P1
 tasks:
   - id: e01s02t01
-    description: "Reject malformed JSON and structural violations with 400; semantic violations with 400 or 422; internal faults with secret-free 500"
-    verify: "bun run build"
-    status: pending
+    description: "Pin scenario_id boundaries (empty, non-string) to 400; fix minimally on red"
+    verify: "bun test tests/optimize-energy.test.ts"
+    risk: P1
+    security: low
+    status: failing
+    allure:
+      severity: high
+      categories:
+        - "API Contract"
+        - "unit"
   - id: e01s02t02
-    description: "Cover 24-hour uniqueness, note count 1-3 non-empty, battery shape, and scenario_id echo in route tests"
-    verify: "bun run lint"
-    status: pending
+    description: "Pin battery-shape and non-object-body 400s; extend e2e; full gates green"
+    verify: "bash specs/epics/e01-contract/verify-e01s01.sh"
+    risk: P1
+    security: low
+    status: failing
+    allure:
+      severity: high
+      categories:
+        - "API Contract"
+        - "integration"
