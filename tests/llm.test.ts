@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { directiveSchema } from "../src/lib/llm/directive";
 import { buildPrompt } from "../src/lib/llm/prompt";
-import { interpretNotes, AiLlmClient, LlmError } from "../src/lib/llm/interpret";
+import { interpretNotes, AiLlmClient, LlmError, configuredProviders } from "../src/lib/llm/interpret";
 
 const battery = {
   capacity_kwh: 200,
@@ -35,6 +35,20 @@ describe("directiveSchema", () => {
     expect(
       directiveSchema.safeParse({ directive_type: "no_op", structured_adjustment: { hours: [1] } }).success,
     ).toBe(false);
+  });
+});
+
+describe("configuredProviders", () => {
+  test("orders openrouter, groq, google with legacy fallbacks", () => {
+    expect(configuredProviders({})).toEqual([]);
+    expect(configuredProviders({ GEMINI_KEY: "x" })).toEqual(["google"]);
+    expect(configuredProviders({ LLM_FALLBACK_API_KEY: "x" })).toEqual(["google"]);
+    expect(configuredProviders({ LLM_API_KEY: "x", GEMINI_KEY: "y" })).toEqual(["groq", "google"]);
+    expect(configuredProviders({ OPENROUTER_KEY: "x", LLM_API_KEY: "y", GEMINI_KEY: "z" })).toEqual([
+      "openrouter",
+      "groq",
+      "google",
+    ]);
   });
 });
 
