@@ -38,6 +38,22 @@ describe("POST /optimize-energy validation", () => {
     expect((await POST(post({ ...base, scenario_id: "" }))).status).toBe(400);
     expect((await POST(post({ ...base, scenario_id: 42 }))).status).toBe(400);
   });
+  test("rejects battery shape violations with 400", async () => {
+    const base = sampleRequest();
+    const negative = { ...base.battery, max_charge_kwh_per_hour: -5 };
+    expect((await POST(post({ ...base, battery: negative }))).status).toBe(400);
+    const zeroCap = { ...base.battery, capacity_kwh: 0 };
+    expect((await POST(post({ ...base, battery: zeroCap }))).status).toBe(400);
+    const { minimum_energy_kwh: _drop, ...missingField } = base.battery;
+    expect((await POST(post({ ...base, battery: missingField }))).status).toBe(400);
+  });
+  test("rejects non-object JSON bodies with 400", async () => {
+    for (const body of ['"just a string"', "[1,2,3]", "null", "42"]) {
+      const res = await POST(post(body));
+      expect(res.status).toBe(400);
+      expect(typeof (await res.json()).error).toBe("string");
+    }
+  });
   test("accepts unsorted hours and returns ascending plan with correct totals", async () => {
     const base = sampleRequest();
     const input = {
