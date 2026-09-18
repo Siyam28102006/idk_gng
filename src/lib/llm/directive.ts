@@ -30,3 +30,11 @@ export const directiveSchema = z.discriminatedUnion("directive_type", [
 ]);
 
 export type DirectiveCandidate = z.infer<typeof directiveSchema>;
+
+export interface BatteryContext {
+  capacity_kwh: number;
+  initial_energy_kwh: number;
+  minimum_energy_kwh: number;
+  max_charge_kwh_per_hour: number;
+  max_discharge_kwh_per_hour: number;
+}
