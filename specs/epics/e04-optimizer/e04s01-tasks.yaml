@@ -1,0 +1,13 @@
+story_id: e04s01
+title: "LP core with battery physics, neutrality, and cost objective"
+status: pending
+bcps: 8
+tasks:
+  - id: e04s01t01
+    description: "Formulate 24h LP (grid, solar_used, charge, discharge, SoC) minimizing sum grid times tariff with balance, solar, bounds, rates, non-negative grid"
+    verify: "bun run build"
+    status: pending
+  - id: e04s01t02
+    description: "Enforce end-of-day neutrality as a hard constraint and verify SoC transitions round-trip within 0.01"
+    verify: "bun run lint"
+    status: pending

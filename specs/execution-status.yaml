@@ -1,0 +1,12 @@
+active_epic: e01-contract
+stories:
+  e01s01: pending
+  e01s02: pending
+  e02s01: pending
+  e02s02: pending
+  e03s01: pending
+  e03s02: pending
+  e04s01: pending
+  e04s02: pending
+  e05s01: pending
+  e06s01: deferred-until-api-green

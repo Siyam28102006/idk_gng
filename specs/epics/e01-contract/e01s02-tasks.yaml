@@ -1,0 +1,13 @@
+story_id: e01s02
+title: "Request validation and controlled error codes"
+status: pending
+bcps: 3
+tasks:
+  - id: e01s02t01
+    description: "Reject malformed JSON and structural violations with 400; semantic violations with 400 or 422; internal faults with secret-free 500"
+    verify: "bun run build"
+    status: pending
+  - id: e01s02t02
+    description: "Cover 24-hour uniqueness, note count 1-3 non-empty, battery shape, and scenario_id echo in route tests"
+    verify: "bun run lint"
+    status: pending

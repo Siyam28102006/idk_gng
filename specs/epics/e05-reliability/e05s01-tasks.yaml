@@ -1,0 +1,13 @@
+story_id: e05s01
+title: "Internal timeouts, controlled failures, secret-safe logging, load stability"
+status: pending
+bcps: 5
+tasks:
+  - id: e05s01t01
+    description: "Add internal LLM and solver timeouts so every request settles inside 30s with controlled 500 and no hangs"
+    verify: "bun run build"
+    status: pending
+  - id: e05s01t02
+    description: "Log LLM raw output, guardrail reasons, solver status without secrets; drill outage, garbage LLM output, malformed bodies, rapid repeats"
+    verify: "bun run lint"
+    status: pending

@@ -1,0 +1,10 @@
+session: "gridwise-bootstrap"
+active_flow: "plan"
+active_epic_id: e01
+active_story_id: e01s01
+vcs:
+  kind: git
+  branch: main
+handoff:
+  next_skill: kickoff-branch
+  note: "e01s01 tracer planned; consistency script absent (no scripts/ yet) — proceed to branch then TDD."

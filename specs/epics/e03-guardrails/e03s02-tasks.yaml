@@ -1,0 +1,13 @@
+story_id: e03s02
+title: "Final hour-by-hour replay validator with recomputed totals"
+status: pending
+bcps: 3
+tasks:
+  - id: e03s02t01
+    description: "Add pure src/lib/validate replay of hourly_plan against directives plus physics and neutrality with 0.01 tolerance"
+    verify: "bun run build"
+    status: pending
+  - id: e03s02t02
+    description: "Recompute total_grid_kwh, total_cost_bdt, peak_grid_kwh from hourly_plan and reject mismatches before responding"
+    verify: "bun run lint"
+    status: pending

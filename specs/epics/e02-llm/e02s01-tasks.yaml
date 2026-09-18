@@ -1,0 +1,13 @@
+story_id: e02s01
+title: "Real per-note LLM call producing the six-type structured directive"
+status: pending
+bcps: 8
+tasks:
+  - id: e02s01t01
+    description: "Add src/lib/llm client with one structured-output call per note, concise prompt covering all six directive types, and env-driven model id"
+    verify: "bun run build"
+    status: pending
+  - id: e02s01t02
+    description: "Parse per-note JSON strictly (no phrase-match sole path, no invented params) and hand untrusted output to guardrails only"
+    verify: "bun run lint"
+    status: pending

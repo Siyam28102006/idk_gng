@@ -1,0 +1,13 @@
+epic_id: e04
+slug: e04-optimizer
+title: "LP optimizer with physics and directive constraints"
+status: pending
+stories:
+  - id: e04s01
+    title: "LP core with battery physics, neutrality, and cost objective"
+    bcps: 8
+    delta: ADDED
+  - id: e04s02
+    title: "Layered directive constraints including stacked reserve plus cap"
+    bcps: 5
+    delta: ADDED

@@ -1,0 +1,9 @@
+epic_id: e06
+slug: e06-delivery
+title: "README, Docker fallback, deployment, video"
+status: deferred-until-api-green
+stories:
+  - id: e06s01
+    title: "Docs, Docker image, live deployment, tie-break video"
+    bcps: 5
+    delta: ADDED

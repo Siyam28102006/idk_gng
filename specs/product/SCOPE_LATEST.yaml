@@ -1,0 +1,63 @@
+core_value: "A single public API turns 1-3 operator notes plus 24h campus data into a valid, cost-minimal dispatch plan through LLM interpretation, deterministic guardrails, and LP optimization."
+summary: >-
+  GridWise is an LLM-assisted Smart Campus Energy Optimization API for BUP CSE Fest 2026.
+  One public HTTP service exposes GET /health and POST /optimize-energy. Each optimize
+  request flows through LLM interpretation (one entry per note), deterministic guardrail
+  validation, LP/MILP optimization over 24 hours, and a final hour-by-hour replay before
+  responding. Judges score interpretation, directive application, validity, cost quality,
+  contract, reliability, deployment, and docs — validity gates all cost credit.
+  This scope covers the scored API path end to end on the existing Next.js 16 + Bun stack.
+in_scope:
+  - id: e01-api-contract
+    what: "Public HTTP contract: GET /health and POST /optimize-energy request/response schemas, status codes, ordering and echo rules"
+    maps_to: "epic e01"
+  - id: e02-llm-interpretation
+    what: "Real LLM call on the note-to-directive path producing exactly one structured directive per note across the six allowed types plus paraphrase/no_op robustness"
+    maps_to: "epic e02"
+  - id: e03-guardrails-validation
+    what: "Deterministic guardrail validator for LLM output and final hour-by-hour replay validator with recomputed totals"
+    maps_to: "epic e03"
+  - id: e04-optimizer
+    what: "Cost-minimizing 24h dispatch optimizer honoring battery physics, end-of-day neutrality, and all applied directives"
+    maps_to: "epic e04"
+  - id: e05-reliability
+    what: "Per-request timeouts, controlled fallbacks, secret-safe logging, and latency/stability behavior inside the 30s budget"
+    maps_to: "epic e05"
+  - id: e06-delivery
+    what: "Production delivery: README, Dockerfile fallback, deployment, and tie-break video"
+    maps_to: "epic e06 (deferred until API is green)"
+out_of_scope:
+  - item: "Dashboard / UI harness (Scenario Builder, Results screens)"
+    why: "PRD declares API-only deliverable; UI is a local dev/test harness built only after the API is green"
+  - item: "InsForge on the scored request path"
+    why: "Extra hop costs p95 and adds a scored failure mode; local harness persistence only"
+  - item: "Grid export / net metering"
+    why: "Explicitly out of scope in PRD; contract forbids export"
+  - item: "Model training / fine-tuning jobs"
+    why: "Disallowed during evaluation; prompt plus structured-output design only"
+  - item: "Live campus, billing, or personal data"
+    why: "Synthetic scenarios only per PRD"
+  - item: "Auth, VPN, or private networking"
+    why: "Both endpoints must be public with no access control"
+constraints:
+  - "Bun-only repo (bun@1.4.2, bun.lock committed; no npm/pnpm/yarn lockfiles)"
+  - "Next.js 16.3.5 App Router with root-level routes (not under /api); TypeScript strict; schema validation at route boundary"
+  - "Guardrail and final-validator modules are pure functions: no fetch, no LLM SDK imports"
+  - "LLM must sit on the note-to-directive path itself; summary-only LLM use is disqualifying; no hard-coded phrase matching as sole interpreter; no hard-coded case IDs, wording, or schedules"
+  - "Unvalidated LLM output never reaches the optimizer; exactly six directive types, no invented params"
+  - "POST /optimize-energy answers in under 30s (target p95 <= 5s); GET /health 200 within 60s of cold start"
+  - "Secrets via env names only (.env.example names, never values); nothing baked into images; no secrets or stack traces in responses/logs"
+  - "Single public service exposing both endpoints for the full evaluation window"
+success_criteria:
+  - "GET /health returns 200 {status:ok} within 60s of cold start"
+  - "POST /optimize-energy returns the exact response schema for 1-3 notes with one interpretation entry per note in ascending note_index order and 24 hourly entries"
+  - "All 10 public sample semantics replay feasible: balance, solar bounds, battery bounds/rates, windows, caps, reserves, neutrality, non-negative grid, idle-zero rule, totals recomputable within 0.01"
+  - "Distractor notes yield no_op; paraphrased notes across all six types interpret correctly"
+  - "Malformed bodies get controlled 400/422; garbage LLM output and provider outage degrade safely inside 30s with no crash and no invented directive"
+  - "Every request completes under 30s with p95 target <= 5s under repeated calls"
+  - "README plus Dockerfile fallback pass a clean-machine rehearsal; repo contains no secrets, zips, or PRD files"
+references:
+  - "GridWise_PRD (1).md (local synthesis; gitignored, never committed)"
+  - "AGENTS.md (canonical scored contract, guardrails, optimizer constraints, testing workflow)"
+  - "Problem Statement (canonical for schemas/guardrails/battery/optimization)"
+  - "Participant Guide (canonical for execution/deployment/scoring)"

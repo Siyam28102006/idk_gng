@@ -1,0 +1,13 @@
+epic_id: e02
+slug: e02-llm
+title: "LLM note-to-directive interpretation path"
+status: pending
+stories:
+  - id: e02s01
+    title: "Real per-note LLM call producing the six-type structured directive"
+    bcps: 8
+    delta: ADDED
+  - id: e02s02
+    title: "Normalization and paraphrase plus distractor robustness"
+    bcps: 5
+    delta: ADDED

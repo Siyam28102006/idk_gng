@@ -1,0 +1,34 @@
+version: "v1.0.0"
+target: "BUP CSE Fest 2026 preliminary submission: green scored API path"
+ordering: "WSJF highest first"
+epics:
+  - id: e01
+    slug: e01-contract
+    title: "API contract and pipeline skeleton"
+    wsjf: 10
+    status: pending
+  - id: e02
+    slug: e02-llm
+    title: "LLM note-to-directive interpretation path"
+    wsjf: 9
+    status: pending
+  - id: e03
+    slug: e03-guardrails
+    title: "Deterministic guardrails and final validation"
+    wsjf: 8
+    status: pending
+  - id: e04
+    slug: e04-optimizer
+    title: "LP optimizer with physics and directive constraints"
+    wsjf: 7
+    status: pending
+  - id: e05
+    slug: e05-reliability
+    title: "Timeouts, fallbacks, logging, latency and stability"
+    wsjf: 6
+    status: pending
+  - id: e06
+    slug: e06-delivery
+    title: "README, Docker fallback, deployment, video"
+    wsjf: 5
+    status: deferred-until-api-green

@@ -1,0 +1,13 @@
+story_id: e02s02
+title: "Normalization and paraphrase plus distractor robustness"
+status: pending
+bcps: 5
+tasks:
+  - id: e02s02t01
+    description: "Normalize percent-of-capacity to absolute kWh, reduction-vs-remains factor, 12h clock to end-exclusive 24h hours"
+    verify: "bun run build"
+    status: pending
+  - id: e02s02t02
+    description: "Classify irrelevant and energy-adjacent chatter as no_op; verify with 3-plus paraphrases per type"
+    verify: "bun run lint"
+    status: pending

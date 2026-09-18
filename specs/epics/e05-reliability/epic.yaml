@@ -1,0 +1,9 @@
+epic_id: e05
+slug: e05-reliability
+title: "Timeouts, fallbacks, logging, latency and stability"
+status: pending
+stories:
+  - id: e05s01
+    title: "Internal timeouts, controlled failures, secret-safe logging, load stability"
+    bcps: 5
+    delta: ADDED

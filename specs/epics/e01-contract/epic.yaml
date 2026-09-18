@@ -1,0 +1,13 @@
+epic_id: e01
+slug: e01-contract
+title: "API contract and pipeline skeleton"
+status: pending
+stories:
+  - id: e01s01
+    title: "Tracer: health plus optimize skeleton with schema-valid feasible plan"
+    bcps: 5
+    delta: ADDED
+  - id: e01s02
+    title: "Request validation and controlled error codes"
+    bcps: 3
+    delta: ADDED

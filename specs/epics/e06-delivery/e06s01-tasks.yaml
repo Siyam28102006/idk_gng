@@ -1,0 +1,9 @@
+story_id: e06s01
+title: "Docs, Docker image, live deployment, tie-break video"
+status: pending
+bcps: 5
+tasks:
+  - id: e06s01t01
+    description: "Write self-contained README, .env.example names only, Dockerfile with pinned tag, deploy one public service, record 3-minute video last"
+    verify: "test -f README.md && test -f Dockerfile"
+    status: pending

@@ -1,0 +1,13 @@
+story_id: e03s01
+title: "Pure guardrail validator with safe fallback"
+status: pending
+bcps: 5
+tasks:
+  - id: e03s01t01
+    description: "Add pure src/lib/guardrails validator (enum, note mapping 1:1, hours unique ascending 0-23, factor range, reserve and cap bounds, applies semantics, no invention)"
+    verify: "bun run build"
+    status: pending
+  - id: e03s01t02
+    description: "Define controlled fallback for malformed output (corrective retry or flagged no_op) that never crashes or emits unvalidated directives"
+    verify: "bun run lint"
+    status: pending

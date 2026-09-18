@@ -1,0 +1,13 @@
+story_id: e04s02
+title: "Layered directive constraints including stacked reserve plus cap"
+status: pending
+bcps: 5
+tasks:
+  - id: e04s02t01
+    description: "Apply effective solar, raised reserve floors, no-charge and no-discharge zeros, and grid caps inside the LP"
+    verify: "bun run build"
+    status: pending
+  - id: e04s02t02
+    description: "Prove stacked directives feasible on SAMPLE-07 and SAMPLE-10 patterns with equivalent-optimal cost"
+    verify: "bun run lint"
+    status: pending

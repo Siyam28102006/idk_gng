@@ -1,0 +1,13 @@
+epic_id: e03
+slug: e03-guardrails
+title: "Deterministic guardrails and final validation"
+status: pending
+stories:
+  - id: e03s01
+    title: "Pure guardrail validator with safe fallback"
+    bcps: 5
+    delta: ADDED
+  - id: e03s02
+    title: "Final hour-by-hour replay validator with recomputed totals"
+    bcps: 3
+    delta: ADDED
