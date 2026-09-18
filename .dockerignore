@@ -1,0 +1,32 @@
+# Files and directories that should NOT be sent to the Docker build context.
+# Keeps the image small and prevents accidental secret leaks.
+
+.git
+.github
+.next
+node_modules
+.env*
+!.env.example
+
+# Tests (not needed at runtime)
+tests
+**/*.test.ts
+
+# Project non-code assets
+*.zip
+*.tar.gz
+GridWise_PRD*.md
+BUP_CSE_FEST_2026_*.md
+BUP_CSE_FEST_2026_*.json
+
+# InsForge & AI agent config (gitignored anyway, but defense in depth)
+.insforge
+opencode.json
+.agent
+.agents
+
+# Logs and caches
+*.log
+bun-debug.log*
+.cache
+.DS_Store

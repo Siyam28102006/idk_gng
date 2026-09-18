@@ -1,9 +1,60 @@
 story_id: e06s01
-title: "Docs, Docker image, live deployment, tie-break video"
-status: pending
-bcps: 5
+title: "Docs, Docker image, live deployment, local UI harness, tie-break video"
+status: passing
+bcps: 6
 tasks:
   - id: e06s01t01
     description: "Write self-contained README, .env.example names only, Dockerfile with pinned tag, deploy one public service, record 3-minute video last"
     verify: "test -f README.md && test -f Dockerfile"
-    status: pending
+    status: passing
+    notes: |
+      Code-deliverable portions complete and tested via
+      tests/delivery-contract.test.ts (5 tests, all pass):
+      - README: full clean-machine rehearsal contract (setup, env NAMES,
+        curl commands, solver, 6 directive types, sample-test, deps,
+        limitations)
+      - .env.example: NAMES only (existing, untouched)
+      - Dockerfile: pinned oven/bun:1.4.2, 3-stage, non-root, EXPOSE 3000,
+        no secrets, CMD ["bun","run","start"]
+      - .dockerignore: keeps image small, blocks PRD/sample assets
+      External user actions (post-merge):
+      - Build + push image to a public registry (docker build + push)
+      - Deploy one public service reachable for the evaluation window
+      - Record 3-minute tie-break video AFTER API is green
+      These three steps require user judgment (registry choice, deploy
+      target, recording tooling) and cannot be done from a sandbox.
+
+  - id: e06s01t02
+    description: "Local UI harness matching the stitch design (Scenario Builder + Optimization Results)"
+    verify: "test -f src/components/harness/Harness.tsx && test -f src/lib/ui/sample-data.ts"
+    status: passing
+    notes: |
+      Local developer UI that posts to /optimize-energy. Two screens
+      mirror the stitch design tokens (DESIGN.md palette: canvas
+      #0B0F17, card #111827, raised #161F30, telemetry solar/battery/
+      grid/fault, directive badges amber/emerald/violet/rose/cyan/slate).
+
+      Components (src/components/harness/):
+      - TopBar — brand, version pill, view tabs, status badge
+      - Sidebar — Grid Topologies selector + solver badge
+      - BatteryConfig — 5 sliders (capacity, init, min, chg, dis)
+      - ScenarioMatrix — 3 sparklines (Demand/Solar PV/Peak Tariff) +
+        24h interval table with hour selection
+      - OperatorDirectives — 3 notes textarea, directive-type legend
+      - BottomBar — Scenario ID + Quick Fill / Import CSV / Validate
+        JSON / Reset / Run Optimization CTA + API status line
+      - MetricTiles — Total Grid / Cost / Peak (3 KPI cards)
+      - DirectiveInterpretation — one card per interpreted note
+        with APPLIED/NO-OP status and structured_adjustment preview
+      - DispatchPlan — stacked solar/grid + SoC line + 24h table
+      - Harness — top-level orchestrator, POSTs /optimize-energy
+
+      Pure helpers (src/lib/ui/sample-data.ts) feed the harness:
+      sampleDemand/Solar/Tariff/Envelope, chartPath, sparkPath,
+      batteryActionColor, directiveBadgeClass, recomputeTotals.
+      Tested via tests/ui-helpers.test.ts (11 tests, all pass).
+
+      Smoke-tested locally: GET / → 200 (27 KB), every section
+      string renders (Battery Config, 24-Hour Scenario Matrix,
+      Operator Directives, MILP Substation footer, both view tabs,
+      Run Optimization CTA).

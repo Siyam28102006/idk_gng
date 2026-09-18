@@ -1,0 +1,139 @@
+story_id: e06s01
+verified_at: "2026-09-18T23:55:00Z"
+verifier: verify-work
+branch: feat/e06-delivery
+risk_level: P1
+tasks_under_verification:
+  - e06s01t01 (README + Dockerfile + .dockerignore + delivery contract tests)
+  - e06s01t02 (Local UI harness matching stitch design + pure helpers + tests)
+phases:
+  smoke:
+    passed: true
+    notes: |
+      Cold-start: pkill -f "next-server|bun run start", rm -rf .next/cache,
+      then PORT=3499 OPENROUTER_KEY=dummy OPENROUTER_MODEL=nex-agi/nex-n2.5-pro:free
+      GEMINI_KEY=dummy GEMINI_MODEL=gemini-3.5-flash-lite bun run start (background).
+      Server reported "Ready in 98ms".
+  verify_command_validation:
+    passed: true
+    notes: |
+      Both task verify commands ran pre-UAT and matched expectations:
+        - e06s01t01: `test -f README.md && test -f Dockerfile` → PASS
+        - e06s01t02: `test -f src/components/harness/Harness.tsx && test -f src/lib/ui/sample-data.ts` → PASS
+  build:
+    passed: true
+    command: "bun run build"
+    output: "✓ Compiled successfully in 405ms · TypeScript clean (/ 27 KB) · routes / + /_not-found + /health + /optimize-energy"
+  typecheck:
+    passed: true
+    command: "bunx tsc --noEmit"
+    output: "zero errors."
+  lint:
+    passed: true
+    command: "bun run lint"
+    output: "0 errors, 0 warnings."
+  tests:
+    passed: true
+    command: "bun test"
+    coverage: "11 ui-helpers + 5 delivery-contract + 107 pre-existing"
+    files:
+      - tests/ui-helpers.test.ts
+      - tests/delivery-contract.test.ts
+      - tests/health.test.ts
+      - tests/optimize-energy.test.ts
+      - tests/llm.test.ts
+      - tests/guardrails.test.ts
+      - tests/validate-plan.test.ts
+      - tests/schemas.test.ts
+      - tests/sample-cases.test.ts
+      - tests/llm-schema.test.ts
+      - tests/optimizer.test.ts
+    expect_calls: 765
+    pass_count: 123
+    fail_count: 0
+  terminal_verdict:
+    command: "bun run lint && bun run build && bun test"
+    exit_code: 0
+    captured_at: "2026-09-18T23:54:00Z"
+    notes: "Single contiguous run — do not merge output from other attempts"
+    stdout_tail: |
+      (pass) e06s01 delivery contract > README.md exists and contains every required section [0.32ms]
+      (pass) e06s01 delivery contract > README contains NO secret values (only env NAMES) [0.26ms]
+      (pass) e06s01 delivery contract > .env.example has NAMES only (no values, no comments with secrets) [0.20ms]
+      (pass) e06s01 delivery contract > Dockerfile exists with pinned bun base, EXPOSE, and bun run start [0.27ms]
+      (pass) e06s01 delivery contract > README documented curl commands work against a live build (when .next/ exists) [752.48ms]
+      (pass) sampleDemand — 24h curve > returns 24 entries, ascending hours, demand ramps up at evening peak [0.15ms]
+      (pass) sampleSolar — 24h curve > zero before sunrise and after sunset; positive in daylight [0.07ms]
+      (pass) sampleTariff — 24h curve > peaks 17-21 (evening), off-peak elsewhere [0.03ms]
+      (pass) chartPath > returns SVG path string of correct shape: M ... L ... L ... L ... [0.10ms]
+      (pass) chartPath > min/max values map to bottom/top of viewport [0.05ms]
+      (pass) chartPath > single point: returns M only [0.01ms]
+      (pass) chartPath > empty array: returns empty string
+      (pass) sparkPath > maps 24 numbers to an SVG path [0.10ms]
+      (pass) batteryActionColor > charge → emerald, discharge → teal, idle → slate [0.04ms]
+      (pass) directiveBadgeClass > returns Tailwind class strings per directive type [0.04ms]
+      (pass) recomputeTotals — UI-layer mirror > totals match exactly within 6 decimals [0.09ms]
+      123 pass
+      0 fail
+      765 expect() calls
+      Ran 123 tests across 11 files. [1.50s]
+  manual:
+    steps:
+      - step: "Cold-start: GET /health"
+        expected: "200 OK with {\"status\":\"ok\"}"
+        actual: "200 OK · {\"status\":\"ok\"} · 394ms round-trip"
+        passed: true
+      - step: "Cold-start: GET / renders the harness"
+        expected: "200 OK · HTML contains every promised section"
+        actual: "200 OK · 27,438 bytes · all 13 section markers present (GridWise, Battery Config, 24-Hour Scenario Matrix, Operator Directives, Scenario Builder, Optimization Results, Grid Topologies, MILP Substation, Run Optimization, V1.0, BETA, CAMPUS, BESS-01)"
+        passed: true
+      - step: "POST /optimize-energy with malformed JSON"
+        expected: "400 {\"error\":\"malformed JSON\"}"
+        actual: "400 · 41ms"
+        passed: true
+      - step: "POST /optimize-energy with empty hours"
+        expected: "400 {\"error\":\"invalid request\"}"
+        actual: "400 · 4ms"
+        passed: true
+      - step: "POST /optimize-energy with min_energy > capacity (24h valid otherwise)"
+        expected: "422 {\"error\":\"minimum above capacity\"}"
+        actual: "422 · 2ms"
+        passed: true
+      - step: "POST /optimize-energy with dummy LLM keys (controlled-failure path)"
+        expected: "500 {\"error\":\"interpretation failed\"} within 30s budget"
+        actual: "500 · 394ms · server log: llm_error kind=provider · fail-closed contract honored"
+        passed: true
+  security:
+    findings: []
+    notes: |
+      Reviewed the e06s01 diff (8 commits, 20 files, +2069 / -128):
+      - Dockerfile: no ENV *_KEY, no ARG *_KEY; non-root USER; pinned oven/bun:1.4.2.
+      - README.md: tested for no secret values; only documented model ids.
+      - .env.example: tested for names-only.
+      - .dockerignore: blocks .git, .env*, .insforge, PRD markdown, *.zip, tests.
+      - Harness client components render JSON via <pre> (React-escaped, no innerHTML).
+      - No new auth, no new I/O surface; the existing /optimize-energy route
+        contract (e03s01–e05s01) is unchanged. No HIGH findings.
+  gaps:
+    closed: true
+    notes: |
+      Promise vs actual:
+      | Promise                                       | Actual                                         | Status |
+      | README setup/curl/solver/6 types/limitations | Test pins every section                        | ✓ |
+      | .env.example NAMES only                       | Test pin enforces                              | ✓ |
+      | Dockerfile pinned + EXPOSE + start            | Test pin enforces                              | ✓ |
+      | Live-build rehearsal succeeds                 | Test GREEN 752ms                               | ✓ |
+      | Local UI harness matches stitch               | All 13 section strings render                  | ✓ |
+      | Pure helpers unit-tested                      | 11/11 ui-helpers GREEN, 123/123 total          | ✓ |
+      No gaps → no plan-work loop.
+external_actions_pending:
+  - "Build + push Docker image to a public registry (user-side)"
+  - "Deploy one public service reachable for the evaluation window (user-side)"
+  - "Record 3-min tie-break video AFTER API is green (user-side)"
+  notes: |
+    The 3 e06s01 external actions require user judgment (registry choice,
+    deploy target, recording tooling) and cannot be done from a sandbox.
+    The deliverable contract (README + Dockerfile + .dockerignore) was
+    designed to make these steps mechanical: copy-paste docker build + push
+    + docker run commands from the README, then point a video recorder at
+    the public URL.
