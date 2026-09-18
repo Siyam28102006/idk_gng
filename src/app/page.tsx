@@ -1,69 +1,101 @@
-import Image from "next/image";
+import Link from "next/link";
+
+const endpoints = [
+  {
+    method: "GET",
+    path: "/health",
+    description: "Liveness probe. Returns 200 {\"status\":\"ok\"} within 60s of cold start.",
+  },
+  {
+    method: "POST",
+    path: "/optimize-energy",
+    description:
+      "Interpret 1–3 operator notes, validate, and return a 24h dispatch plan. <30s, target p95 ≤5s.",
+  },
+];
+
+const sampleBody = `{
+  "scenario_id": "tracer-01",
+  "operator_notes": [
+    "PV output drops to 20% between 13:00 and 15:00."
+  ],
+  "hours": [ /* 24 entries: hour, demand_kwh, solar_kwh, tariff_bdt_per_kwh */ ],
+  "battery": {
+    "capacity_kwh": 200,
+    "initial_energy_kwh": 100,
+    "minimum_energy_kwh": 20,
+    "max_charge_kwh_per_hour": 50,
+    "max_discharge_kwh_per_hour": 50
+  }
+}`;
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <main className="flex-1 w-full max-w-5xl mx-auto px-6 py-16 sm:py-24">
+      <header className="flex flex-col gap-3">
+        <span className="text-xs uppercase tracking-[0.2em] text-telemetry-grid">
+          BUP CSE Fest 2026
+        </span>
+        <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-zinc-50">
+          GridWise
+        </h1>
+        <p className="max-w-2xl text-base leading-7 text-zinc-400">
+          LLM-assisted Smart Campus Energy Optimization. One operator note in,
+          one deterministic 24-hour dispatch plan out — interpreted by an LLM,
+          guarded by deterministic rules, solved by an LP/MILP optimizer, and
+          re-validated hour by hour.
+        </p>
+      </header>
+
+      <section className="mt-12 grid gap-6 sm:grid-cols-2">
+        {endpoints.map((e) => (
+          <article
+            key={e.path}
+            className="rounded-xl border border-border-soft bg-card p-6"
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <div className="flex items-center gap-3">
+              <span className="inline-flex items-center rounded-full border border-border-strong px-2.5 py-0.5 text-xs font-medium text-telemetry-grid">
+                {e.method}
+              </span>
+              <code className="font-mono text-sm text-zinc-200 tabular-nums">
+                {e.path}
+              </code>
+            </div>
+            <p className="mt-3 text-sm leading-6 text-zinc-400">{e.description}</p>
+          </article>
+        ))}
+      </section>
+
+      <section className="mt-12 rounded-xl border border-border-soft bg-card p-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-zinc-300">
+            Sample request
+          </h2>
+          <span className="font-mono text-xs text-zinc-500">POST /optimize-energy</span>
         </div>
-      </main>
-    </div>
+        <pre className="mt-4 overflow-x-auto rounded-lg bg-raised p-4 font-mono text-xs leading-5 text-zinc-200 tabular-nums">
+{sampleBody}
+        </pre>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <Link
+            href="/api/optimize-energy"
+            className="inline-flex h-10 items-center rounded-lg border border-border-strong px-4 text-sm text-zinc-200 transition-colors hover:border-telemetry-grid hover:text-telemetry-grid"
+          >
+            See API contract
+          </Link>
+          <Link
+            href="/health"
+            className="inline-flex h-10 items-center rounded-lg bg-telemetry-grid px-4 text-sm font-medium text-canvas transition-opacity hover:opacity-90"
+          >
+            GET /health →
+          </Link>
+        </div>
+      </section>
+
+      <footer className="mt-16 flex items-center justify-between border-t border-border-soft pt-6 text-xs text-zinc-500">
+        <span>Single public HTTP service · no auth · scored API</span>
+        <span className="font-mono tabular-nums">Next.js 16.3.5 · React 19 · Tailwind v4</span>
+      </footer>
+    </main>
   );
 }
