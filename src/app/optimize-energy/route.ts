@@ -1,5 +1,6 @@
 import { optimizeRequestSchema, type OptimizeRequest } from "@/lib/schemas";
 import { interpretNotes, LlmError } from "@/lib/llm/interpret";
+import { validateGuardrails } from "@/lib/guardrails/validate";
 
 interface HourlyEntry {
   hour: number;
@@ -67,16 +68,26 @@ export async function POST(request: Request) {
 
   try {
     const candidates = await interpretNotes(input.operator_notes, input.battery);
+    // Guardrail is the contract between LLM output and optimizer. Malformed
+    // candidates become flagged no_op and never reach the optimizer as
+    // unvalidated directives. fallback_reasons is logged (generic strings;
+    // no note text, no LLM internals) and never returned to the client.
+    const validated = validateGuardrails(candidates, input.operator_notes, input.battery);
+    for (const fb of validated.fallback_reasons) {
+      console.warn(
+        `guardrail_fallback note_index=${fb.note_index} reason=${fb.reason}`,
+      );
+    }
     const { hourly_plan, total_grid_kwh, total_cost_bdt, peak_grid_kwh } =
       trivialPlan(input);
     return Response.json({
       scenario_id: input.scenario_id,
-      directive_interpretation: candidates.map((c, note_index) => ({
-        note_index,
-        applies: c.directive_type !== "no_op",
-        directive_type: c.directive_type,
-        structured_adjustment: c.structured_adjustment,
-        explanation: `LLM interpretation: ${c.directive_type}`,
+      directive_interpretation: validated.directives.map((d) => ({
+        note_index: d.note_index,
+        applies: d.applies,
+        directive_type: d.directive_type,
+        structured_adjustment: d.structured_adjustment,
+        explanation: `LLM interpretation: ${d.directive_type}`,
       })),
       hourly_plan,
       total_grid_kwh,

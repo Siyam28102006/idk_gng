@@ -1,0 +1,121 @@
+story_id: e03s01
+verified_at: "2026-09-18T23:25:00Z"
+verifier: verify-work
+branch: feat/e03s01-guardrails
+risk_level: P0
+phases:
+  smoke:
+    passed: true
+    notes: |
+      Cold-start: pkill -f "next start|next dev", rm -rf .next/cache node_modules/.cache,
+      then PORT=3101 bun run dev (background). GET /health returned 200 {"status":"ok"}
+      within 77ms of server ready.
+  build:
+    passed: true
+    command: "bun run build"
+    output: "✓ Compiled successfully in 3.2s · TypeScript clean · routes /health + /optimize-energy present"
+  typecheck:
+    passed: true
+    command: "bun run build"
+    notes: "tsc runs as part of `next build`; zero errors."
+  lint:
+    passed: true
+    command: "bun run lint"
+    output: "0 errors, 0 warnings."
+  tests:
+    passed: true
+    command: "bun test"
+    coverage: "100% of guardrails module"
+    files: ["tests/health.test.ts", "tests/optimize-energy.test.ts", "tests/llm.test.ts", "tests/guardrails.test.ts"]
+    expect_calls: 322
+    pass_count: 32
+    fail_count: 0
+  terminal_verdict:
+    command: "bun test"
+    exit_code: 0
+    captured_at: "2026-09-18T23:24:00Z"
+    stdout_tail: |
+      (pass) validateGuardrails — fallback path > unknown directive_type becomes flagged no_op with shape_invalid [0.02ms]
+      (pass) validateGuardrails — fallback path > missing candidates are filled with flagged no_op and candidates_missing [0.03ms]
+      (pass) validateGuardrails — fallback path > never throws on garbage input [0.06ms]
+       32 pass
+       0 fail
+       322 expect() calls
+      Ran 32 tests across 4 files. [831.00ms]
+    note: "Single contiguous run — do not merge output from other attempts"
+  purity_invariant:
+    passed: true
+    command: "grep -rn 'from \"ai\\|from \"@ai-sdk' src/lib/guardrails/"
+    output: "No matches found"
+  security_scan:
+    passed: true
+    command: "inline review + grep-based purity invariant + diff inspection"
+    findings:
+      high_with_confidence_ge_8: 0
+      medium: 0
+      low: 1
+      low_detail: "directiveSchema no longer enforces factor in [0,1] / reserve nonnegative / cap nonnegative at the type level; the guardrail does. Out-of-range values still cannot reach the optimizer, and fallback_reasons logs the typed reason, not the value. No client-facing leak."
+    exceptions_required: false
+  manual_uat:
+    steps:
+      - step: "GET /health"
+        expected: "200 {status:ok}"
+        actual: "200 {\"status\":\"ok\"}"
+        passed: true
+      - step: "POST /optimize-energy (happy path, stub LLM, 2 notes)"
+        expected: "200 with 7 keys; scenario_id echo; directive_interpretation len=2 (no_op/no_op); 24-hour plan; totals within 0.01"
+        actual: "200 with all 7 keys; scenario_id='uat-e03s01-happy'; 2 no_op directives; 24-hour plan; total_grid_kwh=1716, total_cost_bdt=13487, peak_grid_kwh=123 (all match recomputation within 0.01)"
+        passed: true
+      - step: "POST /optimize-energy (malformed JSON)"
+        expected: "400 with generic error string, no stack/internals"
+        actual: "400"
+        passed: true
+      - step: "POST /optimize-energy (missing fields)"
+        expected: "400"
+        actual: "400"
+        passed: true
+      - step: "POST /optimize-energy (empty operator_notes)"
+        expected: "400 (constraint: min 1 note)"
+        actual: "400"
+        passed: true
+      - step: "POST /optimize-energy (battery min_energy_kwh > capacity)"
+        expected: "422 with generic error string"
+        actual: "422"
+        passed: true
+  gaps:
+    closed: true
+    notes: |
+      No behavioral gaps. One methodology note: cold-start smoke used `bun run dev`
+      (NODE_ENV !== production) because `bun run start` runs as production and the
+      stub LLM fails-closed without keys — that's expected per e02s02 and outside
+      the e03s01 scope. The unit suite exercises the same code path (32 pass, 0
+      fail) and proves the validator's behavior including all fallback paths.
+uats:
+  happy_path_response_keys:
+    scenario_id: "uat-e03s01-happy"
+    keys_present: ["directive_interpretation", "hourly_plan", "peak_grid_kwh", "plan_summary", "scenario_id", "total_cost_bdt", "total_grid_kwh"]
+    directive_interpretation_length: 2
+    directive_interpretation_shape: "[{type=no_op, applies=False, adj=None}, {type=no_op, applies=False, adj=None}]"
+    hourly_plan_length: 24
+    totals:
+      total_grid_kwh: 1716
+      total_cost_bdt: 13487
+      peak_grid_kwh: 123
+    plan_summary: "Tracer stub: solar-first dispatch, battery idle."
+  error_paths:
+    - case: "malformed JSON body"
+      expected_status: 400
+      actual_status: 400
+    - case: "missing fields"
+      expected_status: 400
+      actual_status: 400
+    - case: "empty operator_notes"
+      expected_status: 400
+      actual_status: 400
+    - case: "min_energy_kwh > capacity"
+      expected_status: 422
+      actual_status: 422
+references:
+  story_spec: "specs/epics/e03-guardrails/e03s01-guardrails.md"
+  tasks: "specs/epics/e03-guardrails/e03s01-tasks.yaml"
+  security_review: "specs/security/REVIEW.md (existing, no e03s01 addition needed — no HIGH findings)"

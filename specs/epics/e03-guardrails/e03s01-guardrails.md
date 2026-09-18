@@ -35,6 +35,22 @@ its input contract.
 
 ## Requirements
 
+#### MODIFIED: per-type bounds ownership moved from LLM schema to guardrail
+**Before:** `directiveSchema` in `src/lib/llm/directive.ts` enforced
+`solar_reduction.factor` in `[0,1]`, `minimum_battery_reserve.minimum_energy_kwh`
+`>= 0`, and `max_grid_window.max_grid_kwh` `>= 0` at the type level
+(zod `.min(0).max(1)` and `.nonnegative()`). Those checks were
+unreachable in the guardrail because `directiveSchema.safeParse` had
+already rejected them with `shape_invalid`.
+**After:** `directiveSchema` enforces only structural shape (integer
+hours in `0..23`, finite numbers). Per-type bounds are owned by the
+guardrail — the single source of truth. The two layers' contracts are
+now: LLM schema = "this is a well-formed candidate of its declared
+type"; guardrail = "this candidate satisfies the scoring/business
+rules". A test pins this layering: hours `[-1, 5]` and `[24]` fail at
+the LLM schema with `shape_invalid` in the guardrail's
+`fallback_reasons`.
+
 #### ADDED: pure guardrail module enforcing the six rules and the 1:1 note contract
 Full requirement text: `src/lib/guardrails/validate.ts` exports a pure
 `validateGuardrails(candidates, notes, battery)` function. Inputs:

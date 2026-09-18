@@ -1,6 +1,6 @@
 story_id: e03s01
 title: "Pure guardrail validator with safe fallback"
-status: failing
+status: passing
 bcps: 5
 risk: P0
 tasks:
@@ -9,7 +9,7 @@ tasks:
     verify: "bun run build"
     risk: P0
     security: low
-    status: failing
+    status: passing
     allure:
       severity: critical
       categories:
@@ -20,7 +20,7 @@ tasks:
     verify: "bun test tests/guardrails.test.ts"
     risk: P0
     security: low
-    status: failing
+    status: passing
     allure:
       severity: critical
       categories:
@@ -31,7 +31,7 @@ tasks:
     verify: "bun test"
     risk: P0
     security: low
-    status: failing
+    status: passing
     allure:
       severity: critical
       categories:
@@ -43,7 +43,7 @@ tasks:
     verify: "bun test tests/optimize-energy.test.ts"
     risk: P0
     security: low
-    status: failing
+    status: passing
     allure:
       severity: critical
       categories:
@@ -54,7 +54,7 @@ tasks:
     verify: "bun run lint"
     risk: P0
     security: low
-    status: failing
+    status: passing
     allure:
       severity: critical
       categories:
