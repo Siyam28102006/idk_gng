@@ -7,8 +7,8 @@ vcs:
   branch: feat/e03s01-guardrails
   worktree: /home/thespd/Work/e03s01-guardrails
 handoff:
-  next_skill: commit-message
-  note: "e03s01 audited on feat/e03s01-guardrails (self-review PASS; 0 HIGH; 3 documented design decisions; 2 non-blocking follow-ups); ready to commit & PR."
+  next_skill: release-branch
+  note: "e03s01 commit-message drafted (feat(guardrails) minor bump; 0 fix commits; no breaking changes; squash subject + body ready); ready for release-branch merge decision."
 metrics:
   story_start: "2026-09-18T16:42:30Z"
   plan_complete: "2026-09-18T22:50:00Z"
@@ -16,3 +16,4 @@ metrics:
   tdd_complete: "2026-09-18T23:10:00Z"
   verify_complete: "2026-09-18T23:25:00Z"
   audit_complete: "2026-09-18T23:35:00Z"
+  commit_message_drafted: "2026-09-18T23:42:00Z"
