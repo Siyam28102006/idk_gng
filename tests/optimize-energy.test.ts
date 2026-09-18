@@ -33,6 +33,27 @@ function post(body: unknown) {
 }
 
 describe("POST /optimize-energy validation", () => {
+  test("accepts unsorted hours and returns ascending plan with correct totals", async () => {
+    const base = sampleRequest();
+    const input = {
+      ...base,
+      hours: [...base.hours].reverse(),
+    };
+    const res = await POST(post(input));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.hourly_plan.map((h: { hour: number }) => h.hour)).toEqual(
+      Array.from({ length: 24 }, (_, h) => h),
+    );
+    const grids = body.hourly_plan.map((h: { grid_kwh: number }) => h.grid_kwh);
+    expect(Math.abs(body.total_grid_kwh - grids.reduce((a: number, b: number) => a + b, 0))).toBeLessThanOrEqual(0.01);
+    const cost = body.hourly_plan.reduce(
+      (sum: number, h: { grid_kwh: number; hour: number }) =>
+        sum + h.grid_kwh * base.hours[h.hour].tariff_bdt_per_kwh,
+      0,
+    );
+    expect(Math.abs(body.total_cost_bdt - cost)).toBeLessThanOrEqual(0.01);
+  });
   test("rejects semantically invalid battery with 422 and no internals", async () => {
     const input = {
       ...sampleRequest(),
