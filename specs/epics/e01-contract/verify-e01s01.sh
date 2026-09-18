@@ -4,7 +4,7 @@ set -euo pipefail
 PORT="${PORT:-3000}"
 BASE="http://localhost:${PORT}"
 
-bun run build >/dev/null 2>&1
+bun run build >/tmp/e01s01-build.log 2>&1 || { tail -n 20 /tmp/e01s01-build.log; exit 1; }
 (bun run start -- --port "$PORT" >/tmp/e01s01-server.log 2>&1 & echo $! > /tmp/e01s01-server.pid)
 trap 'kill "$(cat /tmp/e01s01-server.pid)" 2>/dev/null || true' EXIT
 
@@ -58,7 +58,7 @@ assert abs(body["peak_grid_kwh"] - max(grids)) <= 0.01
 assert abs(body["hourly_plan"][23]["battery_energy_after_kwh"] - 100) <= 0.01
 print("optimize happy path: OK")
 
-status, body = post("{not json", raw=True)
+status, body = post(b"{not json", raw=True)
 assert status == 400 and "error" in body, (status, body)
 bad = dict(payload); bad["hours"] = bad["hours"][:23]
 status, _ = post(bad)
@@ -68,6 +68,12 @@ status, body = post(bad)
 assert status == 422 and "error" in body, (status, body)
 assert "stack" not in json.dumps(body)
 print("controlled errors: OK")
+
+shuffled = dict(payload, hours=list(reversed(hours)))
+status, body = post(shuffled)
+assert status == 200, (status, body)
+assert [h["hour"] for h in body["hourly_plan"]] == list(range(24))
+print("unsorted hours: OK")
 EOF
 
 echo "ALL-CHECKS-PASS"

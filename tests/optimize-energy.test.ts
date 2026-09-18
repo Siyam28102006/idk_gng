@@ -54,6 +54,20 @@ describe("POST /optimize-energy validation", () => {
     );
     expect(Math.abs(body.total_cost_bdt - cost)).toBeLessThanOrEqual(0.01);
   });
+  test("rejects malformed, short, and duplicate hours with 400", async () => {
+    const malformed = await POST(post("{not json"));
+    expect(malformed.status).toBe(400);
+    expect(typeof (await malformed.json()).error).toBe("string");
+
+    const base = sampleRequest();
+    const short = await POST(post({ ...base, hours: base.hours.slice(0, 23) }));
+    expect(short.status).toBe(400);
+
+    const duped = await POST(
+      post({ ...base, hours: base.hours.map((h, i) => (i === 0 ? base.hours[1] : h)) }),
+    );
+    expect(duped.status).toBe(400);
+  });
   test("rejects semantically invalid battery with 422 and no internals", async () => {
     const input = {
       ...sampleRequest(),
@@ -73,6 +87,38 @@ describe("POST /optimize-energy validation", () => {
   });
 });
 
+describe("POST /optimize-energy note counts and solar cap", () => {
+  test("handles 1 and 3 notes with one entry per note", async () => {
+    for (const n of [1, 3]) {
+      const input = {
+        ...sampleRequest(),
+        operator_notes: Array.from({ length: n }, (_, i) => `note ${i}`),
+      };
+      const res = await POST(post(input));
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.directive_interpretation).toHaveLength(n);
+      expect(
+        body.directive_interpretation.map((d: { note_index: number }) => d.note_index),
+      ).toEqual(Array.from({ length: n }, (_, i) => i));
+    }
+  });
+  test("caps solar use at demand when solar exceeds demand", async () => {
+    const base = sampleRequest();
+    const input = {
+      ...base,
+      hours: base.hours.map((h) => ({ ...h, demand_kwh: 10, solar_kwh: 100 })),
+    };
+    const res = await POST(post(input));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    for (const h of body.hourly_plan) {
+      expect(h.solar_used_kwh).toBe(10);
+      expect(h.grid_kwh).toBe(0);
+    }
+  });
+});
+
 describe("POST /optimize-energy happy path", () => {
   test("returns schema-valid plan with echo, ordering, and recomputable totals", async () => {
     const input = sampleRequest();
@@ -86,14 +132,27 @@ describe("POST /optimize-energy happy path", () => {
     expect(
       body.directive_interpretation.map((d: { note_index: number }) => d.note_index),
     ).toEqual([0, 1]);
+    for (const d of body.directive_interpretation) {
+      expect(d.applies).toBe(false);
+      expect(d.directive_type).toBe("no_op");
+      expect(d.structured_adjustment).toBeNull();
+    }
 
     expect(body.hourly_plan).toHaveLength(24);
     expect(body.hourly_plan.map((h: { hour: number }) => h.hour)).toEqual(
       Array.from({ length: 24 }, (_, h) => h),
     );
-    for (const h of body.hourly_plan) {
+    for (const [i, h] of body.hourly_plan.entries()) {
       if (h.battery_action === "idle") expect(h.battery_kwh).toBe(0);
       expect(h.grid_kwh).toBeGreaterThanOrEqual(0);
+      expect(h.solar_used_kwh).toBeGreaterThanOrEqual(0);
+      expect(h.solar_used_kwh).toBeLessThanOrEqual(
+        Math.min(input.hours[i].demand_kwh, input.hours[i].solar_kwh),
+      );
+      expect(h.grid_kwh + h.solar_used_kwh).toBeCloseTo(input.hours[i].demand_kwh, 2);
+      expect(
+        Math.abs(h.battery_energy_after_kwh - input.battery.initial_energy_kwh),
+      ).toBeLessThanOrEqual(0.01);
     }
 
     const grid = body.hourly_plan.map((h: { grid_kwh: number }) => h.grid_kwh);
