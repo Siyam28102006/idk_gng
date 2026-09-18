@@ -36,6 +36,8 @@ budget) or `Promise.all` for latency at some RPM cost — e02s01 decision.
 2. Primary: Groq free tier (`LLM_API_KEY`, `LLM_MODEL` = verified Llama-class id).
 3. Fallback: Gemini Flash free tier (`LLM_FALLBACK_API_KEY`,
    `LLM_FALLBACK_MODEL`) behind the same interface + 429/timeout retry.
+   Build-time finding: `gemini-2.5-flash-lite` is retired for new users;
+   verified working id is `gemini-3.5-flash-lite` (live e2e 2026-09-18).
 4. Outage drill (e05): provider error → corrective retry once → flagged `no_op`
    fallback, always < 30s, never crash, never unvalidated output.
 5. Exact model ids + quota screenshots go in README (separately graded).

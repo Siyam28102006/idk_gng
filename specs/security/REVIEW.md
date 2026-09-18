@@ -19,3 +19,31 @@ Findings (inline review + dual-blind review rounds 1-3):
 HIGH findings with confidence >= 8: none.
 EXCEPTIONS.md: not required (no unresolved HIGH).
 Fresh as of: 2026-09-18, branch HEAD a02c53f.
+
+---
+
+# Security review — e02s01 LLM path (branch feat/e02s01-llm-path)
+
+Scope: new `src/lib/llm/` (directive schema, prompt builder, interpreter with
+Groq-primary/Gemini-fallback via AI SDK, 9s per-attempt + 20s per-note
+timeouts, fail-closed stub in production), route wiring, `.env.example`
+(names only). External network calls introduced (first in repo).
+
+Findings (inline review + dual-blind review rounds 1-2):
+- Secrets: keys read from env only; `.env.example` values-free; `.env.local`
+  gitignored and verified untracked; diff grepped for key patterns — clean.
+  No key material in code, logs (one warn/error on stub path, no values), or
+  responses (LlmError kinds map to generic 500 strings).
+- Prompt injection: operator note interpolated inside `<operator_note>` tags
+  with an untrusted-data instruction; output constrained by SDK structured
+  output + local `safeParse`. Residual semantic-jailbreak risk accepted with
+  e03 guardrails as the owning control (documented, not unresolved).
+- Fail-open risk closed: production without keys throws (500), never 200 no_op.
+- SSRF/injection: no URLs, shell, SQL, or HTML built from input. Deps
+  `ai@7`, `@ai-sdk/groq`, `@ai-sdk/google` are Vercel-maintained [OK].
+- Availability: per-attempt + per-note timeouts bound LLM wall time inside the
+  30s budget; quota/outage drills owned by e05.
+
+HIGH findings with confidence >= 8: none.
+EXCEPTIONS.md: not required (no unresolved HIGH).
+Fresh as of: 2026-09-18, branch feat/e02s01-llm-path.

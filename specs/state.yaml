@@ -4,7 +4,8 @@ active_epic_id: e02
 active_story_id: e02s01
 vcs:
   kind: git
-  branch: main
+  branch: feat/e02s01-llm-path
+  worktree: /home/thespd/Work/e02s01-llm-path
 handoff:
-  next_skill: kickoff-branch
-  note: "e02s01 LLM path planned (AI SDK v7, Groq primary, Gemini fallback); consistency script still absent."
+  next_skill: release-branch
+  note: "e02s01 done: 20 tests green, live e2e proven, dual-blind review PASS (10/10 both, round 2/5). Ready to merge."
