@@ -82,6 +82,19 @@ status, body = post(shuffled)
 assert status == 200, (status, body)
 assert [h["hour"] for h in body["hourly_plan"]] == list(range(24))
 print("unsorted hours: OK")
+
+import os
+if os.environ.get("LLM_API_KEY"):
+    live = dict(payload, scenario_id="live-llm-01",
+                operator_notes=["Solar panels produce only 20 percent from 1 PM to 3 PM."])
+    status, body = post(live)
+    assert status == 200, (status, body)
+    interp = body["directive_interpretation"][0]
+    assert interp["directive_type"] == "solar_reduction", interp
+    assert interp["applies"] is True, interp
+    print("live LLM interpretation: OK")
+else:
+    print("live LLM interpretation: SKIPPED (LLM_API_KEY unset)")
 EOF
 
 echo "ALL-CHECKS-PASS"
