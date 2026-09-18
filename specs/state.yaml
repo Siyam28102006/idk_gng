@@ -1,11 +1,10 @@
 session: "gridwise-bootstrap"
 active_flow: "build_epic"
-active_epic_id: e01
-active_story_id: e01s02
+active_epic_id: e02
+active_story_id: e02s01
 vcs:
   kind: git
-  branch: feat/e01s02-validation
-  worktree: /home/thespd/Work/e01s02-validation
+  branch: main
 handoff:
-  next_skill: release-branch
-  note: "e01s02 done: 12 tests green, dual-blind review PASS (A 98, B 10/10, round 2/5). Ready to merge."
+  next_skill: survey-context
+  note: "e01 released and archived; e02 LLM path next, blocked on provider decision and sample cases."
