@@ -42,8 +42,25 @@ export type ValidationResult =
   | { ok: false; violations: Violation[] };
 
 export function validatePlan(args: PlanValidationArgs): ValidationResult {
+  // Precondition: hours is ascending 0-23 (the route sorts before calling).
+  // hourly_plan order IS validated below; hours order is trusted from the
+  // route, matching the optimizer's own precondition in build-lp.ts.
   const { hours, battery, directives, output } = args;
   const violations: Violation[] = [];
+
+  // Fail-closed shape helpers: directives arrive via validateGuardrails, but
+  // the validator must never throw on a malformed adjustment — it must
+  // produce a violation instead (the route maps any violation to a 500).
+  function adjHours(adj: unknown): number[] | null {
+    if (typeof adj !== "object" || adj === null) return null;
+    const hs = (adj as { hours?: unknown }).hours;
+    if (!Array.isArray(hs) || !hs.every((x) => Number.isInteger(x))) return null;
+    return hs as number[];
+  }
+  function adjFinite(adj: unknown, key: string): number | null {
+    const v = (adj as Record<string, unknown>)[key];
+    return typeof v === "number" && Number.isFinite(v) ? v : null;
+  }
 
   // 1. Structural: hourly_plan length 24 + ascending by hour.
   if (output.hourly_plan.length !== 24) {
@@ -92,16 +109,38 @@ export function validatePlan(args: PlanValidationArgs): ValidationResult {
   const effectiveSolar = hours.map((h) => h.solar_kwh);
   for (const d of directives) {
     if (!d.applies || d.directive_type !== "solar_reduction" || !d.structured_adjustment) continue;
-    const a = d.structured_adjustment as Extract<typeof d.structured_adjustment, { factor: number }>;
-    for (const hour of a.hours) {
+    const hrs = adjHours(d.structured_adjustment);
+    const factor = adjFinite(d.structured_adjustment, "factor");
+    if (hrs === null || factor === null) {
+      violations.push({
+        code: "directive_violation",
+        message: `solar_reduction: malformed structured_adjustment`,
+      });
+      continue;
+    }
+    for (const hour of hrs) {
       if (hour < 0 || hour > 23) continue;
-      effectiveSolar[hour] = effectiveSolar[hour]! * a.factor;
+      effectiveSolar[hour] = effectiveSolar[hour]! * factor;
     }
   }
 
   for (let h = 0; h < 24; h++) {
     const entry = output.hourly_plan[h]!;
     const demand = hours[h]!.demand_kwh;
+
+    // Fail-closed numerics (§11.3 "finite and non-negative"): every
+    // comparison below is false for NaN, so without this guard a NaN plan
+    // would sail through every check. structure_invalid fits: the values
+    // are not usable numbers at all.
+    const fields = [entry.grid_kwh, entry.solar_used_kwh, entry.battery_kwh, entry.battery_energy_after_kwh];
+    if (!fields.every((f) => Number.isFinite(f))) {
+      violations.push({
+        code: "structure_invalid",
+        hour: h,
+        message: `hour ${h}: non-finite plan value`,
+      });
+      continue;
+    }
 
     // Balance (PRD §5.5 #2): g + s + d - c == demand
     const charge = entry.battery_action === "charge" ? entry.battery_kwh : 0;
@@ -115,22 +154,33 @@ export function validatePlan(args: PlanValidationArgs): ValidationResult {
       });
     }
 
-    // Grid and solar must be non-negative; solar_used must not exceed the
-    // effective solar for this hour (PRD §9.4). This covers both base hours
-    // and reduction hours, so the directive replay below needs no separate
-    // solar branch.
+    // Grid must be non-negative (no export). structure_invalid fits §11.3
+    // ("required numeric values are finite and non-negative") — this is
+    // base physics, not any one directive, so directive_violation would
+    // mislabel it in the logs.
     if (entry.grid_kwh < -TOL) {
       violations.push({
-        code: "directive_violation",
+        code: "structure_invalid",
         hour: h,
         message: `hour ${h}: grid_kwh=${entry.grid_kwh} < 0`,
       });
     }
+    // Solar_used must be within [0, effective] for this hour (PRD §9.4).
+    // This covers both base hours and reduction hours, so the directive
+    // replay below needs no separate solar branch.
     if (entry.solar_used_kwh < -TOL || entry.solar_used_kwh > effectiveSolar[h]! + TOL) {
       violations.push({
         code: "directive_violation",
         hour: h,
         message: `hour ${h}: solar_used=${entry.solar_used_kwh} outside [0, effective=${effectiveSolar[h]}]`,
+      });
+    }
+    // Battery magnitude is never negative, regardless of action.
+    if (entry.battery_kwh < -TOL) {
+      violations.push({
+        code: "battery_bounds_violation",
+        hour: h,
+        message: `hour ${h}: battery_kwh=${entry.battery_kwh} < 0`,
       });
     }
 
@@ -214,20 +264,37 @@ export function validatePlan(args: PlanValidationArgs): ValidationResult {
     // solar_reduction is already enforced by the per-hour effective-solar
     // check in section 3 (stacked factors multiply, same as the optimizer),
     // so it needs no separate replay branch here.
+    // Every branch below shape-checks its adjustment first: a malformed
+    // adjustment yields a violation, never a throw.
+    const hrs = adjHours(adj);
+    if (hrs === null) {
+      violations.push({
+        code: "directive_violation",
+        message: `${d.directive_type}: malformed structured_adjustment`,
+      });
+      continue;
+    }
     if (d.directive_type === "minimum_battery_reserve") {
-      const a = adj as Extract<typeof adj, { minimum_energy_kwh: number }>;
-      for (const hour of a.hours) {
+      const floor = adjFinite(adj, "minimum_energy_kwh");
+      if (floor === null) {
+        violations.push({
+          code: "directive_violation",
+          message: `minimum_battery_reserve: malformed minimum_energy_kwh`,
+        });
+        continue;
+      }
+      for (const hour of hrs) {
         if (hour < 0 || hour > 23) continue;
-        if (output.hourly_plan[hour]!.battery_energy_after_kwh < a.minimum_energy_kwh - TOL) {
+        if (output.hourly_plan[hour]!.battery_energy_after_kwh < floor - TOL) {
           violations.push({
             code: "directive_violation",
             hour,
-            message: `minimum_battery_reserve: h=${hour} soc=${output.hourly_plan[hour]!.battery_energy_after_kwh} < floor=${a.minimum_energy_kwh}`,
+            message: `minimum_battery_reserve: h=${hour} soc=${output.hourly_plan[hour]!.battery_energy_after_kwh} < floor=${floor}`,
           });
         }
       }
     } else if (d.directive_type === "no_charge_window") {
-      for (const hour of adj.hours) {
+      for (const hour of hrs) {
         if (hour < 0 || hour > 23) continue;
         if (output.hourly_plan[hour]!.battery_action === "charge" && output.hourly_plan[hour]!.battery_kwh > TOL) {
           violations.push({
@@ -238,7 +305,7 @@ export function validatePlan(args: PlanValidationArgs): ValidationResult {
         }
       }
     } else if (d.directive_type === "no_discharge_window") {
-      for (const hour of adj.hours) {
+      for (const hour of hrs) {
         if (hour < 0 || hour > 23) continue;
         if (output.hourly_plan[hour]!.battery_action === "discharge" && output.hourly_plan[hour]!.battery_kwh > TOL) {
           violations.push({
@@ -249,14 +316,21 @@ export function validatePlan(args: PlanValidationArgs): ValidationResult {
         }
       }
     } else if (d.directive_type === "max_grid_window") {
-      const a = adj as Extract<typeof adj, { max_grid_kwh: number }>;
-      for (const hour of a.hours) {
+      const cap = adjFinite(adj, "max_grid_kwh");
+      if (cap === null) {
+        violations.push({
+          code: "directive_violation",
+          message: `max_grid_window: malformed max_grid_kwh`,
+        });
+        continue;
+      }
+      for (const hour of hrs) {
         if (hour < 0 || hour > 23) continue;
-        if (output.hourly_plan[hour]!.grid_kwh > a.max_grid_kwh + TOL) {
+        if (output.hourly_plan[hour]!.grid_kwh > cap + TOL) {
           violations.push({
             code: "directive_violation",
             hour,
-            message: `max_grid_window: h=${hour} grid=${output.hourly_plan[hour]!.grid_kwh} > cap=${a.max_grid_kwh}`,
+            message: `max_grid_window: h=${hour} grid=${output.hourly_plan[hour]!.grid_kwh} > cap=${cap}`,
           });
         }
       }
