@@ -337,7 +337,9 @@ describe("validatePlan — base minimum reserve (PRD §9.2)", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.violations.some((v) => v.code === "battery_bounds_violation")).toBe(true);
+    // The floor breach is at h=10 (the h=10/h=11 transition violations are
+    // expected cascade from the same corruption).
+    expect(result.violations.some((v) => v.code === "battery_bounds_violation" && v.hour === 10)).toBe(true);
   });
 });
 
@@ -433,7 +435,49 @@ describe("validatePlan — SoC transitions (PRD §9.1)", () => {
     const result = validatePlan({ hours, battery: battery(), directives: [], output });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.violations.some((v) => v.code === "battery_bounds_violation")).toBe(true);
+    // Corrupting after[6] breaks the h=6 transition (100 → 150) and the h=7
+    // transition (150 → 100); both hours must be flagged.
+    const hours_flagged = result.violations.filter((v) => v.code === "battery_bounds_violation").map((v) => v.hour);
+    expect(hours_flagged).toContain(6);
+    expect(hours_flagged).toContain(7);
+  });
+
+  test("negative battery_kwh magnitude → reject", () => {
+    const { hours, output } = balanced24();
+    output.hourly_plan[5]!.battery_action = "charge";
+    output.hourly_plan[5]!.battery_kwh = -10;
+    const result = validatePlan({ hours, battery: battery(), directives: [], output });
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.violations.some((v) => v.code === "battery_bounds_violation" && v.hour === 5)).toBe(true);
+  });
+});
+
+describe("validatePlan — fail-closed numerics and shapes", () => {
+  test("NaN grid_kwh → reject with structure_invalid (never throws)", () => {
+    const { hours, output } = balanced24();
+    output.hourly_plan[5]!.grid_kwh = NaN;
+    let result: ReturnType<typeof validatePlan>;
+    expect(() => {
+      result = validatePlan({ hours, battery: battery(), directives: [], output });
+    }).not.toThrow();
+    expect(result!.ok).toBe(false);
+    if (result!.ok) return;
+    expect(result!.violations.some((v) => v.code === "structure_invalid" && v.hour === 5)).toBe(true);
+  });
+
+  test("malformed directive adjustment → directive_violation (never throws)", () => {
+    const { hours, output } = balanced24();
+    const directives = [
+      { note_index: 0, directive_type: "no_charge_window", applies: true, structured_adjustment: { hours: undefined } },
+    ] as unknown as ValidatedDirective[];
+    let result: ReturnType<typeof validatePlan>;
+    expect(() => {
+      result = validatePlan({ hours, battery: battery(), directives, output });
+    }).not.toThrow();
+    expect(result!.ok).toBe(false);
+    if (result!.ok) return;
+    expect(result!.violations.some((v) => v.code === "directive_violation")).toBe(true);
   });
 });
 
