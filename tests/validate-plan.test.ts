@@ -338,8 +338,13 @@ describe("validatePlan — base minimum reserve (PRD §9.2)", () => {
     expect(result.ok).toBe(false);
     if (result.ok) return;
     // The floor breach is at h=10 (the h=10/h=11 transition violations are
-    // expected cascade from the same corruption).
-    expect(result.violations.some((v) => v.code === "battery_bounds_violation" && v.hour === 10)).toBe(true);
+    // expected cascade from the same corruption). The message substring
+    // proves the floor rule itself fired, not just the cascade.
+    expect(
+      result.violations.some(
+        (v) => v.code === "battery_bounds_violation" && v.hour === 10 && v.message.includes("outside [40, 200]"),
+      ),
+    ).toBe(true);
   });
 });
 
@@ -449,7 +454,13 @@ describe("validatePlan — SoC transitions (PRD §9.1)", () => {
     const result = validatePlan({ hours, battery: battery(), directives: [], output });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.violations.some((v) => v.code === "battery_bounds_violation" && v.hour === 5)).toBe(true);
+    // Message substring proves the explicit negativity rule fired (balance
+    // and transition drift also fire at h=5 as expected cascade).
+    expect(
+      result.violations.some(
+        (v) => v.code === "battery_bounds_violation" && v.hour === 5 && v.message.includes("battery_kwh=-10 < 0"),
+      ),
+    ).toBe(true);
   });
 });
 
@@ -464,6 +475,17 @@ describe("validatePlan — fail-closed numerics and shapes", () => {
     expect(result!.ok).toBe(false);
     if (result!.ok) return;
     expect(result!.violations.some((v) => v.code === "structure_invalid" && v.hour === 5)).toBe(true);
+  });
+
+  test("NaN total_cost_bdt → reject with structure_invalid", () => {
+    const { hours, output } = balanced24();
+    output.total_cost_bdt = NaN;
+    const result = validatePlan({ hours, battery: battery(), directives: [], output });
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.violations.some((v) => v.code === "structure_invalid" && v.message.includes("total_cost_bdt"))).toBe(
+      true,
+    );
   });
 
   test("malformed directive adjustment → directive_violation (never throws)", () => {
