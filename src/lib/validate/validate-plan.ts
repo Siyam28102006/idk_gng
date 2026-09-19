@@ -63,20 +63,25 @@ export function validatePlan(args: PlanValidationArgs): ValidationResult {
   }
 
   // 1. Structural: hourly_plan length 24 + ascending by hour.
-  if (output.hourly_plan.length !== 24) {
+  // The plan arrives from the optimizer as untrusted data: every dereference
+  // below is guarded so a malformed envelope yields violations, never a throw
+  // (the route would convert a throw to a 500, but the validator's own
+  // contract is fail-closed violations).
+  if (!output || !Array.isArray(output.hourly_plan) || output.hourly_plan.length !== 24) {
     violations.push({
       code: "structure_invalid",
-      message: `hourly_plan must have length 24, got ${output.hourly_plan.length}`,
+      message: `hourly_plan must have length 24, got ${output && Array.isArray(output.hourly_plan) ? output.hourly_plan.length : "non-array"}`,
     });
     // Don't bother with further checks if shape is broken.
     return { ok: false, violations };
   }
   for (let i = 0; i < 24; i++) {
-    if (output.hourly_plan[i]!.hour !== i) {
+    const e = output.hourly_plan[i];
+    if (typeof e !== "object" || e === null || e.hour !== i) {
       violations.push({
         code: "structure_invalid",
         hour: i,
-        message: `hourly_plan[${i}].hour must be ${i}, got ${output.hourly_plan[i]!.hour}`,
+        message: `hourly_plan[${i}].hour must be ${i}, got ${e && typeof e === "object" ? (e as { hour?: unknown }).hour : "non-object"}`,
       });
     }
   }
@@ -150,6 +155,19 @@ export function validatePlan(args: PlanValidationArgs): ValidationResult {
         code: "structure_invalid",
         hour: h,
         message: `hour ${h}: non-finite plan value`,
+      });
+      continue;
+    }
+
+    // Action enum (PRD §5.7: exactly charge|discharge|idle). The TS union
+    // is not enforced at runtime, so allowlist explicitly — otherwise an
+    // unknown action yields charge=discharge=0 and sails through every
+    // check below while carrying a nonzero battery_kwh.
+    if (entry.battery_action !== "charge" && entry.battery_action !== "discharge" && entry.battery_action !== "idle") {
+      violations.push({
+        code: "structure_invalid",
+        hour: h,
+        message: `hour ${h}: battery_action=${String(entry.battery_action)} not in charge|discharge|idle`,
       });
       continue;
     }
