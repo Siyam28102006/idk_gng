@@ -191,13 +191,17 @@ describe("validatePlan — battery_kwh = 0 when action = idle (PRD §5.7)", () =
 
   test("charge + battery_kwh == charge magnitude → ok", () => {
     const { hours, output } = balanced24();
-    // Force a charge at h=5 with consistent balance.
+    // Charge 10 at h=5 (soc 100 → 110) and discharge 10 at h=6 (soc back to
+    // 100) so balance, SoC transitions, and neutrality all stay consistent.
     output.hourly_plan[5]!.battery_action = "charge";
     output.hourly_plan[5]!.battery_kwh = 10;
     output.hourly_plan[5]!.grid_kwh = output.hourly_plan[5]!.grid_kwh + 10;
-    // Adjust totals by +10 grid, +50 cost, and bump peak since 60 > 50.
-    output.total_grid_kwh = round(output.total_grid_kwh + 10);
-    output.total_cost_bdt = round(output.total_cost_bdt + 10 * 5);
+    output.hourly_plan[5]!.battery_energy_after_kwh = 110;
+    output.hourly_plan[6]!.battery_action = "discharge";
+    output.hourly_plan[6]!.battery_kwh = 10;
+    output.hourly_plan[6]!.grid_kwh = output.hourly_plan[6]!.grid_kwh - 10;
+    output.hourly_plan[6]!.battery_energy_after_kwh = 100;
+    // Net totals unchanged (+10 grid at h=5, -10 at h=6); peak bumps to 60.
     output.peak_grid_kwh = Math.max(output.peak_grid_kwh, output.hourly_plan[5]!.grid_kwh);
     const result = validatePlan({ hours, battery: battery(), directives: [], output });
     expect(result.ok).toBe(true);

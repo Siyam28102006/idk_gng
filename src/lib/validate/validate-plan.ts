@@ -87,6 +87,18 @@ export function validatePlan(args: PlanValidationArgs): ValidationResult {
   }
 
   // 3. Per-hour physics + neutrality + battery bounds + directive replay.
+  // Effective solar per hour: raw solar reduced by every stacked
+  // solar_reduction directive (factors multiply — same math as the optimizer).
+  const effectiveSolar = hours.map((h) => h.solar_kwh);
+  for (const d of directives) {
+    if (!d.applies || d.directive_type !== "solar_reduction" || !d.structured_adjustment) continue;
+    const a = d.structured_adjustment as Extract<typeof d.structured_adjustment, { factor: number }>;
+    for (const hour of a.hours) {
+      if (hour < 0 || hour > 23) continue;
+      effectiveSolar[hour] = effectiveSolar[hour]! * a.factor;
+    }
+  }
+
   for (let h = 0; h < 24; h++) {
     const entry = output.hourly_plan[h]!;
     const demand = hours[h]!.demand_kwh;
@@ -100,6 +112,25 @@ export function validatePlan(args: PlanValidationArgs): ValidationResult {
         code: "balance_violation",
         hour: h,
         message: `hour ${h}: g + s + d - c - demand = ${imbalance} (|.| > ${TOL})`,
+      });
+    }
+
+    // Grid and solar must be non-negative; solar_used must not exceed the
+    // effective solar for this hour (PRD §9.4). This covers both base hours
+    // and reduction hours — the directive replay below re-checks reductions
+    // against the same effective values.
+    if (entry.grid_kwh < -TOL) {
+      violations.push({
+        code: "directive_violation",
+        hour: h,
+        message: `hour ${h}: grid_kwh=${entry.grid_kwh} < 0`,
+      });
+    }
+    if (entry.solar_used_kwh < -TOL || entry.solar_used_kwh > effectiveSolar[h]! + TOL) {
+      violations.push({
+        code: "directive_violation",
+        hour: h,
+        message: `hour ${h}: solar_used=${entry.solar_used_kwh} outside [0, effective=${effectiveSolar[h]}]`,
       });
     }
 
@@ -119,12 +150,44 @@ export function validatePlan(args: PlanValidationArgs): ValidationResult {
       });
     }
 
-    // Battery energy bounds (PRD §5.5 #5).
-    if (entry.battery_energy_after_kwh < -TOL || entry.battery_energy_after_kwh > battery.capacity_kwh + TOL) {
+    // Battery energy bounds (PRD §9.2): base minimum <= E_after <= capacity.
+    // Active minimum_battery_reserve directives raise the floor further;
+    // the directive replay below checks that raised floor.
+    if (
+      entry.battery_energy_after_kwh < battery.minimum_energy_kwh - TOL ||
+      entry.battery_energy_after_kwh > battery.capacity_kwh + TOL
+    ) {
       violations.push({
         code: "battery_bounds_violation",
         hour: h,
-        message: `hour ${h}: battery_energy_after_kwh=${entry.battery_energy_after_kwh} outside [0, ${battery.capacity_kwh}]`,
+        message: `hour ${h}: battery_energy_after_kwh=${entry.battery_energy_after_kwh} outside [${battery.minimum_energy_kwh}, ${battery.capacity_kwh}]`,
+      });
+    }
+
+    // Hourly rate limits (PRD §9.3).
+    if (entry.battery_action === "charge" && entry.battery_kwh > battery.max_charge_kwh_per_hour + TOL) {
+      violations.push({
+        code: "battery_bounds_violation",
+        hour: h,
+        message: `hour ${h}: charge=${entry.battery_kwh} > max_charge=${battery.max_charge_kwh_per_hour}`,
+      });
+    }
+    if (entry.battery_action === "discharge" && entry.battery_kwh > battery.max_discharge_kwh_per_hour + TOL) {
+      violations.push({
+        code: "battery_bounds_violation",
+        hour: h,
+        message: `hour ${h}: discharge=${entry.battery_kwh} > max_discharge=${battery.max_discharge_kwh_per_hour}`,
+      });
+    }
+
+    // SoC transition (PRD §9.1): E_after[h] = E_before + charge - discharge.
+    const eBefore = h === 0 ? battery.initial_energy_kwh : output.hourly_plan[h - 1]!.battery_energy_after_kwh;
+    const transition = entry.battery_energy_after_kwh - eBefore - charge + discharge;
+    if (Math.abs(transition) > TOL) {
+      violations.push({
+        code: "battery_bounds_violation",
+        hour: h,
+        message: `hour ${h}: soc transition drift=${transition} (|.| > ${TOL})`,
       });
     }
 
@@ -148,20 +211,10 @@ export function validatePlan(args: PlanValidationArgs): ValidationResult {
     const adj = d.structured_adjustment;
     if (!adj) continue;
 
-    if (d.directive_type === "solar_reduction") {
-      const a = adj as Extract<typeof adj, { factor: number }>;
-      for (const hour of a.hours) {
-        if (hour < 0 || hour > 23) continue;
-        const effective = hours[hour]!.solar_kwh * a.factor;
-        if (output.hourly_plan[hour]!.solar_used_kwh > effective + TOL) {
-          violations.push({
-            code: "directive_violation",
-            hour,
-            message: `solar_reduction: h=${hour} solar_used=${output.hourly_plan[hour]!.solar_used_kwh} > effective=${effective}`,
-          });
-        }
-      }
-    } else if (d.directive_type === "minimum_battery_reserve") {
+    // solar_reduction is already enforced by the per-hour effective-solar
+    // check in section 3 (stacked factors multiply, same as the optimizer),
+    // so it needs no separate replay branch here.
+    if (d.directive_type === "minimum_battery_reserve") {
       const a = adj as Extract<typeof adj, { minimum_energy_kwh: number }>;
       for (const hour of a.hours) {
         if (hour < 0 || hour > 23) continue;
