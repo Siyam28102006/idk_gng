@@ -211,13 +211,24 @@ describe("validatePlan — battery_kwh = 0 when action = idle (PRD §5.7)", () =
 describe("validatePlan — directive replay", () => {
   test("max_grid_window violated (grid_kwh > cap at active hour) → reject", () => {
     const { hours, output } = balanced24();
-    // active at h=18,19,20 with cap 20. Force h=18 to grid=999.
+    // active at h=18,19,20 with cap 20. Raise demand to 999 at h=18 and
+    // serve it from grid so balance, SoC, and totals stay consistent and
+    // only the cap rule fires.
+    hours[18]!.demand_kwh = 999;
     output.hourly_plan[18]!.grid_kwh = 999;
+    output.total_grid_kwh = round(output.total_grid_kwh - 50 + 999);
+    output.total_cost_bdt = round(output.total_cost_bdt + (999 - 50) * hours[18]!.tariff_bdt_per_kwh);
+    output.peak_grid_kwh = 999;
     const directives = [vd("max_grid_window", { hours: [18, 19, 20], max_grid_kwh: 20 })];
     const result = validatePlan({ hours, battery: battery(), directives, output });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.violations.some((v) => v.code === "directive_violation" && v.hour === 18)).toBe(true);
+    // h=18 (grid 999) plus h=19,20 (grid 50 > cap 20): all three cap hours
+    // breach, and nothing else fires — balance, SoC, and totals are consistent.
+    expect(result.violations).toHaveLength(3);
+    for (const h of [18, 19, 20]) {
+      expect(result.violations.some((v) => v.code === "directive_violation" && v.hour === h)).toBe(true);
+    }
   });
 
   test("max_grid_window respected → ok", () => {
@@ -249,33 +260,47 @@ describe("validatePlan — directive replay", () => {
   });
 
   test("no_charge_window violated (charge > 0 at active hour) → reject", () => {
-    // Force a charge at h=5 to make the test independent of any other
-    // battery activity in balanced24.
+    // Charge 10 at h=5 (grid 60, soc 110) then discharge it back at h=6
+    // (grid 40, soc 100) so balance, SoC transitions, neutrality, and
+    // totals all stay consistent and only the window rule fires.
     const { hours, output } = balanced24();
     output.hourly_plan[5]!.battery_action = "charge";
     output.hourly_plan[5]!.battery_kwh = 10;
-    // Now balance requires grid + solar + discharge - charge = demand.
-    // grid -= 10 to keep balance.
-    output.hourly_plan[5]!.grid_kwh = Math.max(0, output.hourly_plan[5]!.grid_kwh - 10);
+    output.hourly_plan[5]!.grid_kwh = 60;
+    output.hourly_plan[5]!.battery_energy_after_kwh = 110;
+    output.hourly_plan[6]!.battery_action = "discharge";
+    output.hourly_plan[6]!.battery_kwh = 10;
+    output.hourly_plan[6]!.grid_kwh = 40;
+    output.hourly_plan[6]!.battery_energy_after_kwh = 100;
+    output.peak_grid_kwh = 60;
     const directives = [vd("no_charge_window", { hours: [5] })];
     const result = validatePlan({ hours, battery: battery(), directives, output });
     expect(result.ok).toBe(false);
     if (result.ok) return;
+    expect(result.violations).toHaveLength(1);
     expect(
       result.violations.some((v) => v.code === "directive_violation" && v.hour === 5 && v.message.includes("no_charge")),
     ).toBe(true);
   });
 
   test("no_discharge_window violated (discharge > 0 at active hour) → reject", () => {
+    // Mirror of the charge fixture: discharge 10 at h=5 (grid 40, soc 90),
+    // recharge at h=6 (grid 60, soc 100). Net totals unchanged, peak 60.
     const { hours, output } = balanced24();
     output.hourly_plan[5]!.battery_action = "discharge";
     output.hourly_plan[5]!.battery_kwh = 10;
-    // Balance: grid + solar + discharge - charge = demand, so grid += 10.
-    output.hourly_plan[5]!.grid_kwh = output.hourly_plan[5]!.grid_kwh + 10;
+    output.hourly_plan[5]!.grid_kwh = 40;
+    output.hourly_plan[5]!.battery_energy_after_kwh = 90;
+    output.hourly_plan[6]!.battery_action = "charge";
+    output.hourly_plan[6]!.battery_kwh = 10;
+    output.hourly_plan[6]!.grid_kwh = 60;
+    output.hourly_plan[6]!.battery_energy_after_kwh = 100;
+    output.peak_grid_kwh = 60;
     const directives = [vd("no_discharge_window", { hours: [5] })];
     const result = validatePlan({ hours, battery: battery(), directives, output });
     expect(result.ok).toBe(false);
     if (result.ok) return;
+    expect(result.violations).toHaveLength(1);
     expect(
       result.violations.some(
         (v) => v.code === "directive_violation" && v.hour === 5 && v.message.includes("no_discharge"),
@@ -288,10 +313,15 @@ describe("validatePlan — directive replay", () => {
     hours[5]!.solar_kwh = 10;
     output.hourly_plan[5]!.solar_used_kwh = 8;
     // factor = 0.25 → effective_solar at h=5 = 2.5; solar_used=8 > 2.5.
+    // Balance needs grid = demand - solar_used = 42; shift totals by -8.
+    output.hourly_plan[5]!.grid_kwh = 42;
+    output.total_grid_kwh = round(output.total_grid_kwh - 8);
+    output.total_cost_bdt = round(output.total_cost_bdt - 8 * hours[5]!.tariff_bdt_per_kwh);
     const directives = [vd("solar_reduction", { hours: [5], factor: 0.25 })];
     const result = validatePlan({ hours, battery: battery(), directives, output });
     expect(result.ok).toBe(false);
     if (result.ok) return;
+    expect(result.violations).toHaveLength(1);
     expect(result.violations.some((v) => v.code === "directive_violation" && v.hour === 5)).toBe(true);
   });
 
@@ -551,6 +581,90 @@ describe("validatePlan — fail-closed numerics and shapes", () => {
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.violations.some((v) => v.code === "directive_violation" && v.hour === 5)).toBe(true);
+  });
+
+  test("unknown directive_type with applies=true → reject (never silently passes)", () => {
+    const { hours, output } = balanced24();
+    const directives = [
+      { note_index: 0, directive_type: "warp_drive", applies: true, structured_adjustment: { hours: [5] } },
+    ] as unknown as ValidatedDirective[];
+    const result = validatePlan({ hours, battery: battery(), directives, output });
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.violations.some((v) => v.code === "directive_violation" && v.message.includes("warp_drive"))).toBe(
+      true,
+    );
+  });
+
+  test("applies=true with null adjustment → reject (never silently skipped)", () => {
+    const { hours, output } = balanced24();
+    const directives = [
+      { note_index: 0, directive_type: "max_grid_window", applies: true, structured_adjustment: null },
+    ] as unknown as ValidatedDirective[];
+    const result = validatePlan({ hours, battery: battery(), directives, output });
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.violations.some((v) => v.code === "directive_violation")).toBe(true);
+  });
+
+  test("solar factor > 1 → reject instead of inflating the cap", () => {
+    // Raw solar 10 at h=5, solar_used=8. factor=2 would inflate effective to
+    // 20 and pass; the validator must reject the factor instead of applying it.
+    const { hours, output } = balanced24(100, 10, 100);
+    output.hourly_plan[5] = { ...output.hourly_plan[5]!, solar_used_kwh: 8, grid_kwh: 92 };
+    let total_grid = 0;
+    let total_cost = 0;
+    let peak = 0;
+    for (const e of output.hourly_plan) {
+      total_grid += e.grid_kwh;
+      total_cost += e.grid_kwh * hours[e.hour]!.tariff_bdt_per_kwh;
+      peak = Math.max(peak, e.grid_kwh);
+    }
+    output.total_grid_kwh = round(total_grid);
+    output.total_cost_bdt = round(total_cost);
+    output.peak_grid_kwh = round(peak);
+    const directives = [vd("solar_reduction", { hours: [5], factor: 2 })];
+    const result = validatePlan({ hours, battery: battery(), directives, output });
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.violations.some((v) => v.code === "directive_violation")).toBe(true);
+  });
+
+  test("negative reserve floor → reject instead of constraining nothing", () => {
+    const { hours, output } = balanced24();
+    const directives = [vd("minimum_battery_reserve", { hours: [5], minimum_energy_kwh: -999 })];
+    const result = validatePlan({ hours, battery: battery(), directives, output });
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.violations.some((v) => v.code === "directive_violation")).toBe(true);
+  });
+
+  test("null directive entry → directive_violation (never throws)", () => {
+    const { hours, output } = balanced24();
+    const directives = [null] as unknown as ValidatedDirective[];
+    let result: ReturnType<typeof validatePlan>;
+    expect(() => {
+      result = validatePlan({ hours, battery: battery(), directives, output });
+    }).not.toThrow();
+    expect(result!.ok).toBe(false);
+    if (result!.ok) return;
+    expect(result!.violations.some((v) => v.code === "directive_violation")).toBe(true);
+  });
+
+  test("non-array directives → structure_invalid (never throws)", () => {
+    const { hours, output } = balanced24();
+    let result: ReturnType<typeof validatePlan>;
+    expect(() => {
+      result = validatePlan({
+        hours,
+        battery: battery(),
+        directives: null as unknown as ValidatedDirective[],
+        output,
+      });
+    }).not.toThrow();
+    expect(result!.ok).toBe(false);
+    if (result!.ok) return;
+    expect(result!.violations.some((v) => v.code === "structure_invalid")).toBe(true);
   });
 
   test("malformed directive adjustment → directive_violation (never throws)", () => {
