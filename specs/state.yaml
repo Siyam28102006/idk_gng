@@ -7,7 +7,7 @@ vcs:
   branch: main
 handoff:
   next_skill: verify-work
-  note: "Validator-hardening merged to main as b1a91d8 (branch feat/validator-hardening retained locally). Final replay now enforces base minimum, rate limits, effective solar caps, SoC transitions; prompt has evening end-exclusive examples. Evidence: 128/128 tests green, lint+build clean, TRUE 10-pack optimizer q=1.0 with team+reference plans valid, LLM 10/10 exact semantics, E2E HTTP 200 in 2.4-3.1s. Unpushed: b1a91d8 + checkpoint 2b62dcd ahead of origin/main. External actions remain for the user: (a) git push, (b) docker build + push, (c) deploy one public service, (d) record 3-min tie-break video. Next: verify-work (full 10-case E2E sweep)."
+  note: "Santa review complete 5/5 rounds on validator hardening (branches feat/validator-hardening, -review-fixes, -round2, -round3, -round4 merged; all retained locally). Final: 142/142 tests green, lint+build clean, TRUE 10-pack q=1.0 team+reference valid. Round 5: both reviewers PASS, zero must-fix; 94% AND-gate unmet on polish-only should-fix (OOR-hour skip, hours-guard tests, substring precision) — review cap exhausted, human decision recorded as ship-as-is recommended. Unpushed commits ahead of origin/main. External actions remain for the user: (a) git push, (b) docker build + push, (c) deploy one public service, (d) record 3-min tie-break video. Next: verify-work (full 10-case E2E sweep)."
 metrics:
   story_start: "2026-09-18T16:42:30Z"
   plan_complete: "2026-09-18T22:50:00Z"
