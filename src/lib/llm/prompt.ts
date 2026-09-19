@@ -14,7 +14,7 @@ export function buildPrompt(note: string, battery: BatteryContext): string {
     '- max_grid_window {"hours":[...], "max_grid_kwh": number}: cap grid import in kWh.',
     '- no_op with null adjustment: the note is irrelevant chatter (announcements, menus, greetings), even with energy-adjacent words.',
     "",
-    "Hours are integers 0-23, ascending, start-inclusive end-exclusive: '1 PM-3 PM' -> [13,14]. Convert 12-hour clock phrases to 24-hour.",
+    "Hours are integers 0-23, ascending, start-inclusive end-exclusive: '1 PM-3 PM' -> [13,14]. The end hour is excluded but the hour BEFORE it is included: '6 PM until 10 PM' -> [18,19,20,21], '7 PM until 9 PM' -> [19,20]. Convert 12-hour clock phrases to 24-hour.",
     `Battery: capacity ${battery.capacity_kwh} kWh, initial ${battery.initial_energy_kwh} kWh, minimum ${battery.minimum_energy_kwh} kWh.`,
     "",
     "Examples:",
