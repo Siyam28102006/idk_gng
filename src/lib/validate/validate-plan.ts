@@ -117,8 +117,8 @@ export function validatePlan(args: PlanValidationArgs): ValidationResult {
 
     // Grid and solar must be non-negative; solar_used must not exceed the
     // effective solar for this hour (PRD §9.4). This covers both base hours
-    // and reduction hours — the directive replay below re-checks reductions
-    // against the same effective values.
+    // and reduction hours, so the directive replay below needs no separate
+    // solar branch.
     if (entry.grid_kwh < -TOL) {
       violations.push({
         code: "directive_violation",
