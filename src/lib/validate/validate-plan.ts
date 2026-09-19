@@ -83,6 +83,18 @@ export function validatePlan(args: PlanValidationArgs): ValidationResult {
   if (violations.length > 0) return { ok: false, violations };
 
   // 2. Totals must match hourly_plan (PRD §5.7).
+  // Same fail-closed numerics as the per-hour guard: NaN totals would sail
+  // through the Math.abs comparisons below, so reject non-finite first.
+  for (const [name, value] of [
+    ["total_grid_kwh", output.total_grid_kwh],
+    ["total_cost_bdt", output.total_cost_bdt],
+    ["peak_grid_kwh", output.peak_grid_kwh],
+  ] as const) {
+    if (!Number.isFinite(value)) {
+      violations.push({ code: "structure_invalid", message: `${name} is non-finite` });
+    }
+  }
+  if (violations.length > 0) return { ok: false, violations };
   const recomputed = recomputeTotals(output.hourly_plan, hours.map((h) => h.tariff_bdt_per_kwh));
   if (Math.abs(output.total_grid_kwh - recomputed.total_grid_kwh) > TOL) {
     violations.push({
