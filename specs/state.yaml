@@ -6,8 +6,8 @@ vcs:
   kind: git
   branch: main
 handoff:
-  next_skill: audit-code
-  note: "e06s01 verified on feat/e06-delivery (evidence: specs/verifications/e06s01-verify.yaml). 123/123 tests GREEN, lint clean, build clean. UAT: cold-start 98ms, /health 200, harness GET / 27 KB with all 13 sections, error contracts (400/422/500) all honored in <1s. External actions remain for the user: (a) build + push Docker image, (b) deploy one public service, (c) record 3-min tie-break video. Next: audit-code."
+  next_skill: survey-context
+  note: "Release complete: e06s01 squash-merged onto main as a8d0ff9 (feat(delivery): README + Dockerfile + .dockerignore + UI harness), archive commit d370f8b pushed to remote https://github.com/Siyam28102006/idk_gng.git. All 12 stories done (e01s01–e06s01); execution-status.yaml shows every entry done. Worktree /home/thespd/Work/feat-e06-delivery pruned; feat/e06-delivery branch retained locally (matches prior solo pattern). CI: no .github/workflows configured for this project, so no Actions run — git-only fallback applies. External actions remain for the user (not blockers for code release): (a) docker build + push, (b) deploy one public service, (c) record 3-min tie-break video. Next: survey-context."
 metrics:
   story_start: "2026-09-18T16:42:30Z"
   plan_complete: "2026-09-18T22:50:00Z"
@@ -18,5 +18,7 @@ metrics:
   commit_message_drafted: "2026-09-18T23:42:00Z"
   release_complete: "2026-09-18T23:55:00Z"
 release:
-  main_sha: "63c3874"
-  branch_kept_locally: "feat/e03-e04-e05-optimizer"
+  main_sha: "d370f8b"
+  branch_kept_locally: "feat/e06-delivery"
+  ci_verified: false
+  ci_note: "no .github/workflows configured; git-only fallback — push landed (d370f8b on https://github.com/Siyam28102006/idk_gng.git main), CI status not applicable."
