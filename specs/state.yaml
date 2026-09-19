@@ -6,8 +6,8 @@ vcs:
   kind: git
   branch: main
 handoff:
-  next_skill: survey-context
-  note: "Release complete: e06s01 squash-merged onto main as a8d0ff9 (feat(delivery): README + Dockerfile + .dockerignore + UI harness), archive commit d370f8b pushed to remote https://github.com/Siyam28102006/idk_gng.git. All 12 stories done (e01s01–e06s01); execution-status.yaml shows every entry done. Worktree /home/thespd/Work/feat-e06-delivery pruned; feat/e06-delivery branch retained locally (matches prior solo pattern). CI: no .github/workflows configured for this project, so no Actions run — git-only fallback applies. External actions remain for the user (not blockers for code release): (a) docker build + push, (b) deploy one public service, (c) record 3-min tie-break video. Next: survey-context."
+  next_skill: verify-work
+  note: "Validator-hardening merged to main as b1a91d8 (branch feat/validator-hardening retained locally). Final replay now enforces base minimum, rate limits, effective solar caps, SoC transitions; prompt has evening end-exclusive examples. Evidence: 128/128 tests green, lint+build clean, TRUE 10-pack optimizer q=1.0 with team+reference plans valid, LLM 10/10 exact semantics, E2E HTTP 200 in 2.4-3.1s. Unpushed: b1a91d8 + checkpoint 2b62dcd ahead of origin/main. External actions remain for the user: (a) git push, (b) docker build + push, (c) deploy one public service, (d) record 3-min tie-break video. Next: verify-work (full 10-case E2E sweep)."
 metrics:
   story_start: "2026-09-18T16:42:30Z"
   plan_complete: "2026-09-18T22:50:00Z"
