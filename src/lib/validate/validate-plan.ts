@@ -42,11 +42,22 @@ export type ValidationResult =
   | { ok: false; violations: Violation[] };
 
 export function validatePlan(args: PlanValidationArgs): ValidationResult {
-  // Precondition: hours is ascending 0-23 (the route sorts before calling).
-  // hourly_plan order IS validated below; hours order is trusted from the
-  // route, matching the optimizer's own precondition in build-lp.ts.
+  // Precondition: hours is ascending 0-23 with length 24 (the route sorts
+  // before calling; values are zod-validated finite at the route boundary).
+  // hourly_plan order IS validated below; hours order/values are trusted
+  // from the route, matching the optimizer's own precondition in build-lp.ts.
+  // Directives are guardrail-constructed, but every dereference below is
+  // still guarded: a malformed directive yields a violation, never a throw.
   const { hours, battery, directives, output } = args;
   const violations: Violation[] = [];
+  if (!Array.isArray(hours) || hours.length !== 24) {
+    violations.push({ code: "structure_invalid", message: `hours must have length 24` });
+    return { ok: false, violations };
+  }
+  if (!Array.isArray(directives)) {
+    violations.push({ code: "structure_invalid", message: `directives must be an array` });
+    return { ok: false, violations };
+  }
 
   // Fail-closed shape helpers: directives arrive via validateGuardrails, but
   // the validator must never throw on a malformed adjustment — it must
@@ -125,10 +136,17 @@ export function validatePlan(args: PlanValidationArgs): ValidationResult {
   // solar_reduction directive (factors multiply — same math as the optimizer).
   const effectiveSolar = hours.map((h) => h.solar_kwh);
   for (const d of directives) {
+    if (typeof d !== "object" || d === null) {
+      violations.push({ code: "directive_violation", message: `malformed directive entry` });
+      continue;
+    }
     if (!d.applies || d.directive_type !== "solar_reduction" || !d.structured_adjustment) continue;
     const hrs = adjHours(d.structured_adjustment);
     const factor = adjFinite(d.structured_adjustment, "factor");
-    if (hrs === null || factor === null) {
+    // Range-mirror of the guardrail (factor_out_of_range): an out-of-range
+    // factor must never be *applied* — factor > 1 would inflate the cap and
+    // fail open, so reject before multiplying.
+    if (hrs === null || factor === null || factor < 0 || factor > 1) {
       violations.push({
         code: "directive_violation",
         message: `solar_reduction: malformed structured_adjustment`,
@@ -196,9 +214,17 @@ export function validatePlan(args: PlanValidationArgs): ValidationResult {
       });
     }
     // Solar_used must be within [0, effective] for this hour (PRD §9.4).
-    // This covers both base hours and reduction hours, so the directive
-    // replay below needs no separate solar branch.
-    if (entry.solar_used_kwh < -TOL || entry.solar_used_kwh > effectiveSolar[h]! + TOL) {
+    // Negativity is base physics (structure_invalid, like grid<0); exceeding
+    // the effective cap is directive-related (the cap derives from
+    // solar_reduction directives). This covers both base hours and reduction
+    // hours, so the directive replay below needs no separate solar branch.
+    if (entry.solar_used_kwh < -TOL) {
+      violations.push({
+        code: "structure_invalid",
+        hour: h,
+        message: `hour ${h}: solar_used_kwh=${entry.solar_used_kwh} < 0`,
+      });
+    } else if (entry.solar_used_kwh > effectiveSolar[h]! + TOL) {
       violations.push({
         code: "directive_violation",
         hour: h,
@@ -287,9 +313,21 @@ export function validatePlan(args: PlanValidationArgs): ValidationResult {
   // violation codes are aggregated under "directive_violation" with the
   // specific message naming the directive + hour.
   for (const d of directives) {
+    if (typeof d !== "object" || d === null) {
+      violations.push({ code: "directive_violation", message: `malformed directive entry` });
+      continue;
+    }
     if (!d.applies || d.directive_type === "no_op") continue;
+    // applies=true requires a well-formed adjustment (guardrail invariant);
+    // a missing one is a violation, not a silent skip.
     const adj = d.structured_adjustment;
-    if (!adj) continue;
+    if (!adj) {
+      violations.push({
+        code: "directive_violation",
+        message: `${d.directive_type}: applies=true with null structured_adjustment`,
+      });
+      continue;
+    }
 
     // solar_reduction is already enforced by the per-hour effective-solar
     // check in section 3 (stacked factors multiply, same as the optimizer),
@@ -304,9 +342,14 @@ export function validatePlan(args: PlanValidationArgs): ValidationResult {
       });
       continue;
     }
-    if (d.directive_type === "minimum_battery_reserve") {
+    if (d.directive_type === "solar_reduction") {
+      continue;
+    } else if (d.directive_type === "minimum_battery_reserve") {
       const floor = adjFinite(adj, "minimum_energy_kwh");
-      if (floor === null) {
+      // Range-mirror of the guardrail (reserve_out_of_bounds): a negative
+      // floor constrains nothing and an over-capacity floor is unsatisfiable
+      // as stated — reject instead of applying either.
+      if (floor === null || floor < 0 || floor > battery.capacity_kwh) {
         violations.push({
           code: "directive_violation",
           message: `minimum_battery_reserve: malformed minimum_energy_kwh`,
@@ -347,7 +390,9 @@ export function validatePlan(args: PlanValidationArgs): ValidationResult {
       }
     } else if (d.directive_type === "max_grid_window") {
       const cap = adjFinite(adj, "max_grid_kwh");
-      if (cap === null) {
+      // Range-mirror of the guardrail (cap_negative): a negative cap would
+      // reject every feasible plan as stated — flag instead of applying.
+      if (cap === null || cap < 0) {
         violations.push({
           code: "directive_violation",
           message: `max_grid_window: malformed max_grid_kwh`,
@@ -364,6 +409,14 @@ export function validatePlan(args: PlanValidationArgs): ValidationResult {
           });
         }
       }
+    } else {
+      // No seventh directive type exists: an unknown active type invents a
+      // constraint the optimizer never saw, so it can never be satisfied as
+      // stated. Fail closed instead of silently passing.
+      violations.push({
+        code: "directive_violation",
+        message: `unknown directive_type=${String((d as { directive_type?: unknown }).directive_type)}`,
+      });
     }
   }
 
