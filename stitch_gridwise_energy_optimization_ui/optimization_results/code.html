@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "primary-fixed": "#6ffbbe", "on-primary-fixed-variant": "#005236", "secondary-fixed-dim": "#ffb95f", "primary-fixed-dim": "#4edea3", "on-error": "#690005", "surface-container-lowest": "#0a0e16", "surface-container-highest": "#31353e", "on-primary-container": "#00422b", "error": "#ffb4ab", "inverse-on-surface": "#2c3039", "on-surface-variant": "#bbcabf", "on-error-container": "#ffdad6", "on-background": "#dfe2ee", "surface": "#0f131c", "tertiary-container": "#19aee8", "inverse-primary": "#006c49", "on-secondary": "#472a00", "surface-variant": "#31353e", "primary": "#4edea3", "on-primary": "#003824", "inverse-surface": "#dfe2ee", "error-container": "#93000a", "on-secondary-fixed-variant": "#653e00", "surface-dim": "#0f131c", "surface-container-low": "#181c24", "on-tertiary-container": "#003e55", "on-tertiary-fixed-variant": "#004c69", "tertiary-fixed-dim": "#7bd0ff", "secondary-fixed": "#ffddb8", "surface-container-high": "#262a33", "surface-tint": "#4edea3", "on-tertiary": "#00354a", "surface-bright": "#353942", "tertiary": "#7bd0ff", "on-secondary-fixed": "#2a1700", "secondary-container": "#ee9800", "primary-container": "#10b981", "on-secondary-container": "#5b3800", "tertiary-fixed": "#c4e7ff", "secondary": "#ffb95f", "on-tertiary-fixed": "#001e2c", "on-surface": "#dfe2ee", "outline": "#86948a", "on-primary-fixed": "#002113", "surface-container": "#1c2028", "outline-variant": "#3c4a42", "background": "#0f131c" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-xl": "2.25rem", "gutter": "1rem", "space-lg": "1.5rem", "space-sm": "0.5rem", "margin": "1rem", "space-md": "1rem", "space-xs": "0.25rem", "gutter-desktop": "1.25rem", "margin-desktop": "2rem" }, "fontFamily": { "code-badge": [ "JetBrains Mono" ], "headline-lg": [ "Plus Jakarta Sans" ], "headline-xl": [ "Plus Jakarta Sans" ], "metric-hero": [ "JetBrains Mono" ], "headline-sm": [ "Plus Jakarta Sans" ], "body-sm": [ "Inter" ], "label-caps": [ "Inter" ], "body-md": [ "Inter" ], "headline-xl-mobile": [ "Plus Jakarta Sans" ], "headline-md": [ "Plus Jakarta Sans" ], "metric-md": [ "JetBrains Mono" ], "metric-hero-mobile": [ "JetBrains Mono" ], "body-lg": [ "Inter" ], "metric-lg": [ "JetBrains Mono" ] }, "fontSize": { "code-badge": [ "11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" } ], "headline-lg": [ "24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" } ], "headline-xl": [ "36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "metric-hero": [ "32px", { "lineHeight": "38px", "letterSpacing": "-0.03em", "fontWeight": "600" } ], "headline-sm": [ "15px", { "lineHeight": "22px", "letterSpacing": "-0.005em", "fontWeight": "600" } ], "body-sm": [ "13px", { "lineHeight": "18px", "fontWeight": "400" } ], "label-caps": [ "11px", { "lineHeight": "16px", "letterSpacing": "0.06em", "fontWeight": "600" } ], "body-md": [ "14px", { "lineHeight": "20px", "fontWeight": "400" } ], "headline-xl-mobile": [ "28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "headline-md": [ "18px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "metric-md": [ "14px", { "lineHeight": "20px", "letterSpacing": "-0.01em", "fontWeight": "500" } ], "metric-hero-mobile": [ "24px", { "lineHeight": "30px", "letterSpacing": "-0.02em", "fontWeight": "600" } ], "body-lg": [ "16px", { "lineHeight": "24px", "fontWeight": "400" } ], "metric-lg": [ "20px", { "lineHeight": "28px", "letterSpacing": "-0.02em", "fontWeight": "500" } ] } } } };</script></head><body class="bg-background font-body-md text-on-surface antialiased min-h-screen"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.4)] z-50 flex flex-col justify-between pt-4 pb-6"><div class="flex flex-col gap-4"><div class="px-space-md flex items-center justify-between"><span class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider">Grid Topologies</span><span class="font-code-badge text-code-badge text-primary bg-surface-container-high px-space-xs py-0.5 rounded">ONLINE</span></div><nav class="flex flex-col gap-1 px-space-sm" data-active-classes="bg-surface-container-high text-primary font-semibold"><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="scenario-builder" href="#"><span class="material-symbols-outlined text-[18px]">edit_note</span><span class="font-body-sm text-body-sm">Scenario Builder</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="run-in-progress" href="#"><span class="material-symbols-outlined text-[18px]">cycle</span><span class="font-body-sm text-body-sm">Run in Progress</span></a><a aria-current="page" class="flex items-center gap-space-sm px-space-md py-2.5 rounded transition-all bg-surface-container-high text-primary font-semibold" data-path="optimization-results" href="#"><span class="material-symbols-outlined text-[18px]">analytics</span><span class="font-body-sm text-body-sm">Optimization Results</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="grid-telemetry" href="#"><span class="material-symbols-outlined text-[18px]">speed</span><span class="font-body-sm text-body-sm">Grid Telemetry</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="directive-logs" href="#"><span class="material-symbols-outlined text-[18px]">list_alt</span><span class="font-body-sm text-body-sm">Directive History</span></a></nav></div><div class="px-space-md flex flex-col gap-2"><div class="p-space-sm rounded bg-surface-container-low flex flex-col gap-1"><div class="flex items-center justify-between text-on-surface-variant"><span class="font-label-caps text-label-caps uppercase">MILP Substation</span><span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span></div><span class="font-metric-md text-metric-md text-on-surface">Node 04 • BUP Hub</span><span class="font-code-badge text-code-badge text-on-surface-variant">Capacity: 1.42 MW</span></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 z-40 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.3)]"><div class="h-16 w-full px-space-md flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md min-w-0"><div class="flex items-center gap-space-sm flex-shrink-0"><img alt="GridWise Logo Mark" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UvTt3dMiUVGrRVuRP8kYrSN3KMnvRAdx60kyyIzoAGXkfSfP1BTs7MwZvUG2mUgfeY7FEEHCPQezpoliKRc93ejVD6NJoULhN2ar45ve26_O6ALKypsSfG5QoK5c4-4SR2nD6xyybNqYahc0DJ3D6rNev_GTXz3i-VEyYNbjih-a1Tvm4rIEK30t1C2RZbKsENuACPG1Quk1yemTQ9Nnm9f4bTTB2QO7kinNdMsmIYELnjwHwjwgUvjzY"/><span class="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight">GridWise</span></div><span class="hidden lg:inline-flex font-code-badge text-code-badge px-space-sm py-0.5 rounded bg-surface-container-high text-on-surface-variant uppercase">v1.2-beta • BUP Smart Campus</span><div class="hidden xl:flex items-center gap-1.5 font-code-badge text-code-badge text-on-surface-variant bg-surface-container-low px-space-sm py-1 rounded"><span class="w-2 h-2 rounded-full bg-primary flex-shrink-0"></span><span>API Gateway: Connected (200 OK)</span></div></div><nav class="hidden md:flex items-center gap-1 bg-surface-container-lowest p-1 rounded" data-active-classes="bg-surface-container-high text-primary font-semibold rounded"><a class="px-space-md py-1.5 text-on-surface-variant font-body-sm text-body-sm hover:text-on-surface transition-colors" data-path="scenario-builder" href="#">Scenario Builder</a><a class="px-space-md py-1.5 text-on-surface-variant font-body-sm text-body-sm hover:text-on-surface transition-colors" data-path="run-in-progress" href="#">Run in Progress</a><a aria-current="page" class="px-space-md py-1.5 transition-colors bg-surface-container-high text-primary font-semibold rounded" data-path="optimization-results" href="#">Optimization Results</a></nav><div class="flex items-center gap-space-md flex-shrink-0"><button class="hidden sm:flex items-center gap-space-xs font-code-badge text-code-badge px-space-sm py-1.5 rounded bg-surface-container-low text-on-surface hover:bg-surface-container-high hover:text-on-surface transition-colors" type="button"><span class="text-secondary">Case:</span><span>SAMPLE-07 Multi-Directive</span><span class="material-symbols-outlined text-[14px] text-on-surface-variant">arrow_drop_down</span></button><div class="hidden 2xl:flex items-center gap-1 font-code-badge text-code-badge bg-surface-container-high text-primary px-space-sm py-1 rounded"><span class="text-on-surface-variant">POST</span><span>/optimize-energy</span></div><a class="hidden lg:flex items-center font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="documentation" href="#">Docs</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 pb-12 bg-background min-h-screen px-space-md lg:px-margin-desktop"><div class="flex flex-col w-full gap-space-lg">
+<!-- Top Operational Banner -->
+<div class="relative overflow-hidden bg-surface-container-low rounded-lg p-space-md shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-space-sm" id="opt-banner">
+<div class="flex items-center gap-space-md">
+<div class="w-2.5 h-2.5 rounded-full bg-primary animate-ping"></div>
+<div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-space-sm">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Optimization Run Complete</span>
+<span class="text-outline-variant hidden sm:inline">•</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Feasible &amp; Optimal Schedule Verified (HiGHS solve time: <strong class="font-code-badge text-primary">3.84s</strong>, SLA p95 compliant)</span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm self-end md:self-auto">
+<span class="font-code-badge text-code-badge bg-surface-container-highest text-primary-fixed px-space-xs py-0.5 rounded">STATUS: OPTIMAL_200</span>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors p-1" onclick="document.getElementById('opt-banner').remove()" title="Dismiss banner">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</div>
+<!-- Primary Scenario Header & Actions -->
+<div class="flex flex-col xl:flex-row xl:items-center justify-between gap-space-md pb-space-sm">
+<div class="flex flex-col gap-1.5">
+<div class="flex flex-wrap items-center gap-space-sm">
+<h1 class="font-headline-xl text-headline-xl text-on-surface font-bold tracking-tight">Optimization Results</h1>
+<span class="font-code-badge text-code-badge bg-surface-container-high text-tertiary px-space-sm py-1 rounded">SCENARIO-CAMPUS-2026-0314</span>
+<span class="font-code-badge text-code-badge bg-surface-container-lowest text-on-surface-variant px-space-sm py-1 rounded">MILP HighS v1.6.0</span>
+</div>
+<div class="flex flex-wrap items-center gap-2 font-body-sm text-body-sm text-on-surface-variant">
+<span>Dual Pipeline: <span class="text-on-surface font-medium">GPT-4o-mini (Directive Parser)</span> + <span class="text-primary font-medium">Deterministic Guardrail Engine</span></span>
+<span class="text-outline-variant">•</span>
+<span>Horizon: <strong class="font-code-badge text-on-surface">24h Dispatch (t0: 00:00 → t23: 23:00)</strong></span>
+</div>
+</div>
+<!-- Top-Right Action Controls -->
+<div class="flex flex-wrap items-center gap-space-sm">
+<button class="flex items-center gap-1.5 px-space-md py-2 rounded bg-surface-container-high hover:bg-surface-bright text-on-surface font-body-sm text-body-sm transition-all shadow-sm" onclick="this.classList.add('opacity-70'); setTimeout(()=&gt;this.classList.remove('opacity-70'), 600);" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary">replay</span>
+<span>Run Again</span>
+</button>
+<button class="flex items-center gap-1.5 px-space-md py-2 rounded bg-surface-container-high hover:bg-surface-bright text-on-surface font-body-sm text-body-sm transition-all shadow-sm" id="copy-json-btn" onclick="const btn = document.getElementById('copy-json-btn'); const orig = btn.innerHTML; btn.innerHTML='&lt;span class=\'material-symbols-outlined text-[16px] text-primary\'&gt;done&lt;/span&gt; Copied!'; setTimeout(()=&gt;btn.innerHTML=orig, 2000);" type="button">
+<span class="material-symbols-outlined text-[16px] text-tertiary">data_object</span>
+<span>Copy JSON</span>
+</button>
+<button class="flex items-center gap-1.5 px-space-md py-2 rounded bg-surface-container-high hover:bg-surface-bright text-on-surface font-body-sm text-body-sm transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined text-[16px] text-secondary">download</span>
+<span>Export CSV</span>
+</button>
+<button class="flex items-center gap-1.5 px-space-md py-2 rounded bg-primary hover:bg-primary-container text-on-primary font-semibold font-body-sm text-body-sm transition-all shadow-md" type="button">
+<span class="material-symbols-outlined text-[16px]">share</span>
+<span>Share Report</span>
+</button>
+</div>
+</div>
+<!-- KPI Cards Grid (3 Columns) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter-desktop">
+<!-- Card 1: Total Grid Import -->
+<div class="relative bg-surface-container-low rounded-lg p-space-md shadow-md flex flex-col justify-between gap-space-md overflow-hidden">
+<div class="flex items-start justify-between">
+<div class="flex flex-col gap-1">
+<span class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">Total Grid Import</span>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="font-metric-hero text-metric-hero font-semibold text-on-surface">642.50</span>
+<span class="font-metric-md text-metric-md text-tertiary">kWh</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[22px]">grid_goldenratio</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-xs">
+<div class="flex items-center gap-1 font-body-sm text-body-sm text-primary">
+<span class="material-symbols-outlined text-[16px]">trending_down</span>
+<span class="font-code-badge font-bold">-28.4%</span>
+<span class="text-on-surface-variant text-[12px]">vs baseline (897 kWh)</span>
+</div>
+<svg class="w-20 h-6 text-tertiary" fill="none" viewbox="0 0 80 24">
+<path d="M0 20 L15 16 L30 18 L45 8 L60 12 L75 4 L80 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<!-- Card 2: Total Cost -->
+<div class="relative bg-surface-container-low rounded-lg p-space-md shadow-md flex flex-col justify-between gap-space-md overflow-hidden">
+<div class="flex items-start justify-between">
+<div class="flex flex-col gap-1">
+<span class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">Total Optimization Cost</span>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="font-metric-hero text-metric-hero font-semibold text-primary">5,418.25</span>
+<span class="font-metric-md text-metric-md text-primary-fixed-dim">BDT</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[22px]">savings</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-xs">
+<div class="flex items-center gap-1 font-body-sm text-body-sm text-primary">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+<span class="font-code-badge font-bold">Saved 2,145.50 BDT</span>
+<span class="text-on-surface-variant text-[12px]">• Quality: 1.00</span>
+</div>
+<svg class="w-20 h-6 text-primary" fill="none" viewbox="0 0 80 24">
+<path d="M0 22 L20 18 L35 14 L50 9 L65 7 L80 3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<!-- Card 3: Peak Grid Draw -->
+<div class="relative bg-surface-container-low rounded-lg p-space-md shadow-md flex flex-col justify-between gap-space-md overflow-hidden">
+<div class="flex items-start justify-between">
+<div class="flex flex-col gap-1">
+<span class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">Peak Grid Draw</span>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="font-metric-hero text-metric-hero font-semibold text-secondary">42.00</span>
+<span class="font-metric-md text-metric-md text-secondary-fixed-dim">kWh</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[22px]">bolt</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-xs">
+<div class="flex items-center gap-1 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-secondary">schedule</span>
+<span>Peak capped at <strong class="text-on-surface font-code-badge">19:00</strong> (Evening tariff avoided)</span>
+</div>
+<svg class="w-20 h-6 text-secondary" fill="none" viewbox="0 0 80 24">
+<path d="M0 18 L18 19 L36 12 L54 6 L64 6 L80 16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+</div>
+<!-- Operational Context Panel with Realistic Campus Facility Image -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-desktop bg-surface-container-low rounded-lg p-space-md shadow-md items-center">
+<div class="lg:col-span-4 relative rounded overflow-hidden h-36 bg-surface-container-lowest">
+<img class="w-full h-full object-cover" data-alt="Modern university rooftop array of photovoltaic solar panels basking under afternoon sunlight with smart microgrid battery inverters installed alongside high-tech monitoring telecommunication antennas in a clean architectural campus setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAw3Yt-dFhsnhlhrQMqZiD_1MDyU8edusav2OnBU28lTUdXExrkYMRRjqM9K-m1-YkFgeYaWufsxdhQWu3G2UjIfpj3kVDTcHiPeNTE5m6gMTFp1AKFuyuqs7QqJZPJZa10YzIFW29-hXgQ0ehel6LZjNPILOI7N82i7_IX9jptpa-lNclaPURKmCcoVjoMwL9UgrL6JUbk6XFLBouqTPDs_DDE1F196_1Bf_tNsyzPrG3FjhwDUl75"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent"></div>
+<div class="absolute bottom-2 left-2 flex items-center gap-1 bg-surface-container-lowest/90 px-space-xs py-0.5 rounded">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="font-code-badge text-code-badge text-on-surface">BUP Hub • 250 kW Rooftop Array</span>
+</div>
+</div>
+<div class="lg:col-span-8 flex flex-col justify-center gap-2">
+<div class="flex items-center gap-2">
+<span class="font-code-badge text-code-badge bg-surface-container-high text-primary px-space-xs py-0.5 rounded">DISPATCH STRATEGY</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Dynamic MILP Constraint Enforcement</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface leading-relaxed">
+        The optimizer scheduled pre-charging during off-peak morning hours (<strong class="font-code-badge text-tertiary">02:00–06:00</strong>) using low tariff grid power and prioritized direct solar consumption during mid-day peak yield. Solar export constraints were deterministically applied during the maintenance interval, with battery reserves elevated to protect campus events.
+      </p>
+</div>
+</div>
+<!-- Directive Interpretation Section -->
+<div class="flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[20px] text-primary">rule</span>
+<h2 class="font-headline-md text-headline-md text-on-surface font-bold">Directive Interpretation (LLM → Deterministic Guardrails)</h2>
+</div>
+<span class="font-code-badge text-code-badge text-on-surface-variant bg-surface-container-low px-space-sm py-1 rounded">3 directives evaluated • 2 enforced • 1 no-op</span>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter-desktop">
+<!-- Directive 1: Solar Reduction -->
+<div class="bg-surface-container-low rounded-lg p-space-md shadow-md flex flex-col justify-between gap-space-md transition-all hover:bg-surface-container">
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="inline-flex items-center gap-1.5 px-space-sm py-0.5 rounded-full bg-surface-container-high font-code-badge text-code-badge text-primary">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+              APPLIED
+            </span>
+<span class="font-code-badge text-code-badge bg-surface-container-highest text-secondary px-space-xs py-0.5 rounded">solar_reduction</span>
+</div>
+<div class="p-space-sm bg-surface-container-lowest rounded font-body-sm text-body-sm text-on-surface-variant italic">
+            “PV production will drop by 80% between 13:00 and 15:00 due to rooftop panel washing maintenance.”
+          </div>
+<div class="flex flex-wrap gap-1.5">
+<span class="font-code-badge text-code-badge bg-surface-container-high text-on-surface px-space-xs py-0.5 rounded">hours: [13, 14]</span>
+<span class="font-code-badge text-code-badge bg-surface-container-high text-secondary px-space-xs py-0.5 rounded">factor: 0.20</span>
+<span class="font-code-badge text-code-badge bg-surface-container-high text-on-surface-variant px-space-xs py-0.5 rounded">usable_solar: 20%</span>
+</div>
+</div>
+<div class="pt-space-xs">
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Deterministic rule capped solar availability to <strong class="text-secondary font-code-badge">20%</strong> during maintenance window hours 13 and 14.
+          </p>
+</div>
+</div>
+<!-- Directive 2: Battery Reserve -->
+<div class="bg-surface-container-low rounded-lg p-space-md shadow-md flex flex-col justify-between gap-space-md transition-all hover:bg-surface-container">
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="inline-flex items-center gap-1.5 px-space-sm py-0.5 rounded-full bg-surface-container-high font-code-badge text-code-badge text-primary">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+              APPLIED
+            </span>
+<span class="font-code-badge text-code-badge bg-surface-container-highest text-tertiary px-space-xs py-0.5 rounded">minimum_battery_reserve</span>
+</div>
+<div class="p-space-sm bg-surface-container-lowest rounded font-body-sm text-body-sm text-on-surface-variant italic">
+            “Keep battery reserve at minimum 50 kWh between 17:00 and 21:00 for evening campus auditorium event.”
+          </div>
+<div class="flex flex-wrap gap-1.5">
+<span class="font-code-badge text-code-badge bg-surface-container-high text-on-surface px-space-xs py-0.5 rounded">hours: [17, 18, 19, 20]</span>
+<span class="font-code-badge text-code-badge bg-surface-container-high text-tertiary px-space-xs py-0.5 rounded">minimum_energy: 50.0 kWh</span>
+</div>
+</div>
+<div class="pt-space-xs">
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Battery floor temporarily elevated from default 15 kWh to <strong class="text-tertiary font-code-badge">50.0 kWh</strong> during peak event hours.
+          </p>
+</div>
+</div>
+<!-- Directive 3: Distractor / No-op -->
+<div class="bg-surface-container-low rounded-lg p-space-md shadow-md flex flex-col justify-between gap-space-md opacity-85 hover:opacity-100 transition-all hover:bg-surface-container">
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="inline-flex items-center gap-1.5 px-space-sm py-0.5 rounded-full bg-surface-container-high font-code-badge text-code-badge text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+              NO-OP
+            </span>
+<span class="font-code-badge text-code-badge bg-surface-container-highest text-on-surface-variant px-space-xs py-0.5 rounded">culinary_event_ignore</span>
+</div>
+<div class="p-space-sm bg-surface-container-lowest rounded font-body-sm text-body-sm text-on-surface-variant italic">
+            “Cafeteria menu changes tomorrow morning — chef requested breakfast delivery at 7 AM.”
+          </div>
+<div class="flex flex-wrap gap-1.5">
+<span class="font-code-badge text-code-badge bg-surface-container-high text-on-surface-variant px-space-xs py-0.5 rounded">structured_adjustment: null</span>
+<span class="font-code-badge text-code-badge bg-surface-container-high text-on-surface-variant px-space-xs py-0.5 rounded">applies: false</span>
+</div>
+</div>
+<div class="pt-space-xs">
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Campus culinary announcement does not constrain mathematical dispatch, energy tariffs, or battery state.
+          </p>
+</div>
+</div>
+</div>
+</div>
+<!-- 24-Hour Dispatch Plan Visualization -->
+<div class="bg-surface-container-low rounded-lg p-space-md shadow-md flex flex-col gap-space-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[20px] text-tertiary">stacked_line_chart</span>
+<h2 class="font-headline-md text-headline-md text-on-surface font-bold">24-Hour Dispatch Plan</h2>
+</div>
+<!-- Legend -->
+<div class="flex flex-wrap items-center gap-space-md font-code-badge text-code-badge text-on-surface-variant">
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded bg-secondary"></span>
+<span>Solar Used</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded bg-tertiary"></span>
+<span>Grid Import</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded bg-primary-container"></span>
+<span>Battery Charge (+)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded bg-surface-container-highest"></span>
+<span>Battery Discharge (-)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-4 h-0.5 bg-primary"></span>
+<span class="text-primary font-bold">Battery SoC Line</span>
+</div>
+</div>
+</div>
+<!-- SVG Energy Chart -->
+<div class="w-full overflow-x-auto">
+<div class="min-w-[760px] w-full h-80 relative flex items-center justify-center">
+<svg class="w-full h-full text-on-surface overflow-visible" preserveaspectratio="none" viewbox="0 0 960 320">
+<defs>
+<lineargradient id="socGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#4edea3" stop-opacity="0.25"></stop>
+<stop offset="100%" stop-color="#4edea3" stop-opacity="0.0"></stop>
+</lineargradient>
+<pattern height="4" id="hatchPattern" patternunits="userSpaceOnUse" width="4">
+<path d="M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2" opacity="0.6" stroke="#10b981" stroke-width="1"></path>
+</pattern>
+</defs>
+<!-- Horizontal Grid Lines -->
+<line stroke="#31353e" stroke-dasharray="2 2" stroke-width="1" x1="40" x2="940" y1="40" y2="40"></line>
+<line stroke="#31353e" stroke-dasharray="2 2" stroke-width="1" x1="40" x2="940" y1="100" y2="100"></line>
+<line stroke="#31353e" stroke-dasharray="2 2" stroke-width="1" x1="40" x2="940" y1="160" y2="160"></line>
+<line stroke="#31353e" stroke-dasharray="2 2" stroke-width="1" x1="40" x2="940" y1="220" y2="220"></line>
+<line stroke="#3c4a42" stroke-width="1.5" x1="40" x2="940" y1="270" y2="270"></line>
+<!-- Y-Axis Labels Left (Energy Dispatch kWh) -->
+<text fill="#bbcabf" font-family="JetBrains Mono" font-size="10" text-anchor="end" x="32" y="44">100 kW</text>
+<text fill="#bbcabf" font-family="JetBrains Mono" font-size="10" text-anchor="end" x="32" y="104">75 kW</text>
+<text fill="#bbcabf" font-family="JetBrains Mono" font-size="10" text-anchor="end" x="32" y="164">50 kW</text>
+<text fill="#bbcabf" font-family="JetBrains Mono" font-size="10" text-anchor="end" x="32" y="224">25 kW</text>
+<text fill="#bbcabf" font-family="JetBrains Mono" font-size="10" text-anchor="end" x="32" y="274">0 kW</text>
+<!-- Maintenance Highlight Window (h13-h14) -->
+<rect fill="#ee9800" fill-opacity="0.08" height="230" rx="2" width="75" x="532" y="40"></rect>
+<text fill="#ffb95f" font-family="JetBrains Mono" font-size="10" font-weight="600" text-anchor="middle" x="570" y="32">DIR 1: WASHING</text>
+<!-- Reserve Event Highlight Window (h17-h20) -->
+<rect fill="#7bd0ff" fill-opacity="0.08" height="230" rx="2" width="150" x="682" y="40"></rect>
+<text fill="#7bd0ff" font-family="JetBrains Mono" font-size="10" font-weight="600" text-anchor="middle" x="757" y="32">DIR 2: ≥50 kWh RESERVE</text>
+<line stroke="#7bd0ff" stroke-dasharray="4 2" stroke-width="1.5" x1="682" x2="832" y1="160" y2="160"></line>
+<!-- 24 Hourly Stacked Bars -->
+<!-- 00:00 -->
+<rect fill="#7bd0ff" fill-opacity="0.75" height="45" rx="1" width="28" x="45" y="225"></rect>
+<!-- 01:00 -->
+<rect fill="#7bd0ff" fill-opacity="0.75" height="35" rx="1" width="28" x="82.5" y="235"></rect>
+<!-- 02:00 Precharge battery from grid -->
+<rect fill="#7bd0ff" fill-opacity="0.75" height="45" rx="1" width="28" x="120" y="200"></rect>
+<rect fill="#10b981" height="25" rx="1" width="28" x="120" y="175"></rect>
+<!-- 03:00 Precharge -->
+<rect fill="#7bd0ff" fill-opacity="0.75" height="40" rx="1" width="28" x="157.5" y="205"></rect>
+<rect fill="#10b981" height="25" rx="1" width="28" x="157.5" y="180"></rect>
+<!-- 04:00 Precharge -->
+<rect fill="#7bd0ff" fill-opacity="0.75" height="40" rx="1" width="28" x="195" y="205"></rect>
+<rect fill="#10b981" height="20" rx="1" width="28" x="195" y="185"></rect>
+<!-- 05:00 -->
+<rect fill="#7bd0ff" fill-opacity="0.75" height="50" rx="1" width="28" x="232.5" y="220"></rect>
+<!-- 06:00 -->
+<rect fill="#7bd0ff" fill-opacity="0.75" height="55" rx="1" width="28" x="270" y="215"></rect>
+<!-- 07:00 Early Solar appears -->
+<rect fill="#7bd0ff" fill-opacity="0.75" height="45" rx="1" width="28" x="307.5" y="210"></rect>
+<rect fill="#ffb95f" height="15" rx="1" width="28" x="307.5" y="195"></rect>
+<!-- 08:00 -->
+<rect fill="#7bd0ff" fill-opacity="0.75" height="50" rx="1" width="28" x="345" y="185"></rect>
+<rect fill="#ffb95f" height="35" rx="1" width="28" x="345" y="150"></rect>
+<!-- 09:00 Strong solar -->
+<rect fill="#7bd0ff" fill-opacity="0.75" height="25" rx="1" width="28" x="382.5" y="215"></rect>
+<rect fill="#ffb95f" height="70" rx="1" width="28" x="382.5" y="145"></rect>
+<!-- 10:00 Solar charge surplus -->
+<rect fill="#7bd0ff" fill-opacity="0.75" height="15" rx="1" width="28" x="420" y="235"></rect>
+<rect fill="#ffb95f" height="95" rx="1" width="28" x="420" y="140"></rect>
+<rect fill="#10b981" height="20" rx="1" width="28" x="420" y="120"></rect>
+<!-- 11:00 Solar charge surplus -->
+<rect fill="#7bd0ff" fill-opacity="0.75" height="10" rx="1" width="28" x="457.5" y="245"></rect>
+<rect fill="#ffb95f" height="115" rx="1" width="28" x="457.5" y="130"></rect>
+<rect fill="#10b981" height="20" rx="1" width="28" x="457.5" y="110"></rect>
+<!-- 12:00 Solar peak -->
+<rect fill="#7bd0ff" fill-opacity="0.75" height="10" rx="1" width="28" x="495" y="250"></rect>
+<rect fill="#ffb95f" height="120" rx="1" width="28" x="495" y="130"></rect>
+<!-- 13:00 Solar Capped 20% by Directive 1 -->
+<rect fill="#7bd0ff" fill-opacity="0.75" height="40" rx="1" width="28" x="532.5" y="210"></rect>
+<rect fill="#ffb95f" height="25" rx="1" width="28" x="532.5" y="185"></rect>
+<rect fill="url(#hatchPattern)" height="20" rx="1" width="28" x="532.5" y="165"></rect>
+<!-- 14:00 Solar Capped 20% by Directive 1 -->
+<rect fill="#7bd0ff" fill-opacity="0.75" height="35" rx="1" width="28" x="570" y="215"></rect>
+<rect fill="#ffb95f" height="20" rx="1" width="28" x="570" y="195"></rect>
+<rect fill="url(#hatchPattern)" height="20" rx="1" width="28" x="570" y="175"></rect>
+<!-- 15:00 Solar recovers partially -->
+<rect fill="#7bd0ff" fill-opacity="0.75" height="25" rx="1" width="28" x="607.5" y="220"></rect>
+<rect fill="#ffb95f" height="50" rx="1" width="28" x="607.5" y="170"></rect>
+<!-- 16:00 Evening transition -->
+<rect fill="#7bd0ff" fill-opacity="0.75" height="35" rx="1" width="28" x="645" y="210"></rect>
+<rect fill="#ffb95f" height="25" rx="1" width="28" x="645" y="185"></rect>
+<!-- 17:00 Reserve window begins, controlled battery discharge -->
+<rect fill="#7bd0ff" fill-opacity="0.75" height="40" rx="1" width="28" x="682.5" y="200"></rect>
+<rect fill="url(#hatchPattern)" height="25" rx="1" width="28" x="682.5" y="175"></rect>
+<!-- 18:00 Controlled discharge -->
+<rect fill="#7bd0ff" fill-opacity="0.75" height="42" rx="1" width="28" x="720" y="195"></rect>
+<rect fill="url(#hatchPattern)" height="25" rx="1" width="28" x="720" y="170"></rect>
+<!-- 19:00 Peak Tariff hour: Discharge exactly to 50 kWh floor -->
+<rect fill="#7bd0ff" fill-opacity="0.75" height="42" rx="1" width="28" x="757.5" y="200"></rect>
+<rect fill="url(#hatchPattern)" height="22" rx="1" width="28" x="757.5" y="178"></rect>
+<!-- 20:00 Event ends -->
+<rect fill="#7bd0ff" fill-opacity="0.75" height="38" rx="1" width="28" x="795" y="210"></rect>
+<rect fill="url(#hatchPattern)" height="15" rx="1" width="28" x="795" y="195"></rect>
+<!-- 21:00 Reserve window ends, safe to dispatch to baseline -->
+<rect fill="#7bd0ff" fill-opacity="0.75" height="35" rx="1" width="28" x="832.5" y="215"></rect>
+<rect fill="url(#hatchPattern)" height="20" rx="1" width="28" x="832.5" y="195"></rect>
+<!-- 22:00 Night load -->
+<rect fill="#7bd0ff" fill-opacity="0.75" height="40" rx="1" width="28" x="870" y="225"></rect>
+<!-- 23:00 Baseline return 45 kWh -->
+<rect fill="#7bd0ff" fill-opacity="0.75" height="40" rx="1" width="28" x="907.5" y="230"></rect>
+<!-- Battery SoC Secondary Spline Curve -->
+<!-- 45 kWh @ t0 (y=172), 65 kWh @ t4 (y=124), 95 kWh @ t12 (y=52), 50 kWh @ t19 (y=160), 45 kWh @ t23 (y=172) -->
+<path d="M 59 172
+                   C 100 172, 140 145, 180 130
+                   C 220 125, 300 120, 360 115
+                   C 420 100, 470 60, 509 52
+                   C 540 52, 590 85, 621 110
+                   C 660 130, 710 155, 771 160
+                   C 810 160, 850 165, 880 170
+                   L 921 172" fill="none" stroke="#4edea3" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+<!-- SoC Anchor Dots for critical points -->
+<!-- t0 Baseline (45 kWh) -->
+<circle cx="59" cy="172" fill="#0f131c" r="4" stroke="#4edea3" stroke-width="2"></circle>
+<!-- t12 Solar Peak Charge (95 kWh) -->
+<circle cx="509" cy="52" fill="#0f131c" r="4" stroke="#4edea3" stroke-width="2"></circle>
+<text fill="#4edea3" font-family="JetBrains Mono" font-size="10" font-weight="700" text-anchor="middle" x="509" y="44">95.0 kWh</text>
+<!-- t19 Reserve Floor Capped (50 kWh) -->
+<circle cx="771" cy="160" fill="#0f131c" r="4" stroke="#7bd0ff" stroke-width="2"></circle>
+<text fill="#7bd0ff" font-family="JetBrains Mono" font-size="10" font-weight="700" text-anchor="middle" x="771" y="152">50.0 kWh (Reserve)</text>
+<!-- t23 Neutral Balance (45.0 kWh) -->
+<circle cx="921" cy="172" fill="#0f131c" r="4" stroke="#4edea3" stroke-width="2"></circle>
+<text fill="#4edea3" font-family="JetBrains Mono" font-size="10" font-weight="700" text-anchor="end" x="921" y="190">45.0 kWh EOD</text>
+<!-- X-Axis Timestamps (00 to 23) -->
+<g fill="#bbcabf" font-family="JetBrains Mono" font-size="10" text-anchor="middle">
+<text x="59" y="290">00:00</text>
+<text x="134" y="290">02:00</text>
+<text x="209" y="290">04:00</text>
+<text x="284" y="290">06:00</text>
+<text x="359" y="290">08:00</text>
+<text x="434" y="290">10:00</text>
+<text x="509" y="290">12:00</text>
+<text x="584" y="290">14:00</text>
+<text x="659" y="290">16:00</text>
+<text x="734" y="290">18:00</text>
+<text x="809" y="290">20:00</text>
+<text x="884" y="290">22:00</text>
+</g>
+</svg>
+</div>
+</div>
+<!-- Collapsible Table Toggle Button -->
+<div class="flex items-center justify-between pt-space-xs">
+<button class="flex items-center gap-space-sm px-space-md py-2 rounded bg-surface-container-high hover:bg-surface-bright text-on-surface transition-all font-body-sm text-body-sm shadow-sm" onclick="const tbl = document.getElementById('hourly-telemetry-table'); const chevron = document.getElementById('table-chevron'); const isHidden = tbl.classList.toggle('hidden'); chevron.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(180deg)';" type="button">
+<span class="material-symbols-outlined text-[18px]">table_rows</span>
+<span>Toggle 24-Hour Numerical Telemetry</span>
+<span class="material-symbols-outlined text-[16px] transition-transform duration-200" id="table-chevron">expand_more</span>
+</button>
+<span class="font-code-badge text-code-badge text-on-surface-variant hidden sm:inline">Rows 13-14 &amp; 17-20 highlighted with directive constraints</span>
+</div>
+<!-- Numerical Telemetry Data Table -->
+<div class="hidden flex flex-col w-full overflow-x-auto rounded bg-surface-container-lowest" id="hourly-telemetry-table">
+<table class="w-full text-left font-body-sm text-body-sm border-collapse">
+<thead>
+<tr class="bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps uppercase tracking-wider">
+<th class="p-space-sm">Hour</th>
+<th class="p-space-sm text-right">Demand</th>
+<th class="p-space-sm text-right">Solar</th>
+<th class="p-space-sm text-right">Grid In</th>
+<th class="p-space-sm text-center">Batt Action</th>
+<th class="p-space-sm text-right">Batt kWh</th>
+<th class="p-space-sm text-right">SoC After</th>
+<th class="p-space-sm text-right">Tariff</th>
+<th class="p-space-sm text-right">Cost (BDT)</th>
+</tr>
+</thead>
+<tbody class="font-metric-md text-metric-md divide-y divide-surface-container-high">
+<!-- 00:00 -->
+<tr class="hover:bg-surface-container-high/40 transition-colors">
+<td class="p-space-sm text-on-surface font-semibold">00:00</td>
+<td class="p-space-sm text-right text-on-surface-variant">45.00</td>
+<td class="p-space-sm text-right text-secondary-fixed-dim">0.00</td>
+<td class="p-space-sm text-right text-tertiary">45.00</td>
+<td class="p-space-sm text-center"><span class="font-code-badge text-code-badge bg-surface-container-high text-on-surface-variant px-1.5 py-0.5 rounded">IDLE</span></td>
+<td class="p-space-sm text-right text-on-surface-variant">0.00</td>
+<td class="p-space-sm text-right text-primary">45.00</td>
+<td class="p-space-sm text-right text-on-surface-variant">6.50</td>
+<td class="p-space-sm text-right text-on-surface font-semibold">292.50</td>
+</tr>
+<!-- 02:00 Pre-charging -->
+<tr class="hover:bg-surface-container-high/40 transition-colors bg-primary/5">
+<td class="p-space-sm text-on-surface font-semibold">02:00</td>
+<td class="p-space-sm text-right text-on-surface-variant">45.00</td>
+<td class="p-space-sm text-right text-secondary-fixed-dim">0.00</td>
+<td class="p-space-sm text-right text-tertiary">70.00</td>
+<td class="p-space-sm text-center"><span class="font-code-badge text-code-badge bg-primary/20 text-primary px-1.5 py-0.5 rounded">+CHARGE</span></td>
+<td class="p-space-sm text-right text-primary">+25.00</td>
+<td class="p-space-sm text-right text-primary">70.00</td>
+<td class="p-space-sm text-right text-on-surface-variant">4.80</td>
+<td class="p-space-sm text-right text-on-surface font-semibold">336.00</td>
+</tr>
+<!-- 11:00 Peak Solar -->
+<tr class="hover:bg-surface-container-high/40 transition-colors">
+<td class="p-space-sm text-on-surface font-semibold">11:00</td>
+<td class="p-space-sm text-right text-on-surface-variant">105.00</td>
+<td class="p-space-sm text-right text-secondary">115.00</td>
+<td class="p-space-sm text-right text-tertiary">10.00</td>
+<td class="p-space-sm text-center"><span class="font-code-badge text-code-badge bg-primary/20 text-primary px-1.5 py-0.5 rounded">+CHARGE</span></td>
+<td class="p-space-sm text-right text-primary">+10.00</td>
+<td class="p-space-sm text-right text-primary">92.50</td>
+<td class="p-space-sm text-right text-on-surface-variant">8.20</td>
+<td class="p-space-sm text-right text-on-surface font-semibold">82.00</td>
+</tr>
+<!-- 13:00 DIRECTIVE 1 ENFORCED -->
+<tr class="bg-secondary/10 hover:bg-secondary/15 transition-colors">
+<td class="p-space-sm text-secondary font-bold flex items-center gap-1">
+<span>13:00</span>
+<span class="material-symbols-outlined text-[14px]">warning</span>
+</td>
+<td class="p-space-sm text-right text-on-surface-variant">85.00</td>
+<td class="p-space-sm text-right text-secondary font-bold">25.00 (20%)</td>
+<td class="p-space-sm text-right text-tertiary">40.00</td>
+<td class="p-space-sm text-center"><span class="font-code-badge text-code-badge bg-surface-container-highest text-secondary px-1.5 py-0.5 rounded">-DISCH</span></td>
+<td class="p-space-sm text-right text-secondary-fixed-dim">-20.00</td>
+<td class="p-space-sm text-right text-primary">75.00</td>
+<td class="p-space-sm text-right text-on-surface-variant">8.20</td>
+<td class="p-space-sm text-right text-on-surface font-semibold">328.00</td>
+</tr>
+<!-- 14:00 DIRECTIVE 1 ENFORCED -->
+<tr class="bg-secondary/10 hover:bg-secondary/15 transition-colors">
+<td class="p-space-sm text-secondary font-bold flex items-center gap-1">
+<span>14:00</span>
+<span class="material-symbols-outlined text-[14px]">warning</span>
+</td>
+<td class="p-space-sm text-right text-on-surface-variant">75.00</td>
+<td class="p-space-sm text-right text-secondary font-bold">20.00 (20%)</td>
+<td class="p-space-sm text-right text-tertiary">35.00</td>
+<td class="p-space-sm text-center"><span class="font-code-badge text-code-badge bg-surface-container-highest text-secondary px-1.5 py-0.5 rounded">-DISCH</span></td>
+<td class="p-space-sm text-right text-secondary-fixed-dim">-20.00</td>
+<td class="p-space-sm text-right text-primary">55.00</td>
+<td class="p-space-sm text-right text-on-surface-variant">8.20</td>
+<td class="p-space-sm text-right text-on-surface font-semibold">287.00</td>
+</tr>
+<!-- 17:00 DIRECTIVE 2 ENFORCED -->
+<tr class="bg-tertiary/10 hover:bg-tertiary/15 transition-colors">
+<td class="p-space-sm text-tertiary font-bold flex items-center gap-1">
+<span>17:00</span>
+<span class="material-symbols-outlined text-[14px]">shield</span>
+</td>
+<td class="p-space-sm text-right text-on-surface-variant">65.00</td>
+<td class="p-space-sm text-right text-secondary-fixed-dim">0.00</td>
+<td class="p-space-sm text-right text-tertiary">40.00</td>
+<td class="p-space-sm text-center"><span class="font-code-badge text-code-badge bg-surface-container-highest text-tertiary px-1.5 py-0.5 rounded">-DISCH</span></td>
+<td class="p-space-sm text-right text-tertiary">-5.00</td>
+<td class="p-space-sm text-right text-tertiary font-bold">50.00 (Floor)</td>
+<td class="p-space-sm text-right text-on-surface-variant">11.50</td>
+<td class="p-space-sm text-right text-on-surface font-semibold">460.00</td>
+</tr>
+<!-- 19:00 Peak Tariff avoided -->
+<tr class="bg-tertiary/10 hover:bg-tertiary/15 transition-colors">
+<td class="p-space-sm text-tertiary font-bold flex items-center gap-1">
+<span>19:00</span>
+<span class="material-symbols-outlined text-[14px]">shield</span>
+</td>
+<td class="p-space-sm text-right text-on-surface-variant">42.00</td>
+<td class="p-space-sm text-right text-secondary-fixed-dim">0.00</td>
+<td class="p-space-sm text-right text-tertiary">42.00</td>
+<td class="p-space-sm text-center"><span class="font-code-badge text-code-badge bg-surface-container-high text-on-surface-variant px-1.5 py-0.5 rounded">HOLD_FLOOR</span></td>
+<td class="p-space-sm text-right text-on-surface-variant">0.00</td>
+<td class="p-space-sm text-right text-tertiary font-bold">50.00 (Floor)</td>
+<td class="p-space-sm text-right text-on-surface-variant">12.00</td>
+<td class="p-space-sm text-right text-on-surface font-semibold">504.00</td>
+</tr>
+<!-- 23:00 Baseline Return -->
+<tr class="hover:bg-surface-container-high/40 transition-colors">
+<td class="p-space-sm text-on-surface font-semibold">23:00</td>
+<td class="p-space-sm text-right text-on-surface-variant">40.00</td>
+<td class="p-space-sm text-right text-secondary-fixed-dim">0.00</td>
+<td class="p-space-sm text-right text-tertiary">40.00</td>
+<td class="p-space-sm text-center"><span class="font-code-badge text-code-badge bg-surface-container-high text-on-surface-variant px-1.5 py-0.5 rounded">IDLE</span></td>
+<td class="p-space-sm text-right text-on-surface-variant">0.00</td>
+<td class="p-space-sm text-right text-primary font-bold">45.00</td>
+<td class="p-space-sm text-right text-on-surface-variant">6.50</td>
+<td class="p-space-sm text-right text-on-surface font-semibold">260.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Executive Dispatch Summary Card -->
+<div class="relative bg-surface-container-low rounded-lg p-space-md shadow-md flex flex-col md:flex-row gap-space-md items-start">
+<div class="w-12 h-12 rounded-lg bg-surface-container-high flex-shrink-0 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[26px]">terminal</span>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex flex-wrap items-center gap-2">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Executive Dispatch Summary</h3>
+<span class="font-code-badge text-code-badge bg-surface-container-highest text-primary px-space-xs py-0.5 rounded">Deterministic Guarantee Validated</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+        The optimizer pre-charged the battery during off-peak morning hours (<strong class="font-code-badge text-on-surface">02:00–06:00</strong>) using low tariff grid power and maximized direct solar consumption between <strong class="font-code-badge text-on-surface">09:00 and 12:00</strong>. Solar usage was reduced to <strong class="text-secondary font-code-badge">20%</strong> in hours 13–14 per Directive 1. Battery discharge offset expensive peak tariff grid imports between <strong class="font-code-badge text-on-surface">17:00 and 21:00</strong> while strictly maintaining the <strong class="text-tertiary font-code-badge">50.0 kWh</strong> reserve floor per Directive 2. End-of-day battery energy returned precisely to the initial <strong class="text-primary font-code-badge">45.0 kWh</strong> baseline.
+      </p>
+<div class="flex flex-wrap items-center gap-space-md pt-space-xs font-code-badge text-code-badge text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px] text-primary">check_circle</span> Initial SoC = Final SoC (45 kWh)</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px] text-primary">check_circle</span> Zero Breaker Excursions</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px] text-primary">check_circle</span> Demand Peak Capped ≤ 42 kW</span>
+</div>
+</div>
+</div>
+</div></main><footer class="w-full bg-surface-container-lowest py-2.5 px-space-md lg:px-margin-desktop flex flex-col md:flex-row items-center justify-between gap-2 shadow-[0_-1px_8px_rgba(0,0,0,0.3)]"><div class="flex items-center gap-2 font-code-badge text-code-badge text-on-surface-variant"><span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span><span>Service SLA: p95 Latency ≤ 4.2s</span><span class="text-outline-variant">•</span><span>Guardrail Validation: Deterministic</span><span class="text-outline-variant">•</span><span>Model: LLM Directed MILP Solver</span></div><div class="font-code-badge text-code-badge text-on-surface-variant">BUP CSE Fest 2026 • Real-Time Energy Dispatch Engine</div></footer></div></body></html>

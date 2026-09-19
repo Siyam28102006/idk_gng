@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "primary-fixed": "#6ffbbe", "on-primary-fixed-variant": "#005236", "secondary-fixed-dim": "#ffb95f", "primary-fixed-dim": "#4edea3", "on-error": "#690005", "surface-container-lowest": "#0a0e16", "surface-container-highest": "#31353e", "on-primary-container": "#00422b", "error": "#ffb4ab", "inverse-on-surface": "#2c3039", "on-surface-variant": "#bbcabf", "on-error-container": "#ffdad6", "on-background": "#dfe2ee", "surface": "#0f131c", "tertiary-container": "#19aee8", "inverse-primary": "#006c49", "on-secondary": "#472a00", "surface-variant": "#31353e", "primary": "#4edea3", "on-primary": "#003824", "inverse-surface": "#dfe2ee", "error-container": "#93000a", "on-secondary-fixed-variant": "#653e00", "surface-dim": "#0f131c", "surface-container-low": "#181c24", "on-tertiary-container": "#003e55", "on-tertiary-fixed-variant": "#004c69", "tertiary-fixed-dim": "#7bd0ff", "secondary-fixed": "#ffddb8", "surface-container-high": "#262a33", "surface-tint": "#4edea3", "on-tertiary": "#00354a", "surface-bright": "#353942", "tertiary": "#7bd0ff", "on-secondary-fixed": "#2a1700", "secondary-container": "#ee9800", "primary-container": "#10b981", "on-secondary-container": "#5b3800", "tertiary-fixed": "#c4e7ff", "secondary": "#ffb95f", "on-tertiary-fixed": "#001e2c", "on-surface": "#dfe2ee", "outline": "#86948a", "on-primary-fixed": "#002113", "surface-container": "#1c2028", "outline-variant": "#3c4a42", "background": "#0f131c" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-xl": "2.25rem", "gutter": "1rem", "space-lg": "1.5rem", "space-sm": "0.5rem", "margin": "1rem", "space-md": "1rem", "space-xs": "0.25rem", "gutter-desktop": "1.25rem", "margin-desktop": "2rem" }, "fontFamily": { "code-badge": [ "JetBrains Mono" ], "headline-lg": [ "Plus Jakarta Sans" ], "headline-xl": [ "Plus Jakarta Sans" ], "metric-hero": [ "JetBrains Mono" ], "headline-sm": [ "Plus Jakarta Sans" ], "body-sm": [ "Inter" ], "label-caps": [ "Inter" ], "body-md": [ "Inter" ], "headline-xl-mobile": [ "Plus Jakarta Sans" ], "headline-md": [ "Plus Jakarta Sans" ], "metric-md": [ "JetBrains Mono" ], "metric-hero-mobile": [ "JetBrains Mono" ], "body-lg": [ "Inter" ], "metric-lg": [ "JetBrains Mono" ] }, "fontSize": { "code-badge": [ "11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" } ], "headline-lg": [ "24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" } ], "headline-xl": [ "36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "metric-hero": [ "32px", { "lineHeight": "38px", "letterSpacing": "-0.03em", "fontWeight": "600" } ], "headline-sm": [ "15px", { "lineHeight": "22px", "letterSpacing": "-0.005em", "fontWeight": "600" } ], "body-sm": [ "13px", { "lineHeight": "18px", "fontWeight": "400" } ], "label-caps": [ "11px", { "lineHeight": "16px", "letterSpacing": "0.06em", "fontWeight": "600" } ], "body-md": [ "14px", { "lineHeight": "20px", "fontWeight": "400" } ], "headline-xl-mobile": [ "28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "headline-md": [ "18px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "metric-md": [ "14px", { "lineHeight": "20px", "letterSpacing": "-0.01em", "fontWeight": "500" } ], "metric-hero-mobile": [ "24px", { "lineHeight": "30px", "letterSpacing": "-0.02em", "fontWeight": "600" } ], "body-lg": [ "16px", { "lineHeight": "24px", "fontWeight": "400" } ], "metric-lg": [ "20px", { "lineHeight": "28px", "letterSpacing": "-0.02em", "fontWeight": "500" } ] } } } };</script></head><body class="bg-background font-body-md text-on-surface antialiased min-h-screen"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.4)] z-50 flex flex-col justify-between pt-4 pb-6"><div class="flex flex-col gap-4"><div class="px-space-md flex items-center justify-between"><span class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider">Grid Topologies</span><span class="font-code-badge text-code-badge text-primary bg-surface-container-high px-space-xs py-0.5 rounded">ONLINE</span></div><nav class="flex flex-col gap-1 px-space-sm" data-active-classes="bg-surface-container-high text-primary font-semibold"><a aria-current="page" class="flex items-center gap-space-sm px-space-md py-2.5 rounded transition-all bg-surface-container-high text-primary font-semibold" data-path="scenario-builder" href="#"><span class="material-symbols-outlined text-[18px]">edit_note</span><span class="font-body-sm text-body-sm">Scenario Builder</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="run-in-progress" href="#"><span class="material-symbols-outlined text-[18px]">cycle</span><span class="font-body-sm text-body-sm">Run in Progress</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="optimization-results" href="#"><span class="material-symbols-outlined text-[18px]">analytics</span><span class="font-body-sm text-body-sm">Optimization Results</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="grid-telemetry" href="#"><span class="material-symbols-outlined text-[18px]">speed</span><span class="font-body-sm text-body-sm">Grid Telemetry</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="directive-logs" href="#"><span class="material-symbols-outlined text-[18px]">list_alt</span><span class="font-body-sm text-body-sm">Directive History</span></a></nav></div><div class="px-space-md flex flex-col gap-2"><div class="p-space-sm rounded bg-surface-container-low flex flex-col gap-1"><div class="flex items-center justify-between text-on-surface-variant"><span class="font-label-caps text-label-caps uppercase">MILP Substation</span><span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span></div><span class="font-metric-md text-metric-md text-on-surface">Node 04 • BUP Hub</span><span class="font-code-badge text-code-badge text-on-surface-variant">Capacity: 1.42 MW</span></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 z-40 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.3)]"><div class="h-16 w-full px-space-md flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md min-w-0"><div class="flex items-center gap-space-sm flex-shrink-0"><img alt="GridWise Logo Mark" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UvTt3dMiUVGrRVuRP8kYrSN3KMnvRAdx60kyyIzoAGXkfSfP1BTs7MwZvUG2mUgfeY7FEEHCPQezpoliKRc93ejVD6NJoULhN2ar45ve26_O6ALKypsSfG5QoK5c4-4SR2nD6xyybNqYahc0DJ3D6rNev_GTXz3i-VEyYNbjih-a1Tvm4rIEK30t1C2RZbKsENuACPG1Quk1yemTQ9Nnm9f4bTTB2QO7kinNdMsmIYELnjwHwjwgUvjzY"/><span class="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight">GridWise</span></div><span class="hidden lg:inline-flex font-code-badge text-code-badge px-space-sm py-0.5 rounded bg-surface-container-high text-on-surface-variant uppercase">v1.2-beta • BUP Smart Campus</span><div class="hidden xl:flex items-center gap-1.5 font-code-badge text-code-badge text-on-surface-variant bg-surface-container-low px-space-sm py-1 rounded"><span class="w-2 h-2 rounded-full bg-primary flex-shrink-0"></span><span>API Gateway: Connected (200 OK)</span></div></div><nav class="hidden md:flex items-center gap-1 bg-surface-container-lowest p-1 rounded" data-active-classes="bg-surface-container-high text-primary font-semibold rounded"><a aria-current="page" class="px-space-md py-1.5 transition-colors bg-surface-container-high text-primary font-semibold rounded" data-path="scenario-builder" href="#">Scenario Builder</a><a class="px-space-md py-1.5 text-on-surface-variant font-body-sm text-body-sm hover:text-on-surface transition-colors" data-path="run-in-progress" href="#">Run in Progress</a><a class="px-space-md py-1.5 text-on-surface-variant font-body-sm text-body-sm hover:text-on-surface transition-colors" data-path="optimization-results" href="#">Optimization Results</a></nav><div class="flex items-center gap-space-md flex-shrink-0"><button class="hidden sm:flex items-center gap-space-xs font-code-badge text-code-badge px-space-sm py-1.5 rounded bg-surface-container-low text-on-surface hover:bg-surface-container-high hover:text-on-surface transition-colors" type="button"><span class="text-secondary">Case:</span><span>SAMPLE-07 Multi-Directive</span><span class="material-symbols-outlined text-[14px] text-on-surface-variant">arrow_drop_down</span></button><div class="hidden 2xl:flex items-center gap-1 font-code-badge text-code-badge bg-surface-container-high text-primary px-space-sm py-1 rounded"><span class="text-on-surface-variant">POST</span><span>/optimize-energy</span></div><a class="hidden lg:flex items-center font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="documentation" href="#">Docs</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 pb-12 bg-background min-h-screen px-space-md lg:px-margin-desktop"><div class="flex flex-col w-full gap-space-md">
+<!-- Top Header Sub-bar -->
+<div class="flex flex-wrap items-center justify-between gap-space-md bg-surface-container-low p-space-md rounded-lg shadow-sm">
+<div class="flex items-center gap-space-sm">
+<div class="flex items-center justify-center w-8 h-8 rounded bg-surface-container-high text-primary">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Dispatch Workspace</span>
+<span class="text-outline-variant">/</span>
+<span class="font-code-badge text-code-badge text-primary bg-primary/10 px-1.5 py-0.5 rounded">MILP Core v2.4</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">New Optimization Run</h1>
+</div>
+</div>
+<div class="flex items-center gap-space-sm">
+<div class="relative inline-block text-left">
+<div class="flex items-center bg-surface-container-high rounded px-space-sm py-1.5 gap-space-xs text-on-surface">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Preset:</span>
+<select class="bg-transparent font-code-badge text-code-badge text-secondary-fixed-dim focus:outline-none cursor-pointer pr-2" id="presetSelector">
+<option class="bg-surface-container-high text-on-surface" value="SAMPLE-07">SAMPLE-07: Reserve + Grid Cap</option>
+<option class="bg-surface-container-high text-on-surface" value="SAMPLE-01">SAMPLE-01: Solar Reduction Curve</option>
+<option class="bg-surface-container-high text-on-surface" value="CLEAR">-- Clear Form Matrix --</option>
+</select>
+</div>
+</div>
+<button class="flex items-center gap-space-xs px-space-md py-1.5 rounded bg-surface-container-high text-on-surface hover:bg-surface-bright transition-colors font-body-sm text-body-sm" type="button">
+<span class="material-symbols-outlined text-[16px] text-tertiary">data_object</span>
+<span>Validate JSON</span>
+</button>
+<button class="flex items-center gap-space-xs px-space-md py-1.5 rounded bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors font-body-sm text-body-sm" type="button">
+<span class="material-symbols-outlined text-[16px]">history</span>
+<span class="hidden sm:inline">Revert</span>
+</button>
+</div>
+</div>
+<!-- Three-Column Main Working Area -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-md items-start">
+<!-- Left Card: Battery Configuration (3 cols on xl, ~25-28%) -->
+<div class="xl:col-span-3 flex flex-col gap-space-md bg-surface-container-low p-space-md rounded-lg shadow-sm">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Subsystem 01</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mt-0.5">Battery Configuration</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Energy storage specifications &amp; rate limits</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">battery_charging_full</span>
+</div>
+<!-- Live SoC State Indicator -->
+<div class="bg-surface-container p-space-sm rounded flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-caps text-label-caps uppercase">State of Charge (Initial SoC)</span>
+<span class="font-metric-md text-metric-md text-primary font-semibold">37.5%</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-primary rounded-full transition-all duration-500" style="width: 37.5%"></div>
+</div>
+<div class="flex justify-between font-code-badge text-code-badge text-outline">
+<span>Min: 15 kWh (12.5%)</span>
+<span>Max: 120 kWh (100%)</span>
+</div>
+</div>
+<!-- 5 Numeric Input Fields -->
+<div class="flex flex-col gap-space-sm">
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps uppercase text-on-surface-variant flex justify-between">
+<span>Gross Storage Capacity</span>
+<span class="text-tertiary">BESS-N04</span>
+</label>
+<div class="flex items-stretch rounded bg-surface-container-lowest overflow-hidden focus-within:ring-1 focus-within:ring-tertiary">
+<input class="w-full bg-transparent px-space-sm py-2 font-metric-md text-metric-md text-on-surface focus:outline-none" step="0.5" type="number" value="120.0"/>
+<span class="bg-surface-container-high px-space-sm py-2 font-code-badge text-code-badge text-on-surface-variant flex items-center">kWh</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps uppercase text-on-surface-variant flex justify-between">
+<span>Initial Energy (Hour 0)</span>
+<span class="text-primary font-semibold">Baseline</span>
+</label>
+<div class="flex items-stretch rounded bg-surface-container-lowest overflow-hidden focus-within:ring-1 focus-within:ring-primary">
+<input class="w-full bg-transparent px-space-sm py-2 font-metric-md text-metric-md text-primary focus:outline-none" step="0.5" type="number" value="45.0"/>
+<span class="bg-surface-container-high px-space-sm py-2 font-code-badge text-code-badge text-on-surface-variant flex items-center">kWh</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps uppercase text-on-surface-variant flex justify-between">
+<span>Minimum Safe Energy</span>
+<span class="text-error">Hard Floor</span>
+</label>
+<div class="flex items-stretch rounded bg-surface-container-lowest overflow-hidden focus-within:ring-1 focus-within:ring-error">
+<input class="w-full bg-transparent px-space-sm py-2 font-metric-md text-metric-md text-on-surface focus:outline-none" step="0.5" type="number" value="15.0"/>
+<span class="bg-surface-container-high px-space-sm py-2 font-code-badge text-code-badge text-on-surface-variant flex items-center">kWh</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps uppercase text-on-surface-variant flex justify-between">
+<span>Max Inverter Charge Rate</span>
+<span class="text-on-surface-variant">Limiter</span>
+</label>
+<div class="flex items-stretch rounded bg-surface-container-lowest overflow-hidden focus-within:ring-1 focus-within:ring-tertiary">
+<input class="w-full bg-transparent px-space-sm py-2 font-metric-md text-metric-md text-on-surface focus:outline-none" step="0.5" type="number" value="30.0"/>
+<span class="bg-surface-container-high px-space-sm py-2 font-code-badge text-code-badge text-on-surface-variant flex items-center">kWh/h</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps uppercase text-on-surface-variant flex justify-between">
+<span>Max Discharge Rate</span>
+<span class="text-secondary">Limiter</span>
+</label>
+<div class="flex items-stretch rounded bg-surface-container-lowest overflow-hidden focus-within:ring-1 focus-within:ring-secondary">
+<input class="w-full bg-transparent px-space-sm py-2 font-metric-md text-metric-md text-on-surface focus:outline-none" step="0.5" type="number" value="35.0"/>
+<span class="bg-surface-container-high px-space-sm py-2 font-code-badge text-code-badge text-on-surface-variant flex items-center">kWh/h</span>
+</div>
+</div>
+</div>
+<!-- Physics Helper Note -->
+<div class="p-space-sm rounded bg-surface-container flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-tertiary text-[18px] flex-shrink-0 mt-0.5">balance</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+<strong class="text-on-surface font-semibold">Boundary Constraint:</strong> End-of-day energy balance requires final hour SoC = initial energy (<span class="font-code-badge text-code-badge text-primary">45.0 kWh</span>) to prevent cyclic depletion.
+        </p>
+</div>
+<!-- Substation Diagnostic Mini Card -->
+<div class="bg-surface-container-lowest p-space-sm rounded flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[16px]">solar_power</span>
+<span class="font-body-sm text-body-sm text-on-surface">Campus PV Array</span>
+</div>
+<span class="font-code-badge text-code-badge text-secondary bg-surface-container-high px-1.5 py-0.5 rounded">Rooftop 420 kWp</span>
+</div>
+</div>
+<!-- Center Card: 24-Hour Scenario Matrix (5 cols on xl, ~42-45%) -->
+<div class="xl:col-span-5 flex flex-col gap-space-md bg-surface-container-low p-space-md rounded-lg shadow-sm">
+<div class="flex flex-wrap items-center justify-between gap-space-sm">
+<div>
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Profile Telemetry</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mt-0.5">24-Hour Scenario Matrix</h2>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="px-space-sm py-1 rounded bg-surface-container-high text-on-surface-variant hover:text-on-surface font-code-badge text-code-badge transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[14px]">auto_fix_high</span>
+<span>Quick Fill Solar</span>
+</button>
+<button class="px-space-sm py-1 rounded bg-surface-container-high text-on-surface-variant hover:text-on-surface font-code-badge text-code-badge transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[14px]">upload_file</span>
+<span>Import CSV</span>
+</button>
+</div>
+</div>
+<!-- Sparkline Dual Area Profile Graphic -->
+<div class="bg-surface-container-lowest p-space-sm rounded flex flex-col gap-2">
+<div class="flex items-center justify-between text-on-surface-variant px-1">
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-1 bg-tertiary rounded-full"></span>
+<span class="font-code-badge text-code-badge text-tertiary">Demand (kW)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-1 bg-secondary rounded-full"></span>
+<span class="font-code-badge text-code-badge text-secondary">Solar PV (kW)</span>
+</div>
+</div>
+<div class="flex items-center gap-1 font-code-badge text-code-badge text-error bg-error/10 px-1.5 py-0.5 rounded">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+<span>Peak Tariff: 17:00–22:00</span>
+</div>
+</div>
+<!-- SVG 24-hour visual curve -->
+<div class="w-full h-24 relative">
+<svg class="w-full h-full" fill="none" preserveaspectratio="none" viewbox="0 0 480 100">
+<!-- Tariff peak shading zone: x=340 to x=440 (hours 17 to 22 approx) -->
+<rect fill="#93000a" fill-opacity="0.12" height="92" rx="2" width="100" x="340" y="4"></rect>
+<!-- Grid lines -->
+<line stroke="#1c2028" stroke-dasharray="3 3" x1="0" x2="480" y1="25" y2="25"></line>
+<line stroke="#1c2028" stroke-dasharray="3 3" x1="0" x2="480" y1="50" y2="50"></line>
+<line stroke="#1c2028" stroke-dasharray="3 3" x1="0" x2="480" y1="75" y2="75"></line>
+<!-- Solar Area and Line (Peaking at center, hours 10-15) -->
+<path d="M 0 95 L 140 95 C 180 95 210 20 240 15 C 270 20 300 95 340 95 L 480 95 Z" fill="url(#solarGrad)" opacity="0.3"></path>
+<path d="M 0 95 L 140 95 C 180 95 210 20 240 15 C 270 20 300 95 340 95 L 480 95" stroke="#ffb95f" stroke-linecap="round" stroke-width="2"></path>
+<!-- Demand Curve (Baseline ~25 rising to ~85) -->
+<path d="M 0 75 Q 80 78 120 70 T 200 35 T 280 40 T 360 18 T 420 25 T 480 70 L 480 95 L 0 95 Z" fill="url(#demandGrad)" opacity="0.25"></path>
+<path d="M 0 75 Q 80 78 120 70 T 200 35 T 280 40 T 360 18 T 420 25 T 480 70" stroke="#7bd0ff" stroke-linecap="round" stroke-width="2"></path>
+<defs>
+<lineargradient id="solarGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#ffb95f"></stop>
+<stop offset="100%" stop-color="#ffb95f" stop-opacity="0"></stop>
+</lineargradient>
+<lineargradient id="demandGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#7bd0ff"></stop>
+<stop offset="100%" stop-color="#7bd0ff" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+</svg>
+</div>
+<div class="flex justify-between font-code-badge text-code-badge text-outline px-1">
+<span>00:00</span>
+<span>06:00</span>
+<span>12:00</span>
+<span>18:00</span>
+<span>23:00</span>
+</div>
+</div>
+<!-- Editable Data Table Container (Hours 0 through 23) -->
+<div class="rounded bg-surface-container-lowest overflow-hidden flex flex-col">
+<div class="grid grid-cols-4 bg-surface-container-high px-space-sm py-2 font-label-caps text-label-caps text-on-surface-variant uppercase">
+<div class="col-span-1">Interval</div>
+<div class="col-span-1 text-right text-tertiary">Demand (kWh)</div>
+<div class="col-span-1 text-right text-secondary">Solar (kWh)</div>
+<div class="col-span-1 text-right text-on-surface">Tariff (BDT)</div>
+</div>
+<div class="overflow-y-auto max-h-[360px] flex flex-col divide-y-0" id="matrixRows">
+<!-- Hour rows dynamically or statically rendered with alternating colors -->
+<div class="grid grid-cols-4 items-center px-space-sm py-1.5 bg-surface-container-lowest hover:bg-surface-container transition-colors">
+<span class="col-span-1 font-code-badge text-code-badge text-on-surface">00:00 - 01:00</span>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-tertiary focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="26.4"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-secondary focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="0.0"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-on-surface-variant focus:bg-surface-container-high rounded px-1 focus:outline-none" step="0.1" type="number" value="6.50"/>
+</div>
+<div class="grid grid-cols-4 items-center px-space-sm py-1.5 bg-surface-container-low hover:bg-surface-container transition-colors">
+<span class="col-span-1 font-code-badge text-code-badge text-on-surface">01:00 - 02:00</span>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-tertiary focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="24.1"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-secondary focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="0.0"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-on-surface-variant focus:bg-surface-container-high rounded px-1 focus:outline-none" step="0.1" type="number" value="6.50"/>
+</div>
+<div class="grid grid-cols-4 items-center px-space-sm py-1.5 bg-surface-container-lowest hover:bg-surface-container transition-colors">
+<span class="col-span-1 font-code-badge text-code-badge text-on-surface">02:00 - 03:00</span>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-tertiary focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="23.8"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-secondary focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="0.0"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-on-surface-variant focus:bg-surface-container-high rounded px-1 focus:outline-none" step="0.1" type="number" value="6.50"/>
+</div>
+<div class="grid grid-cols-4 items-center px-space-sm py-1.5 bg-surface-container-low hover:bg-surface-container transition-colors">
+<span class="col-span-1 font-code-badge text-code-badge text-on-surface">06:00 - 07:00</span>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-tertiary focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="38.5"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-secondary focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="8.2"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-on-surface-variant focus:bg-surface-container-high rounded px-1 focus:outline-none" step="0.1" type="number" value="6.50"/>
+</div>
+<div class="grid grid-cols-4 items-center px-space-sm py-1.5 bg-surface-container-lowest hover:bg-surface-container transition-colors">
+<span class="col-span-1 font-code-badge text-code-badge text-on-surface">09:00 - 10:00</span>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-tertiary focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="64.0"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-secondary focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="42.5"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-on-surface-variant focus:bg-surface-container-high rounded px-1 focus:outline-none" step="0.1" type="number" value="8.40"/>
+</div>
+<div class="grid grid-cols-4 items-center px-space-sm py-1.5 bg-surface-container-low hover:bg-surface-container transition-colors">
+<span class="col-span-1 font-code-badge text-code-badge text-on-surface">12:00 - 13:00</span>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-tertiary focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="78.2"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-secondary focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="65.0"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-on-surface-variant focus:bg-surface-container-high rounded px-1 focus:outline-none" step="0.1" type="number" value="8.40"/>
+</div>
+<!-- Midday Maintenance Window (Note 1 affected) -->
+<div class="grid grid-cols-4 items-center px-space-sm py-1.5 bg-secondary-container/10 hover:bg-secondary-container/20 transition-colors">
+<div class="col-span-1 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="font-code-badge text-code-badge text-secondary font-semibold">13:00 - 14:00</span>
+</div>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-tertiary focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="75.0"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-secondary font-bold focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="13.0"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-on-surface-variant focus:bg-surface-container-high rounded px-1 focus:outline-none" step="0.1" type="number" value="8.40"/>
+</div>
+<div class="grid grid-cols-4 items-center px-space-sm py-1.5 bg-secondary-container/10 hover:bg-secondary-container/20 transition-colors">
+<div class="col-span-1 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="font-code-badge text-code-badge text-secondary font-semibold">14:00 - 15:00</span>
+</div>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-tertiary focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="79.4"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-secondary font-bold focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="12.4"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-on-surface-variant focus:bg-surface-container-high rounded px-1 focus:outline-none" step="0.1" type="number" value="8.40"/>
+</div>
+<!-- Peak Tariff & Event Hours (Note 2 affected) -->
+<div class="grid grid-cols-4 items-center px-space-sm py-1.5 bg-error-container/10 hover:bg-error-container/20 transition-colors">
+<div class="col-span-1 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+<span class="font-code-badge text-code-badge text-error font-semibold">17:00 - 18:00</span>
+</div>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-tertiary focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="84.2"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-secondary focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="1.5"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-error font-bold focus:bg-surface-container-high rounded px-1 focus:outline-none" step="0.1" type="number" value="12.80"/>
+</div>
+<div class="grid grid-cols-4 items-center px-space-sm py-1.5 bg-error-container/10 hover:bg-error-container/20 transition-colors">
+<div class="col-span-1 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+<span class="font-code-badge text-code-badge text-error font-semibold">18:00 - 19:00</span>
+</div>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-tertiary focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="86.0"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-secondary focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="0.0"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-error font-bold focus:bg-surface-container-high rounded px-1 focus:outline-none" step="0.1" type="number" value="12.80"/>
+</div>
+<div class="grid grid-cols-4 items-center px-space-sm py-1.5 bg-error-container/10 hover:bg-error-container/20 transition-colors">
+<div class="col-span-1 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+<span class="font-code-badge text-code-badge text-error font-semibold">20:00 - 21:00</span>
+</div>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-tertiary focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="81.5"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-secondary focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="0.0"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-error font-bold focus:bg-surface-container-high rounded px-1 focus:outline-none" step="0.1" type="number" value="12.80"/>
+</div>
+<div class="grid grid-cols-4 items-center px-space-sm py-1.5 bg-surface-container-lowest hover:bg-surface-container transition-colors">
+<span class="col-span-1 font-code-badge text-code-badge text-on-surface">22:00 - 23:00</span>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-tertiary focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="38.0"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-secondary focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="0.0"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-on-surface-variant focus:bg-surface-container-high rounded px-1 focus:outline-none" step="0.1" type="number" value="6.50"/>
+</div>
+<div class="grid grid-cols-4 items-center px-space-sm py-1.5 bg-surface-container-low hover:bg-surface-container transition-colors">
+<span class="col-span-1 font-code-badge text-code-badge text-on-surface">23:00 - 00:00</span>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-tertiary focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="28.3"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-secondary focus:bg-surface-container-high rounded px-1 focus:outline-none" type="number" value="0.0"/>
+<input class="col-span-1 bg-transparent text-right font-metric-md text-metric-md text-on-surface-variant focus:bg-surface-container-high rounded px-1 focus:outline-none" step="0.1" type="number" value="6.50"/>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant font-code-badge text-code-badge pt-1">
+<span>Displaying 24 hourly timesteps</span>
+<span class="text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+          MILP Formulation Matrix Synchronized
+        </span>
+</div>
+</div>
+<!-- Right Card: Operator Notes (4 cols on xl, ~28-33%) -->
+<div class="xl:col-span-4 flex flex-col gap-space-md bg-surface-container-low p-space-md rounded-lg shadow-sm">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Natural Language Injection</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mt-0.5">Operator Directives</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">LLM Directed Input (1 to 3 Operational Directives)</p>
+</div>
+<span class="font-code-badge text-code-badge text-secondary bg-surface-container-high px-2 py-0.5 rounded">2 / 3 Active</span>
+</div>
+<!-- Helper info about LLM parser -->
+<div class="p-space-sm rounded bg-surface-container flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[20px] flex-shrink-0 mt-0.5">psychology</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+          Operational notes are parsed by Gemini LLM into strict mathematical constraints. Non-dispatch or conversational text will be deterministically mapped as <span class="font-code-badge text-code-badge text-outline">no_op</span>.
+        </p>
+</div>
+<!-- Active Pre-filled Operator Note 1 -->
+<div class="flex flex-col gap-2 bg-surface-container-lowest p-space-sm rounded shadow-sm hover:bg-surface-container-high/40 transition-colors group">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-code-badge text-code-badge text-on-primary bg-primary px-1.5 py-0.5 rounded">NOTE 01</span>
+<span class="font-label-caps text-label-caps uppercase text-secondary">solar_reduction</span>
+</div>
+<div class="flex items-center gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
+<button class="p-1 hover:text-on-surface text-on-surface-variant rounded" type="button">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+<button class="p-1 hover:text-error text-on-surface-variant rounded" type="button">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+</div>
+<textarea class="w-full bg-surface-container text-on-surface p-space-sm rounded font-body-sm text-body-sm resize-none focus:outline-none focus:ring-1 focus:ring-secondary" rows="3">PV production will drop by 80% between 13:00 and 15:00 due to rooftop panel washing maintenance.</textarea>
+<div class="flex items-center justify-between font-code-badge text-code-badge text-on-surface-variant pt-0.5">
+<span class="flex items-center gap-1 text-secondary">
+<span class="material-symbols-outlined text-[14px]">bolt</span>
+<span>Target: Hours 13-15 (Factor: 0.20)</span>
+</span>
+<span class="text-primary font-semibold">VALIDATED</span>
+</div>
+</div>
+<!-- Active Pre-filled Operator Note 2 -->
+<div class="flex flex-col gap-2 bg-surface-container-lowest p-space-sm rounded shadow-sm hover:bg-surface-container-high/40 transition-colors group">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-code-badge text-code-badge text-on-primary bg-primary px-1.5 py-0.5 rounded">NOTE 02</span>
+<span class="font-label-caps text-label-caps uppercase text-tertiary">minimum_battery_reserve</span>
+</div>
+<div class="flex items-center gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
+<button class="p-1 hover:text-on-surface text-on-surface-variant rounded" type="button">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+<button class="p-1 hover:text-error text-on-surface-variant rounded" type="button">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+</div>
+<textarea class="w-full bg-surface-container text-on-surface p-space-sm rounded font-body-sm text-body-sm resize-none focus:outline-none focus:ring-1 focus:ring-tertiary" rows="3">Keep battery reserve at minimum 50 kWh between 17:00 and 21:00 for evening campus auditorium event.</textarea>
+<div class="flex items-center justify-between font-code-badge text-code-badge text-on-surface-variant pt-0.5">
+<span class="flex items-center gap-1 text-tertiary">
+<span class="material-symbols-outlined text-[14px]">shield</span>
+<span>Constraint: SoC ≥ 50 kWh (17:00-21:00)</span>
+</span>
+<span class="text-primary font-semibold">VALIDATED</span>
+</div>
+</div>
+<!-- Empty Note 3 Slot -->
+<button class="flex items-center justify-center gap-2 p-space-md rounded bg-surface-container-lowest hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span class="font-body-sm text-body-sm font-semibold">+ Add third operator note (capped at 3)</span>
+</button>
+<!-- Supported Directives Reference Pills -->
+<div class="flex flex-col gap-1.5 pt-2">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Parsed Directive Grammar</span>
+<div class="flex flex-wrap gap-1.5">
+<span class="font-code-badge text-code-badge px-2 py-0.5 rounded bg-surface-container text-secondary flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> solar_reduction
+          </span>
+<span class="font-code-badge text-code-badge px-2 py-0.5 rounded bg-surface-container text-primary flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> minimum_battery_reserve
+          </span>
+<span class="font-code-badge text-code-badge px-2 py-0.5 rounded bg-surface-container text-tertiary flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> no_charge_window
+          </span>
+<span class="font-code-badge text-code-badge px-2 py-0.5 rounded bg-surface-container text-error flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> no_discharge_window
+          </span>
+<span class="font-code-badge text-code-badge px-2 py-0.5 rounded bg-surface-container text-secondary-fixed flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed"></span> max_grid_window
+          </span>
+<span class="font-code-badge text-code-badge px-2 py-0.5 rounded bg-surface-container text-outline flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span> no_op
+          </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom Operational Bar -->
+<div class="sticky bottom-0 z-30 bg-surface-container-lowest/95 backdrop-blur-md p-space-md rounded-lg shadow-xl flex flex-wrap items-center justify-between gap-space-md">
+<!-- Left: Scenario ID Field -->
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="flex items-center gap-2 bg-surface-container-high px-space-md py-2 rounded">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Scenario ID:</span>
+<input class="bg-transparent font-code-badge text-code-badge text-primary focus:outline-none min-w-[200px]" type="text" value="SCENARIO-CAMPUS-2026-0314"/>
+<button class="text-on-surface-variant hover:text-primary transition-colors flex items-center" title="Regenerate Seed ID" type="button">
+<span class="material-symbols-outlined text-[16px]">refresh</span>
+</button>
+</div>
+<span class="hidden lg:inline-flex font-code-badge text-code-badge text-outline bg-surface-container px-2 py-1.5 rounded">Deterministic Seed #9942</span>
+</div>
+<!-- Middle: System Telemetry & Health -->
+<div class="hidden md:flex items-center gap-4 text-on-surface-variant font-code-badge text-code-badge">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-on-surface">API Status: Ready</span>
+</div>
+<span class="text-outline-variant">•</span>
+<span>Timeout Budget: 30.0s</span>
+<span class="text-outline-variant">•</span>
+<span>Target SLA: p95 ≤ 5.0s</span>
+</div>
+<!-- Right: Actions CTA -->
+<div class="flex items-center gap-space-sm">
+<button class="px-space-md py-2.5 rounded bg-surface-container-high text-on-surface-variant hover:text-on-surface hover:bg-surface-bright transition-colors font-body-sm text-body-sm font-semibold" type="button">
+        Reset to Defaults
+      </button>
+<button class="flex items-center gap-space-xs px-space-lg py-2.5 rounded bg-primary text-on-primary hover:bg-primary-fixed-dim transition-all shadow-[0_0_16px_rgba(78,222,163,0.3)] font-headline-sm text-headline-sm font-bold active:scale-95" id="runOptimizationBtn" type="button">
+<span class="material-symbols-outlined text-[20px]">electric_bolt</span>
+<span>Run Optimization →</span>
+</button>
+</div>
+</div>
+<script>
+    // Micro-interaction: handle preset change demo
+    document.getElementById('presetSelector')?.addEventListener('change', function(e) {
+      if (e.target.value === 'SAMPLE-01') {
+        const idField = document.querySelector('input[value*="SCENARIO"]');
+        if (idField) idField.value = 'SCENARIO-SOLAR-DROP-01';
+      } else if (e.target.value === 'SAMPLE-07') {
+        const idField = document.querySelector('input[value*="SCENARIO"]');
+        if (idField) idField.value = 'SCENARIO-CAMPUS-2026-0314';
+      }
+    });
+
+    // Micro-interaction: button execution animation
+    const runBtn = document.getElementById('runOptimizationBtn');
+    if (runBtn) {
+      runBtn.addEventListener('click', function() {
+        const originalText = this.innerHTML;
+        this.innerHTML = '<span class="material-symbols-outlined text-[20px] animate-spin">refresh</span><span>Synthesizing MILP...</span>';
+        this.classList.add('opacity-80', 'cursor-wait');
+        setTimeout(() => {
+          this.innerHTML = originalText;
+          this.classList.remove('opacity-80', 'cursor-wait');
+        }, 1200);
+      });
+    }
+  </script>
+</div></main><footer class="w-full bg-surface-container-lowest py-2.5 px-space-md lg:px-margin-desktop flex flex-col md:flex-row items-center justify-between gap-2 shadow-[0_-1px_8px_rgba(0,0,0,0.3)]"><div class="flex items-center gap-2 font-code-badge text-code-badge text-on-surface-variant"><span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span><span>Service SLA: p95 Latency ≤ 4.2s</span><span class="text-outline-variant">•</span><span>Guardrail Validation: Deterministic</span><span class="text-outline-variant">•</span><span>Model: LLM Directed MILP Solver</span></div><div class="font-code-badge text-code-badge text-on-surface-variant">BUP CSE Fest 2026 • Real-Time Energy Dispatch Engine</div></footer></div></body></html>
