@@ -321,6 +321,118 @@ describe("validatePlan — battery energy bounds (PRD §5.5 #5)", () => {
   });
 });
 
+describe("validatePlan — base minimum reserve (PRD §9.2)", () => {
+  test("battery_energy_after_kwh below base minimum_energy_kwh → reject", () => {
+    const { hours, output } = balanced24();
+    output.hourly_plan[10]!.battery_energy_after_kwh = 10;
+    const result = validatePlan({
+      hours,
+      battery: battery({ minimum_energy_kwh: 40 }),
+      directives: [],
+      output,
+    });
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.violations.some((v) => v.code === "battery_bounds_violation")).toBe(true);
+  });
+});
+
+describe("validatePlan — hourly rate limits (PRD §9.3)", () => {
+  function ratePairPlan(): {
+    hours: { hour: number; demand_kwh: number; solar_kwh: number; tariff_bdt_per_kwh: number }[];
+    output: OptimizeOutput;
+  } {
+    // Demand 100, no solar. h2 charges 60 (> 50 cap), h3 discharges 60
+    // (> 50 cap) so SoC transitions and neutrality stay consistent and only
+    // the rate checks fire.
+    const { hours } = balanced24(100, 0, 100);
+    const hourly_plan: HourlyEntry[] = [];
+    for (let h = 0; h < 24; h++) {
+      hourly_plan.push({
+        hour: h,
+        grid_kwh: 100,
+        solar_used_kwh: 0,
+        battery_action: "idle",
+        battery_kwh: 0,
+        battery_energy_after_kwh: 100,
+      });
+    }
+    hourly_plan[2] = { hour: 2, grid_kwh: 160, solar_used_kwh: 0, battery_action: "charge", battery_kwh: 60, battery_energy_after_kwh: 160 };
+    hourly_plan[3] = { hour: 3, grid_kwh: 40, solar_used_kwh: 0, battery_action: "discharge", battery_kwh: 60, battery_energy_after_kwh: 100 };
+    let total_grid = 0;
+    let total_cost = 0;
+    let peak = 0;
+    for (const e of hourly_plan) {
+      total_grid += e.grid_kwh;
+      total_cost += e.grid_kwh * hours[e.hour]!.tariff_bdt_per_kwh;
+      peak = Math.max(peak, e.grid_kwh);
+    }
+    return {
+      hours,
+      output: { hourly_plan, total_grid_kwh: round(total_grid), total_cost_bdt: round(total_cost), peak_grid_kwh: round(peak) },
+    };
+  }
+
+  test("charge above max_charge_kwh_per_hour → reject", () => {
+    const { hours, output } = ratePairPlan();
+    const result = validatePlan({
+      hours,
+      battery: battery({ max_charge_kwh_per_hour: 50, max_discharge_kwh_per_hour: 60 }),
+      directives: [],
+      output,
+    });
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.violations.some((v) => v.code === "battery_bounds_violation" && v.message.includes("charge"))).toBe(true);
+  });
+
+  test("discharge above max_discharge_kwh_per_hour → reject", () => {
+    const { hours, output } = ratePairPlan();
+    const result = validatePlan({
+      hours,
+      battery: battery({ max_charge_kwh_per_hour: 60, max_discharge_kwh_per_hour: 50 }),
+      directives: [],
+      output,
+    });
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.violations.some((v) => v.code === "battery_bounds_violation" && v.message.includes("discharge"))).toBe(true);
+  });
+});
+
+describe("validatePlan — base solar cap (PRD §9.4)", () => {
+  test("solar_used_kwh above available solar_kwh → reject", () => {
+    const { hours, output } = balanced24(100, 50, 100);
+    output.hourly_plan[5] = { ...output.hourly_plan[5]!, solar_used_kwh: 60, grid_kwh: 40 };
+    let total_grid = 0;
+    let total_cost = 0;
+    let peak = 0;
+    for (const e of output.hourly_plan) {
+      total_grid += e.grid_kwh;
+      total_cost += e.grid_kwh * hours[e.hour]!.tariff_bdt_per_kwh;
+      peak = Math.max(peak, e.grid_kwh);
+    }
+    output.total_grid_kwh = round(total_grid);
+    output.total_cost_bdt = round(total_cost);
+    output.peak_grid_kwh = round(peak);
+    const result = validatePlan({ hours, battery: battery(), directives: [], output });
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.violations.some((v) => v.code === "directive_violation")).toBe(true);
+  });
+});
+
+describe("validatePlan — SoC transitions (PRD §9.1)", () => {
+  test("battery_energy_after jump without charge/discharge → reject", () => {
+    const { hours, output } = balanced24();
+    output.hourly_plan[6]!.battery_energy_after_kwh = 150;
+    const result = validatePlan({ hours, battery: battery(), directives: [], output });
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.violations.some((v) => v.code === "battery_bounds_violation")).toBe(true);
+  });
+});
+
 describe("validatePlan — structural", () => {
   test("hourly_plan length != 24 → reject", () => {
     const { hours } = demandOnlyHours();
